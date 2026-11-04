@@ -224,9 +224,9 @@ Cada módulo define su propio puerto según su intención, y sus adaptadores usa
 - [ ] Repo en GitHub con licencia libre (RNF09); nombre y visibilidad por confirmar.
 - [x] `pyproject.toml` (uv), `ruff`, `mypy`, `pytest` y `docker-compose.yml` con api, postgres y redis.
 - [x] App factory, `/health`, problem+json y CORS para el origen del front.
-- [ ] **Todos los esquemas Pydantic de la sección 6** y routers stub que devuelven fixtures de ejemplo.
+- [x] **Todos los esquemas Pydantic de la sección 6** y routers stub que devuelven fixtures de ejemplo.
 - [x] `openapi.json` exportado en CI y publicado en el repo. **Es lo que se le entrega al front.**
-- [ ] README con cómo levantarlo (`docker compose up`) y cómo autenticarse. Falta autenticarse (llega con M1).
+- [x] README con cómo levantarlo (`docker compose up`) y cómo autenticarse.
 
 ### Fase 1 · Núcleo «Debe» (5 de noviembre)
 
