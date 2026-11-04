@@ -1,6 +1,617 @@
 {
   "components": {
     "schemas": {
+      "AccessibilityProfile": {
+        "description": "Profiles offered by the wizard. Pending confirmation against the requirements (RF35).",
+        "enum": [
+          "low_vision",
+          "reading",
+          "hearing",
+          "attention",
+          "motor"
+        ],
+        "title": "AccessibilityProfile",
+        "type": "string"
+      },
+      "AccessibilityProfileOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "enables": {
+            "items": {
+              "$ref": "#/components/schemas/AccessibilitySetting"
+            },
+            "title": "Enables",
+            "type": "array"
+          },
+          "icon": {
+            "description": "Nombre del ícono que usa el front.",
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "$ref": "#/components/schemas/AccessibilityProfile"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "suggested_format": {
+            "enum": [
+              "visual_map",
+              "real_example",
+              "easy_read",
+              "audio"
+            ],
+            "title": "Suggested Format",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "icon",
+          "enables",
+          "suggested_format"
+        ],
+        "title": "AccessibilityProfileOut",
+        "type": "object"
+      },
+      "AccessibilitySetting": {
+        "enum": [
+          "voice",
+          "high_contrast",
+          "large_text",
+          "short_texts",
+          "captions",
+          "large_buttons",
+          "keyboard_mode"
+        ],
+        "title": "AccessibilitySetting",
+        "type": "string"
+      },
+      "AccountOut": {
+        "properties": {
+          "alias": {
+            "title": "Alias",
+            "type": "string"
+          },
+          "career": {
+            "title": "Career",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "learner",
+              "teacher"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "alias",
+          "career",
+          "role"
+        ],
+        "title": "AccountOut",
+        "type": "object"
+      },
+      "ActiveMembershipOut": {
+        "properties": {
+          "class_id": {
+            "format": "uuid",
+            "title": "Class Id",
+            "type": "string"
+          },
+          "class_name": {
+            "title": "Class Name",
+            "type": "string"
+          },
+          "status": {
+            "const": "joined",
+            "default": "joined",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "class_id",
+          "class_name"
+        ],
+        "title": "ActiveMembershipOut",
+        "type": "object"
+      },
+      "AdaptationContent": {
+        "properties": {
+          "plain_text": {
+            "description": "Texto continuo; en `audio` lo lee la voz del navegador.",
+            "title": "Plain Text",
+            "type": "string"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/ContentSection"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "sections",
+          "plain_text"
+        ],
+        "title": "AdaptationContent",
+        "type": "object"
+      },
+      "AdaptationOut": {
+        "properties": {
+          "ai_notice": {
+            "description": "Aviso de límites de la IA (RF30).",
+            "title": "Ai Notice",
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/AdaptationContent"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "fallback": {
+            "description": "`true` si se usó la respuesta de respaldo (RF29).",
+            "title": "Fallback",
+            "type": "boolean"
+          },
+          "format": {
+            "$ref": "#/components/schemas/Format"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "material_id": {
+            "format": "uuid",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "prompt_text": {
+            "description": "Receta lista para «Copiar receta» (RF08).",
+            "title": "Prompt Text",
+            "type": "string"
+          },
+          "recipe": {
+            "$ref": "#/components/schemas/Recipe"
+          }
+        },
+        "required": [
+          "id",
+          "material_id",
+          "format",
+          "content",
+          "recipe",
+          "prompt_text",
+          "ai_notice",
+          "fallback",
+          "created_at"
+        ],
+        "title": "AdaptationOut",
+        "type": "object"
+      },
+      "AiUsage": {
+        "properties": {
+          "help_requests": {
+            "minimum": 0.0,
+            "title": "Help Requests",
+            "type": "integer"
+          },
+          "solved_without_ai": {
+            "minimum": 0.0,
+            "title": "Solved Without Ai",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "help_requests",
+          "solved_without_ai"
+        ],
+        "title": "AiUsage",
+        "type": "object"
+      },
+      "Alert": {
+        "properties": {
+          "code": {
+            "examples": [
+              "stuck_on_hint_1"
+            ],
+            "title": "Code",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "text": {
+            "examples": [
+              "Se traba en la pista 1"
+            ],
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "text",
+          "icon"
+        ],
+        "title": "Alert",
+        "type": "object"
+      },
+      "AliasPatch": {
+        "properties": {
+          "alias": {
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Alias",
+            "type": "string"
+          }
+        },
+        "required": [
+          "alias"
+        ],
+        "title": "AliasPatch",
+        "type": "object"
+      },
+      "AnswerOut": {
+        "properties": {
+          "chosen_option": {
+            "title": "Chosen Option",
+            "type": "string"
+          },
+          "correct_option": {
+            "title": "Correct Option",
+            "type": "string"
+          },
+          "feedback": {
+            "title": "Feedback",
+            "type": "string"
+          },
+          "is_correct": {
+            "title": "Is Correct",
+            "type": "boolean"
+          },
+          "question_id": {
+            "format": "uuid",
+            "title": "Question Id",
+            "type": "string"
+          },
+          "suggested_format": {
+            "anyOf": [
+              {
+                "enum": [
+                  "visual_map",
+                  "real_example",
+                  "easy_read",
+                  "audio"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Solo si falla: «Prueba con…» (RF14).",
+            "title": "Suggested Format"
+          },
+          "used_help": {
+            "title": "Used Help",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "question_id",
+          "chosen_option",
+          "is_correct",
+          "correct_option",
+          "feedback",
+          "suggested_format",
+          "used_help"
+        ],
+        "title": "AnswerOut",
+        "type": "object"
+      },
+      "AnswerRequest": {
+        "properties": {
+          "option": {
+            "examples": [
+              "b"
+            ],
+            "maxLength": 8,
+            "minLength": 1,
+            "title": "Option",
+            "type": "string"
+          }
+        },
+        "required": [
+          "option"
+        ],
+        "title": "AnswerRequest",
+        "type": "object"
+      },
+      "Body_upload_class_material_api_v1_classes__class_id__materials_post": {
+        "properties": {
+          "file": {
+            "anyOf": [
+              {
+                "contentMediaType": "application/octet-stream",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "PDF de hasta 10 MB.",
+            "title": "File"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 100000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "Body_upload_class_material_api_v1_classes__class_id__materials_post",
+        "type": "object"
+      },
+      "Body_upload_material_api_v1_materials_upload_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "PDF de hasta 10 MB.",
+            "title": "File",
+            "type": "string"
+          },
+          "kind": {
+            "default": "guide",
+            "enum": [
+              "guide",
+              "brief",
+              "draft"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file",
+          "title"
+        ],
+        "title": "Body_upload_material_api_v1_materials_upload_post",
+        "type": "object"
+      },
+      "ClaimOut": {
+        "properties": {
+          "backing_passage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pasaje de tu material que la respalda.",
+            "title": "Backing Passage"
+          },
+          "fragment": {
+            "description": "Frase del borrador que se revisó.",
+            "title": "Fragment",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "no_backing_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "«No hay respaldo en tu material» cuando no hay pasaje.",
+            "title": "No Backing Message"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ClaimStatus"
+          }
+        },
+        "required": [
+          "id",
+          "fragment",
+          "status",
+          "reason",
+          "backing_passage",
+          "no_backing_message"
+        ],
+        "title": "ClaimOut",
+        "type": "object"
+      },
+      "ClaimReviewOut": {
+        "properties": {
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimSection"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "work_id": {
+            "format": "uuid",
+            "title": "Work Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "work_id",
+          "sections"
+        ],
+        "title": "ClaimReviewOut",
+        "type": "object"
+      },
+      "ClaimSection": {
+        "properties": {
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimOut"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "section": {
+            "title": "Section",
+            "type": "string"
+          }
+        },
+        "required": [
+          "section",
+          "claims"
+        ],
+        "title": "ClaimSection",
+        "type": "object"
+      },
+      "ClaimStatus": {
+        "enum": [
+          "supported",
+          "unverifiable",
+          "contradicts"
+        ],
+        "title": "ClaimStatus",
+        "type": "string"
+      },
+      "ClassMaterialOut": {
+        "properties": {
+          "class_id": {
+            "format": "uuid",
+            "title": "Class Id",
+            "type": "string"
+          },
+          "extracted_text": {
+            "title": "Extracted Text",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "const": "class_content",
+            "default": "class_content",
+            "title": "Kind",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "class_id",
+          "title",
+          "extracted_text"
+        ],
+        "title": "ClassMaterialOut",
+        "type": "object"
+      },
+      "ClassOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "invite_code": {
+            "title": "Invite Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "tasks": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "subject",
+          "tasks",
+          "invite_code",
+          "created_at"
+        ],
+        "title": "ClassOut",
+        "type": "object"
+      },
       "ComponentStatus": {
         "enum": [
           "up",
@@ -8,6 +619,435 @@
         ],
         "title": "ComponentStatus",
         "type": "string"
+      },
+      "ConfiguredBy": {
+        "enum": [
+          "self",
+          "companion"
+        ],
+        "title": "ConfiguredBy",
+        "type": "string"
+      },
+      "ContentSection": {
+        "properties": {
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "heading": {
+            "title": "Heading",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "heading",
+          "body"
+        ],
+        "title": "ContentSection",
+        "type": "object"
+      },
+      "CreateAdaptationRequest": {
+        "properties": {
+          "format": {
+            "$ref": "#/components/schemas/Format"
+          }
+        },
+        "required": [
+          "format"
+        ],
+        "title": "CreateAdaptationRequest",
+        "type": "object"
+      },
+      "CreateClassRequest": {
+        "properties": {
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "subject": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Subject",
+            "type": "string"
+          },
+          "tasks": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "subject"
+        ],
+        "title": "CreateClassRequest",
+        "type": "object"
+      },
+      "CreateMaterialRequest": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "guide",
+              "brief",
+              "draft"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 100000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "kind",
+          "text"
+        ],
+        "title": "CreateMaterialRequest",
+        "type": "object"
+      },
+      "CreateSessionRequest": {
+        "properties": {
+          "alias": {
+            "examples": [
+              "Ana"
+            ],
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Alias",
+            "type": "string"
+          },
+          "career": {
+            "examples": [
+              "Mecatrónica"
+            ],
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Career",
+            "type": "string"
+          },
+          "class_code": {
+            "anyOf": [
+              {
+                "maxLength": 16,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Opcional. Si no existe se responde 422 `Classrooms.InvalidCode`.",
+            "examples": [
+              "SENSOR1"
+            ],
+            "title": "Class Code"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": [
+          "alias",
+          "career",
+          "role"
+        ],
+        "title": "CreateSessionRequest",
+        "type": "object"
+      },
+      "CreateWorkRequest": {
+        "properties": {
+          "brief_material_id": {
+            "description": "Material con `kind=brief` (la consigna).",
+            "format": "uuid",
+            "title": "Brief Material Id",
+            "type": "string"
+          },
+          "draft_material_id": {
+            "description": "Material con `kind=draft` (el borrador).",
+            "format": "uuid",
+            "title": "Draft Material Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "brief_material_id",
+          "draft_material_id"
+        ],
+        "title": "CreateWorkRequest",
+        "type": "object"
+      },
+      "DashboardOut": {
+        "properties": {
+          "ai_usage": {
+            "$ref": "#/components/schemas/AiUsage"
+          },
+          "class_id": {
+            "format": "uuid",
+            "title": "Class Id",
+            "type": "string"
+          },
+          "most_failed_questions": {
+            "items": {
+              "$ref": "#/components/schemas/FailedQuestion"
+            },
+            "title": "Most Failed Questions",
+            "type": "array"
+          },
+          "sample_data": {
+            "description": "`true` mientras se muestran datos de ejemplo.",
+            "title": "Sample Data",
+            "type": "boolean"
+          },
+          "students": {
+            "items": {
+              "$ref": "#/components/schemas/StudentRow"
+            },
+            "title": "Students",
+            "type": "array"
+          },
+          "top_formats": {
+            "items": {
+              "$ref": "#/components/schemas/FormatCount"
+            },
+            "title": "Top Formats",
+            "type": "array"
+          }
+        },
+        "required": [
+          "class_id",
+          "sample_data",
+          "students",
+          "top_formats",
+          "most_failed_questions",
+          "ai_usage"
+        ],
+        "title": "DashboardOut",
+        "type": "object"
+      },
+      "EvaluatePromptRequest": {
+        "properties": {
+          "claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claim Id"
+          },
+          "material_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Material Id"
+          },
+          "text": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "EvaluatePromptRequest",
+        "type": "object"
+      },
+      "FailedQuestion": {
+        "properties": {
+          "fail_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fail Rate",
+            "type": "number"
+          },
+          "statement": {
+            "title": "Statement",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statement",
+          "fail_rate"
+        ],
+        "title": "FailedQuestion",
+        "type": "object"
+      },
+      "Format": {
+        "enum": [
+          "visual_map",
+          "real_example",
+          "easy_read",
+          "audio"
+        ],
+        "title": "Format",
+        "type": "string"
+      },
+      "FormatAccuracy": {
+        "properties": {
+          "correct": {
+            "minimum": 0.0,
+            "title": "Correct",
+            "type": "integer"
+          },
+          "format": {
+            "enum": [
+              "visual_map",
+              "real_example",
+              "easy_read",
+              "audio"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "total": {
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "format",
+          "correct",
+          "total"
+        ],
+        "title": "FormatAccuracy",
+        "type": "object"
+      },
+      "FormatCount": {
+        "properties": {
+          "count": {
+            "minimum": 0.0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "format": {
+            "enum": [
+              "visual_map",
+              "real_example",
+              "easy_read",
+              "audio"
+            ],
+            "title": "Format",
+            "type": "string"
+          }
+        },
+        "required": [
+          "format",
+          "count"
+        ],
+        "title": "FormatCount",
+        "type": "object"
+      },
+      "FormatOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "$ref": "#/components/schemas/Format"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "suggested": {
+            "description": "Sugerido según los perfiles de la persona.",
+            "title": "Suggested",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "icon",
+          "suggested"
+        ],
+        "title": "FormatOut",
+        "type": "object"
+      },
+      "FormatUsage": {
+        "properties": {
+          "count": {
+            "minimum": 0.0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "format": {
+            "enum": [
+              "visual_map",
+              "real_example",
+              "easy_read",
+              "audio"
+            ],
+            "title": "Format",
+            "type": "string"
+          }
+        },
+        "required": [
+          "format",
+          "count"
+        ],
+        "title": "FormatUsage",
+        "type": "object"
+      },
+      "GuidePassage": {
+        "properties": {
+          "location": {
+            "examples": [
+              "Guía de sensores, párrafo 2"
+            ],
+            "title": "Location",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "location"
+        ],
+        "title": "GuidePassage",
+        "type": "object"
       },
       "HealthResponse": {
         "properties": {
@@ -33,6 +1073,121 @@
         ],
         "title": "HealthResponse",
         "type": "object"
+      },
+      "HelpAttemptOut": {
+        "properties": {
+          "adaptation_id": {
+            "format": "uuid",
+            "title": "Adaptation Id",
+            "type": "string"
+          },
+          "final_unlocked": {
+            "title": "Final Unlocked",
+            "type": "boolean"
+          },
+          "help_label": {
+            "examples": [
+              "Nivel 2, con pistas"
+            ],
+            "title": "Help Label",
+            "type": "string"
+          },
+          "help_level": {
+            "maximum": 4.0,
+            "minimum": 0.0,
+            "title": "Help Level",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "max_step": {
+            "$ref": "#/components/schemas/ReachedStep"
+          },
+          "next_step": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HelpStep"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "El único escalón que se puede abrir ahora."
+          },
+          "own_answer_submitted": {
+            "title": "Own Answer Submitted",
+            "type": "boolean"
+          },
+          "solved_without_ai": {
+            "title": "Solved Without Ai",
+            "type": "boolean"
+          },
+          "task_ref": {
+            "title": "Task Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "adaptation_id",
+          "task_ref",
+          "max_step",
+          "next_step",
+          "final_unlocked",
+          "own_answer_submitted",
+          "solved_without_ai",
+          "help_level",
+          "help_label"
+        ],
+        "title": "HelpAttemptOut",
+        "type": "object"
+      },
+      "HelpByStep": {
+        "properties": {
+          "count": {
+            "minimum": 0.0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "step": {
+            "enum": [
+              "hint_1",
+              "hint_2",
+              "step_by_step",
+              "final"
+            ],
+            "title": "Step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "step",
+          "count"
+        ],
+        "title": "HelpByStep",
+        "type": "object"
+      },
+      "HelpStep": {
+        "enum": [
+          "hint_1",
+          "hint_2",
+          "step_by_step",
+          "final"
+        ],
+        "title": "HelpStep",
+        "type": "string"
+      },
+      "IntroStatus": {
+        "enum": [
+          "seen",
+          "skipped",
+          "pending"
+        ],
+        "title": "IntroStatus",
+        "type": "string"
       },
       "InvalidParam": {
         "properties": {
@@ -66,6 +1221,745 @@
           "type"
         ],
         "title": "InvalidParam",
+        "type": "object"
+      },
+      "InvitationsRequest": {
+        "properties": {
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 60,
+            "minItems": 1,
+            "title": "Aliases",
+            "type": "array"
+          }
+        },
+        "required": [
+          "aliases"
+        ],
+        "title": "InvitationsRequest",
+        "type": "object"
+      },
+      "JoinClassOut": {
+        "properties": {
+          "class_id": {
+            "format": "uuid",
+            "title": "Class Id",
+            "type": "string"
+          },
+          "class_name": {
+            "title": "Class Name",
+            "type": "string"
+          },
+          "status": {
+            "const": "joined",
+            "default": "joined",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "class_id",
+          "class_name"
+        ],
+        "title": "JoinClassOut",
+        "type": "object"
+      },
+      "JoinClassRequest": {
+        "properties": {
+          "code": {
+            "maxLength": 16,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "JoinClassRequest",
+        "type": "object"
+      },
+      "JourneySummaryOut": {
+        "properties": {
+          "autonomy_level": {
+            "anyOf": [
+              {
+                "maximum": 3.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autonomy Level"
+          },
+          "best_prompt_score": {
+            "anyOf": [
+              {
+                "maximum": 16.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Prompt Score"
+          },
+          "favorite_format": {
+            "anyOf": [
+              {
+                "enum": [
+                  "visual_map",
+                  "real_example",
+                  "easy_read",
+                  "audio"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Favorite Format"
+          },
+          "learned_recipe": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LearnedRecipe"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "favorite_format",
+          "learned_recipe",
+          "best_prompt_score",
+          "autonomy_level",
+          "message"
+        ],
+        "title": "JourneySummaryOut",
+        "type": "object"
+      },
+      "Language": {
+        "enum": [
+          "es",
+          "qu",
+          "ay"
+        ],
+        "title": "Language",
+        "type": "string"
+      },
+      "LanguageOut": {
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "coming_soon"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "status"
+        ],
+        "title": "LanguageOut",
+        "type": "object"
+      },
+      "LearnedRecipe": {
+        "properties": {
+          "context": {
+            "title": "Context",
+            "type": "string"
+          },
+          "format": {
+            "enum": [
+              "visual_map",
+              "real_example",
+              "easy_read",
+              "audio"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "goal": {
+            "title": "Goal",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "string"
+          }
+        },
+        "required": [
+          "context",
+          "goal",
+          "level",
+          "format"
+        ],
+        "title": "LearnedRecipe",
+        "type": "object"
+      },
+      "MaterialKind": {
+        "enum": [
+          "guide",
+          "brief",
+          "draft",
+          "class_content"
+        ],
+        "title": "MaterialKind",
+        "type": "string"
+      },
+      "MaterialOut": {
+        "properties": {
+          "class_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Class Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "extracted_text": {
+            "title": "Extracted Text",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MaterialKind"
+          },
+          "source": {
+            "$ref": "#/components/schemas/MaterialSource"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "source",
+          "class_id",
+          "extracted_text",
+          "created_at"
+        ],
+        "title": "MaterialOut",
+        "type": "object"
+      },
+      "MaterialSource": {
+        "enum": [
+          "sample",
+          "upload",
+          "paste"
+        ],
+        "title": "MaterialSource",
+        "type": "string"
+      },
+      "MaterialSummaryOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MaterialKind"
+          },
+          "preview": {
+            "description": "Primeras líneas del texto.",
+            "title": "Preview",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/MaterialSource"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "source",
+          "preview"
+        ],
+        "title": "MaterialSummaryOut",
+        "type": "object"
+      },
+      "MeOut": {
+        "properties": {
+          "membership": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActiveMembershipOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "onboarding": {
+            "$ref": "#/components/schemas/OnboardingStateOut"
+          },
+          "person": {
+            "$ref": "#/components/schemas/PersonOut"
+          }
+        },
+        "required": [
+          "person",
+          "membership",
+          "onboarding"
+        ],
+        "title": "MeOut",
+        "type": "object"
+      },
+      "MemberOut": {
+        "properties": {
+          "alias": {
+            "title": "Alias",
+            "type": "string"
+          },
+          "joined_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Joined At"
+          },
+          "person_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "`null` mientras la invitación está pendiente.",
+            "title": "Person Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MembershipStatus"
+          },
+          "status_label": {
+            "examples": [
+              "Se unió",
+              "Invitación pendiente"
+            ],
+            "title": "Status Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "alias",
+          "person_id",
+          "status",
+          "status_label",
+          "joined_at"
+        ],
+        "title": "MemberOut",
+        "type": "object"
+      },
+      "MembersOut": {
+        "properties": {
+          "invite_code": {
+            "title": "Invite Code",
+            "type": "string"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/MemberOut"
+            },
+            "title": "Members",
+            "type": "array"
+          }
+        },
+        "required": [
+          "invite_code",
+          "members"
+        ],
+        "title": "MembersOut",
+        "type": "object"
+      },
+      "MembershipStatus": {
+        "enum": [
+          "invited",
+          "joined",
+          "left"
+        ],
+        "title": "MembershipStatus",
+        "type": "string"
+      },
+      "OnboardingOut": {
+        "properties": {
+          "configured_by": {
+            "anyOf": [
+              {
+                "enum": [
+                  "self",
+                  "companion"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Configured By"
+          },
+          "done": {
+            "title": "Done",
+            "type": "boolean"
+          },
+          "enabled_settings": {
+            "description": "Ajustes que quedaron activos por los perfiles elegidos.",
+            "items": {
+              "$ref": "#/components/schemas/AccessibilitySetting"
+            },
+            "title": "Enabled Settings",
+            "type": "array"
+          },
+          "intro_status": {
+            "enum": [
+              "seen",
+              "skipped",
+              "pending"
+            ],
+            "title": "Intro Status",
+            "type": "string"
+          },
+          "profiles": {
+            "items": {
+              "$ref": "#/components/schemas/AccessibilityProfile"
+            },
+            "title": "Profiles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "done",
+          "configured_by",
+          "profiles",
+          "enabled_settings",
+          "intro_status"
+        ],
+        "title": "OnboardingOut",
+        "type": "object"
+      },
+      "OnboardingRequest": {
+        "properties": {
+          "intro": {
+            "description": "Introducción a la IA (RF37).",
+            "enum": [
+              "seen",
+              "skipped"
+            ],
+            "title": "Intro",
+            "type": "string"
+          },
+          "profiles": {
+            "items": {
+              "$ref": "#/components/schemas/AccessibilityProfile"
+            },
+            "maxItems": 5,
+            "title": "Profiles",
+            "type": "array"
+          },
+          "who_uses": {
+            "description": "`companion`: alguien configura FROBI para la persona (RF36).",
+            "enum": [
+              "self",
+              "companion"
+            ],
+            "title": "Who Uses",
+            "type": "string"
+          }
+        },
+        "required": [
+          "who_uses",
+          "intro"
+        ],
+        "title": "OnboardingRequest",
+        "type": "object"
+      },
+      "OnboardingStateOut": {
+        "properties": {
+          "done": {
+            "title": "Done",
+            "type": "boolean"
+          },
+          "intro_status": {
+            "$ref": "#/components/schemas/IntroStatus"
+          }
+        },
+        "required": [
+          "done",
+          "intro_status"
+        ],
+        "title": "OnboardingStateOut",
+        "type": "object"
+      },
+      "OpenAttemptRequest": {
+        "properties": {
+          "adaptation_id": {
+            "format": "uuid",
+            "title": "Adaptation Id",
+            "type": "string"
+          },
+          "task_ref": {
+            "examples": [
+              "ejercicio-1"
+            ],
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Task Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "adaptation_id",
+          "task_ref"
+        ],
+        "title": "OpenAttemptRequest",
+        "type": "object"
+      },
+      "OrganizedWork": {
+        "properties": {
+          "missing": {
+            "description": "Requisitos que el borrador todavía no cubre.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "requirements": {
+            "description": "Lo que pide la consigna.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Requirements",
+            "type": "array"
+          },
+          "topics": {
+            "description": "Temas que aparecen en el borrador.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "requirements",
+          "topics",
+          "missing"
+        ],
+        "title": "OrganizedWork",
+        "type": "object"
+      },
+      "OwnAnswerOut": {
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/HelpAttemptOut"
+          },
+          "matching_passages": {
+            "description": "Pasajes de la guía que coinciden con tu respuesta. Se buscan sin IA.",
+            "items": {
+              "$ref": "#/components/schemas/GuidePassage"
+            },
+            "title": "Matching Passages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "attempt",
+          "matching_passages"
+        ],
+        "title": "OwnAnswerOut",
+        "type": "object"
+      },
+      "OwnAnswerRequest": {
+        "properties": {
+          "answer": {
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Answer",
+            "type": "string"
+          },
+          "self_check": {
+            "description": "Casillas de autochequeo marcadas.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Self Check",
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer"
+        ],
+        "title": "OwnAnswerRequest",
+        "type": "object"
+      },
+      "PersonOut": {
+        "properties": {
+          "alias": {
+            "title": "Alias",
+            "type": "string"
+          },
+          "career": {
+            "title": "Career",
+            "type": "string"
+          },
+          "configured_by": {
+            "$ref": "#/components/schemas/ConfiguredBy"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        },
+        "required": [
+          "id",
+          "alias",
+          "career",
+          "role",
+          "configured_by"
+        ],
+        "title": "PersonOut",
+        "type": "object"
+      },
+      "PieceScore": {
+        "properties": {
+          "feedback": {
+            "title": "Feedback",
+            "type": "string"
+          },
+          "piece": {
+            "$ref": "#/components/schemas/RecipePiece"
+          },
+          "score": {
+            "maximum": 4.0,
+            "minimum": 0.0,
+            "title": "Score",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "piece",
+          "score",
+          "feedback"
+        ],
+        "title": "PieceScore",
+        "type": "object"
+      },
+      "PrivacyItem": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "category",
+          "description"
+        ],
+        "title": "PrivacyItem",
+        "type": "object"
+      },
+      "PrivacyOut": {
+        "properties": {
+          "class_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Class Name"
+          },
+          "in_class": {
+            "title": "In Class",
+            "type": "boolean"
+          },
+          "never_shared": {
+            "items": {
+              "$ref": "#/components/schemas/PrivacyItem"
+            },
+            "title": "Never Shared",
+            "type": "array"
+          },
+          "shared_with_teacher": {
+            "description": "Solo lo hecho dentro de la clase, con el `class_id` de esa clase.",
+            "items": {
+              "$ref": "#/components/schemas/PrivacyItem"
+            },
+            "title": "Shared With Teacher",
+            "type": "array"
+          }
+        },
+        "required": [
+          "in_class",
+          "class_name",
+          "shared_with_teacher",
+          "never_shared"
+        ],
+        "title": "PrivacyOut",
         "type": "object"
       },
       "ProblemDetail": {
@@ -133,6 +2027,767 @@
         ],
         "title": "ProblemDetail",
         "type": "object"
+      },
+      "ProgressOut": {
+        "properties": {
+          "accuracy_by_format": {
+            "items": {
+              "$ref": "#/components/schemas/FormatAccuracy"
+            },
+            "title": "Accuracy By Format",
+            "type": "array"
+          },
+          "formats_used": {
+            "items": {
+              "$ref": "#/components/schemas/FormatUsage"
+            },
+            "title": "Formats Used",
+            "type": "array"
+          },
+          "has_data": {
+            "description": "`false`: estado vacío explícito, mostrar `message`.",
+            "title": "Has Data",
+            "type": "boolean"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "prompt_scores": {
+            "items": {
+              "$ref": "#/components/schemas/PromptScorePoint"
+            },
+            "title": "Prompt Scores",
+            "type": "array"
+          },
+          "solved_without_ai": {
+            "minimum": 0.0,
+            "title": "Solved Without Ai",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_data",
+          "formats_used",
+          "accuracy_by_format",
+          "prompt_scores",
+          "solved_without_ai",
+          "message"
+        ],
+        "title": "ProgressOut",
+        "type": "object"
+      },
+      "PromptComparisonOut": {
+        "properties": {
+          "evaluation_id": {
+            "format": "uuid",
+            "title": "Evaluation Id",
+            "type": "string"
+          },
+          "fallback": {
+            "title": "Fallback",
+            "type": "boolean"
+          },
+          "improved": {
+            "$ref": "#/components/schemas/PromptRun"
+          },
+          "original": {
+            "$ref": "#/components/schemas/PromptRun"
+          }
+        },
+        "required": [
+          "evaluation_id",
+          "original",
+          "improved",
+          "fallback"
+        ],
+        "title": "PromptComparisonOut",
+        "type": "object"
+      },
+      "PromptEvaluationOut": {
+        "properties": {
+          "autonomy_label": {
+            "examples": [
+              "Nivel 2: ya pides con contexto"
+            ],
+            "title": "Autonomy Label",
+            "type": "string"
+          },
+          "autonomy_level": {
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Autonomy Level",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "improved_text": {
+            "title": "Improved Text",
+            "type": "string"
+          },
+          "missing_piece": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecipePiece"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scores": {
+            "description": "Una por pieza; primero la que más falta.",
+            "items": {
+              "$ref": "#/components/schemas/PieceScore"
+            },
+            "title": "Scores",
+            "type": "array"
+          },
+          "suggestion": {
+            "title": "Suggestion",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "scores",
+          "missing_piece",
+          "suggestion",
+          "improved_text",
+          "autonomy_level",
+          "autonomy_label"
+        ],
+        "title": "PromptEvaluationOut",
+        "type": "object"
+      },
+      "PromptRun": {
+        "properties": {
+          "output": {
+            "title": "Output",
+            "type": "string"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt",
+          "output"
+        ],
+        "title": "PromptRun",
+        "type": "object"
+      },
+      "PromptScorePoint": {
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "title": "At",
+            "type": "string"
+          },
+          "total": {
+            "description": "Suma de las 4 piezas (0 a 4 cada una).",
+            "maximum": 16.0,
+            "minimum": 0.0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "at",
+          "total"
+        ],
+        "title": "PromptScorePoint",
+        "type": "object"
+      },
+      "QuestionKind": {
+        "enum": [
+          "comprehension",
+          "transfer"
+        ],
+        "title": "QuestionKind",
+        "type": "string"
+      },
+      "QuestionOption": {
+        "properties": {
+          "id": {
+            "examples": [
+              "a"
+            ],
+            "title": "Id",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text"
+        ],
+        "title": "QuestionOption",
+        "type": "object"
+      },
+      "QuestionOut": {
+        "description": "The correct option is never sent before the person answers.",
+        "properties": {
+          "adaptation_id": {
+            "format": "uuid",
+            "title": "Adaptation Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/QuestionKind"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionOption"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "statement": {
+            "title": "Statement",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "adaptation_id",
+          "kind",
+          "statement",
+          "options"
+        ],
+        "title": "QuestionOut",
+        "type": "object"
+      },
+      "ReachedStep": {
+        "enum": [
+          "none",
+          "hint_1",
+          "hint_2",
+          "step_by_step",
+          "final"
+        ],
+        "title": "ReachedStep",
+        "type": "string"
+      },
+      "Recipe": {
+        "description": "The 4-piece recipe shown to the person (RF07) is the same one sent to the model.",
+        "properties": {
+          "context": {
+            "title": "Context",
+            "type": "string"
+          },
+          "format": {
+            "$ref": "#/components/schemas/Format"
+          },
+          "goal": {
+            "title": "Goal",
+            "type": "string"
+          },
+          "level": {
+            "title": "Level",
+            "type": "string"
+          }
+        },
+        "required": [
+          "context",
+          "goal",
+          "level",
+          "format"
+        ],
+        "title": "Recipe",
+        "type": "object"
+      },
+      "RecipePiece": {
+        "enum": [
+          "context",
+          "goal",
+          "level",
+          "format"
+        ],
+        "title": "RecipePiece",
+        "type": "string"
+      },
+      "RecommendationOut": {
+        "properties": {
+          "tool": {
+            "$ref": "#/components/schemas/ToolOut"
+          },
+          "when_not": {
+            "title": "When Not",
+            "type": "string"
+          },
+          "why": {
+            "title": "Why",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool",
+          "why",
+          "when_not"
+        ],
+        "title": "RecommendationOut",
+        "type": "object"
+      },
+      "RecommendationRequest": {
+        "properties": {
+          "claim_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Afirmación de M9 para la que se busca herramienta.",
+            "title": "Claim Id"
+          },
+          "need": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "examples": [
+              "verify_source"
+            ],
+            "title": "Need"
+          }
+        },
+        "title": "RecommendationRequest",
+        "type": "object"
+      },
+      "RequestStepRequest": {
+        "properties": {
+          "step": {
+            "$ref": "#/components/schemas/HelpStep",
+            "description": "Solo se puede abrir el siguiente escalón."
+          }
+        },
+        "required": [
+          "step"
+        ],
+        "title": "RequestStepRequest",
+        "type": "object"
+      },
+      "Role": {
+        "enum": [
+          "learner",
+          "teacher"
+        ],
+        "title": "Role",
+        "type": "string"
+      },
+      "SessionOut": {
+        "properties": {
+          "membership": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActiveMembershipOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "person": {
+            "$ref": "#/components/schemas/PersonOut"
+          },
+          "token": {
+            "description": "Enviar como `Authorization: Bearer <token>`. Dura 30 días.",
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "person",
+          "membership"
+        ],
+        "title": "SessionOut",
+        "type": "object"
+      },
+      "SettingsOut": {
+        "properties": {
+          "captions": {
+            "title": "Captions",
+            "type": "boolean"
+          },
+          "high_contrast": {
+            "title": "High Contrast",
+            "type": "boolean"
+          },
+          "keyboard_mode": {
+            "title": "Keyboard Mode",
+            "type": "boolean"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "large_buttons": {
+            "title": "Large Buttons",
+            "type": "boolean"
+          },
+          "large_text": {
+            "title": "Large Text",
+            "type": "boolean"
+          },
+          "profiles": {
+            "description": "Ids de `GET /accessibility-profiles`.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Profiles",
+            "type": "array"
+          },
+          "short_texts": {
+            "title": "Short Texts",
+            "type": "boolean"
+          },
+          "voice": {
+            "title": "Voice",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "profiles",
+          "voice",
+          "high_contrast",
+          "large_text",
+          "short_texts",
+          "captions",
+          "large_buttons",
+          "keyboard_mode",
+          "language"
+        ],
+        "title": "SettingsOut",
+        "type": "object"
+      },
+      "SettingsPatch": {
+        "description": "Only the fields that are sent change.",
+        "properties": {
+          "captions": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Captions"
+          },
+          "high_contrast": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High Contrast"
+          },
+          "keyboard_mode": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keyboard Mode"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Language"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Solo `es` está disponible."
+          },
+          "large_buttons": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Large Buttons"
+          },
+          "large_text": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Large Text"
+          },
+          "short_texts": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Short Texts"
+          },
+          "voice": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice"
+          }
+        },
+        "title": "SettingsPatch",
+        "type": "object"
+      },
+      "StepOut": {
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/HelpAttemptOut"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "fallback": {
+            "title": "Fallback",
+            "type": "boolean"
+          },
+          "step": {
+            "$ref": "#/components/schemas/HelpStep"
+          }
+        },
+        "required": [
+          "attempt",
+          "step",
+          "content",
+          "fallback"
+        ],
+        "title": "StepOut",
+        "type": "object"
+      },
+      "StudentDetailOut": {
+        "description": "Only activity recorded with this class_id (RNF16).",
+        "properties": {
+          "alias": {
+            "title": "Alias",
+            "type": "string"
+          },
+          "correct_answers": {
+            "minimum": 0.0,
+            "title": "Correct Answers",
+            "type": "integer"
+          },
+          "help_by_step": {
+            "items": {
+              "$ref": "#/components/schemas/HelpByStep"
+            },
+            "title": "Help By Step",
+            "type": "array"
+          },
+          "most_failed_question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Most Failed Question"
+          },
+          "person_id": {
+            "format": "uuid",
+            "title": "Person Id",
+            "type": "string"
+          },
+          "preferred_format": {
+            "anyOf": [
+              {
+                "enum": [
+                  "visual_map",
+                  "real_example",
+                  "easy_read",
+                  "audio"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Format"
+          },
+          "solved_without_ai": {
+            "minimum": 0.0,
+            "title": "Solved Without Ai",
+            "type": "integer"
+          },
+          "total_answers": {
+            "minimum": 0.0,
+            "title": "Total Answers",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "person_id",
+          "alias",
+          "preferred_format",
+          "correct_answers",
+          "total_answers",
+          "help_by_step",
+          "solved_without_ai",
+          "most_failed_question"
+        ],
+        "title": "StudentDetailOut",
+        "type": "object"
+      },
+      "StudentRow": {
+        "properties": {
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/Alert"
+            },
+            "title": "Alerts",
+            "type": "array"
+          },
+          "alias": {
+            "title": "Alias",
+            "type": "string"
+          },
+          "person_id": {
+            "format": "uuid",
+            "title": "Person Id",
+            "type": "string"
+          },
+          "progress_label": {
+            "title": "Progress Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "person_id",
+          "alias",
+          "progress_label",
+          "alerts"
+        ],
+        "title": "StudentRow",
+        "type": "object"
+      },
+      "ToolOut": {
+        "properties": {
+          "avoid_for": {
+            "title": "Avoid For",
+            "type": "string"
+          },
+          "id": {
+            "examples": [
+              "google-scholar"
+            ],
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "need": {
+            "description": "Necesidad que cubre, para filtrar con `?need=`.",
+            "title": "Need",
+            "type": "string"
+          },
+          "use_for": {
+            "title": "Use For",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "need",
+          "use_for",
+          "avoid_for"
+        ],
+        "title": "ToolOut",
+        "type": "object"
+      },
+      "WorkOut": {
+        "properties": {
+          "brief_material_id": {
+            "format": "uuid",
+            "title": "Brief Material Id",
+            "type": "string"
+          },
+          "draft_material_id": {
+            "format": "uuid",
+            "title": "Draft Material Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "organized": {
+            "$ref": "#/components/schemas/OrganizedWork"
+          }
+        },
+        "required": [
+          "id",
+          "brief_material_id",
+          "draft_material_id",
+          "organized"
+        ],
+        "title": "WorkOut",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "description": "Token opaco que devuelve `POST /api/v1/sessions`.",
+        "scheme": "bearer",
+        "type": "http"
       }
     }
   },
@@ -143,6 +2798,928 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/accessibility-profiles": {
+      "get": {
+        "operationId": "list_accessibility_profiles_api_v1_accessibility_profiles_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AccessibilityProfileOut"
+                  },
+                  "title": "Response List Accessibility Profiles Api V1 Accessibility Profiles Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Catálogo de perfiles y los ajustes que activa cada uno",
+        "tags": [
+          "M2 · Primera configuración"
+        ]
+      }
+    },
+    "/api/v1/adaptations/{adaptation_id}": {
+      "get": {
+        "operationId": "get_adaptation_api_v1_adaptations__adaptation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "adaptation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Adaptation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdaptationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Volver a ver una adaptación",
+        "tags": [
+          "M4 y M5 · Adaptación"
+        ]
+      }
+    },
+    "/api/v1/adaptations/{adaptation_id}/questions": {
+      "post": {
+        "operationId": "generate_questions_api_v1_adaptations__adaptation_id__questions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "adaptation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Adaptation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionOut"
+                  },
+                  "title": "Response Generate Questions Api V1 Adaptations  Adaptation Id  Questions Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Generar 2 o 3 preguntas sobre el material",
+        "tags": [
+          "M8 · Verificación"
+        ]
+      }
+    },
+    "/api/v1/adaptations/{adaptation_id}/transfer-question": {
+      "post": {
+        "operationId": "transfer_question_api_v1_adaptations__adaptation_id__transfer_question_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "adaptation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Adaptation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Pregunta similar sin ayuda",
+        "tags": [
+          "M8 · Verificación"
+        ]
+      }
+    },
+    "/api/v1/classes": {
+      "post": {
+        "operationId": "create_class_api_v1_classes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClassRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crear una clase y su código de invitación",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/join": {
+      "post": {
+        "operationId": "join_class_api_v1_classes_join_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinClassRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JoinClassOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Código inexistente (`Classrooms.InvalidCode`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Unirse a una clase con su código (estudiante)",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/{class_id}": {
+      "get": {
+        "operationId": "get_class_api_v1_classes__class_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Detalle de la clase",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/{class_id}/dashboard": {
+      "get": {
+        "operationId": "get_dashboard_api_v1_classes__class_id__dashboard_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Panel docente",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/{class_id}/invitations": {
+      "post": {
+        "operationId": "invite_students_api_v1_classes__class_id__invitations_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MemberOut"
+                  },
+                  "title": "Response Invite Students Api V1 Classes  Class Id  Invitations Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Invitar estudiantes por alias",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/{class_id}/materials": {
+      "post": {
+        "operationId": "upload_class_material_api_v1_classes__class_id__materials_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_class_material_api_v1_classes__class_id__materials_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassMaterialOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Falta `text` o `file`, o el PDF es ilegible."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Subir contenido de la clase (texto o PDF)",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/{class_id}/members": {
+      "get": {
+        "operationId": "list_members_api_v1_classes__class_id__members_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembersOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Código y lista de miembros con su estado",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/{class_id}/students/{person_id}": {
+      "get": {
+        "operationId": "get_student_api_v1_classes__class_id__students__person_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "person_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Person Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Detalle de un estudiante (solo actividad de esta clase)",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/formats": {
+      "get": {
+        "operationId": "list_formats_api_v1_formats_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FormatOut"
+                  },
+                  "title": "Response List Formats Api V1 Formats Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Los 4 formatos y el sugerido según el perfil",
+        "tags": [
+          "M4 y M5 · Adaptación"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "operationId": "health_api_v1_health_get",
@@ -183,6 +3760,1839 @@
           "health"
         ]
       }
+    },
+    "/api/v1/help-attempts": {
+      "post": {
+        "operationId": "open_attempt_api_v1_help_attempts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenAttemptRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelpAttemptOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Abrir un intento sobre una tarea",
+        "tags": [
+          "M6 · Escalera de ayuda"
+        ]
+      }
+    },
+    "/api/v1/help-attempts/{attempt_id}": {
+      "get": {
+        "operationId": "get_attempt_api_v1_help_attempts__attempt_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attempt_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Attempt Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HelpAttemptOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Estado del intento y nivel de ayuda",
+        "tags": [
+          "M6 · Escalera de ayuda"
+        ]
+      }
+    },
+    "/api/v1/help-attempts/{attempt_id}/own-answer": {
+      "post": {
+        "operationId": "submit_own_answer_api_v1_help_attempts__attempt_id__own_answer_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attempt_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Attempt Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnAnswerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnAnswerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Inténtalo sin IA",
+        "tags": [
+          "M6 · Escalera de ayuda"
+        ]
+      }
+    },
+    "/api/v1/help-attempts/{attempt_id}/steps": {
+      "post": {
+        "operationId": "request_step_api_v1_help_attempts__attempt_id__steps_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attempt_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Attempt Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestStepRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StepOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "`Tutoring.StepOutOfOrder` si se salta un escalón; `Tutoring.FinalLocked` si se pide `final` sin intento propio."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Abrir el siguiente escalón de ayuda",
+        "tags": [
+          "M6 · Escalera de ayuda"
+        ]
+      }
+    },
+    "/api/v1/languages": {
+      "get": {
+        "operationId": "list_languages_api_v1_languages_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LanguageOut"
+                  },
+                  "title": "Response List Languages Api V1 Languages Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Idiomas de la interfaz",
+        "tags": [
+          "M13 · Ajustes y privacidad"
+        ]
+      }
+    },
+    "/api/v1/materials": {
+      "post": {
+        "operationId": "create_material_api_v1_materials_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMaterialRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Crear un material pegando texto",
+        "tags": [
+          "M3 · Material"
+        ]
+      }
+    },
+    "/api/v1/materials/samples": {
+      "get": {
+        "operationId": "list_samples_api_v1_materials_samples_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MaterialSummaryOut"
+                  },
+                  "title": "Response List Samples Api V1 Materials Samples Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Guías de ejemplo",
+        "tags": [
+          "M3 · Material"
+        ]
+      }
+    },
+    "/api/v1/materials/upload": {
+      "post": {
+        "operationId": "upload_material_api_v1_materials_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_material_api_v1_materials_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "PDF ilegible (`Materials.PdfUnreadable`) o más de 10 MB."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Subir un PDF (máximo 10 MB) y obtener su texto",
+        "tags": [
+          "M3 · Material"
+        ]
+      }
+    },
+    "/api/v1/materials/{material_id}": {
+      "get": {
+        "operationId": "get_material_api_v1_materials__material_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "material_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Material Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Detalle de un material y su texto",
+        "tags": [
+          "M3 · Material"
+        ]
+      }
+    },
+    "/api/v1/materials/{material_id}/adaptations": {
+      "post": {
+        "operationId": "create_adaptation_api_v1_materials__material_id__adaptations_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "material_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Material Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAdaptationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdaptationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Adaptar un material a un formato (tope de 15 s, con respaldo)",
+        "tags": [
+          "M4 y M5 · Adaptación"
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "get_me_api_v1_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Persona actual, clase activa y estado del asistente",
+        "tags": [
+          "M1 · Cuenta y acceso"
+        ]
+      },
+      "patch": {
+        "operationId": "update_alias_api_v1_me_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AliasPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cambiar el alias",
+        "tags": [
+          "M13 · Ajustes y privacidad"
+        ]
+      }
+    },
+    "/api/v1/me/journey-summary": {
+      "get": {
+        "operationId": "get_journey_summary_api_v1_me_journey_summary_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JourneySummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cierre del recorrido",
+        "tags": [
+          "M11 · Progreso y cierre"
+        ]
+      }
+    },
+    "/api/v1/me/membership": {
+      "delete": {
+        "operationId": "leave_class_api_v1_me_membership_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Salir de la clase (lo que hagas después queda fuera de la clase)",
+        "tags": [
+          "M13 · Ajustes y privacidad"
+        ]
+      }
+    },
+    "/api/v1/me/onboarding": {
+      "post": {
+        "operationId": "complete_onboarding_api_v1_me_onboarding_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Completar el asistente y aplicar los perfiles",
+        "tags": [
+          "M2 · Primera configuración"
+        ]
+      }
+    },
+    "/api/v1/me/onboarding/reset": {
+      "post": {
+        "operationId": "reset_onboarding_api_v1_me_onboarding_reset_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Volver a hacer el asistente",
+        "tags": [
+          "M2 · Primera configuración"
+        ]
+      }
+    },
+    "/api/v1/me/onboarding/skip": {
+      "post": {
+        "operationId": "skip_onboarding_api_v1_me_onboarding_skip_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Omitir el asistente",
+        "tags": [
+          "M2 · Primera configuración"
+        ]
+      }
+    },
+    "/api/v1/me/privacy": {
+      "get": {
+        "operationId": "get_privacy_api_v1_me_privacy_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Qué ve tu docente",
+        "tags": [
+          "M13 · Ajustes y privacidad"
+        ]
+      }
+    },
+    "/api/v1/me/progress": {
+      "get": {
+        "operationId": "get_progress_api_v1_me_progress_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Progreso de la persona (o estado vacío explícito)",
+        "tags": [
+          "M11 · Progreso y cierre"
+        ]
+      }
+    },
+    "/api/v1/me/settings": {
+      "get": {
+        "operationId": "get_settings_api_v1_me_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Ajustes actuales",
+        "tags": [
+          "M13 · Ajustes y privacidad"
+        ]
+      },
+      "patch": {
+        "operationId": "update_settings_api_v1_me_settings_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Valor inválido o idioma todavía no disponible."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cambiar interruptores de accesibilidad e idioma",
+        "tags": [
+          "M13 · Ajustes y privacidad"
+        ]
+      }
+    },
+    "/api/v1/prompt-evaluations": {
+      "post": {
+        "operationId": "evaluate_prompt_api_v1_prompt_evaluations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluatePromptRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptEvaluationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Puntuar una instrucción",
+        "tags": [
+          "M7 · Entrenador de instrucciones"
+        ]
+      }
+    },
+    "/api/v1/prompt-evaluations/{evaluation_id}/compare": {
+      "post": {
+        "operationId": "compare_prompts_api_v1_prompt_evaluations__evaluation_id__compare_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "evaluation_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Evaluation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptComparisonOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Correr la original y la mejorada, lado a lado",
+        "tags": [
+          "M7 · Entrenador de instrucciones"
+        ]
+      }
+    },
+    "/api/v1/questions/{question_id}/answers": {
+      "post": {
+        "operationId": "answer_question_api_v1_questions__question_id__answers_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "question_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Question Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Responder una pregunta",
+        "tags": [
+          "M8 · Verificación"
+        ]
+      }
+    },
+    "/api/v1/sessions": {
+      "post": {
+        "operationId": "create_session_api_v1_sessions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos o código de clase inexistente."
+          }
+        },
+        "summary": "Entrar con alias, carrera y rol (sin contraseña)",
+        "tags": [
+          "M1 · Cuenta y acceso"
+        ]
+      }
+    },
+    "/api/v1/sessions/current": {
+      "delete": {
+        "operationId": "delete_current_session_api_v1_sessions_current_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cerrar la sesión",
+        "tags": [
+          "M1 · Cuenta y acceso"
+        ]
+      }
+    },
+    "/api/v1/tools": {
+      "get": {
+        "operationId": "list_tools_api_v1_tools_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "need",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 60,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Need"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ToolOut"
+                  },
+                  "title": "Response List Tools Api V1 Tools Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Catálogo fijo de herramientas, filtrable por necesidad",
+        "tags": [
+          "M10 · Herramientas"
+        ]
+      }
+    },
+    "/api/v1/tools/recommendations": {
+      "post": {
+        "operationId": "recommend_tool_api_v1_tools_recommendations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Recomendar una herramienta para una necesidad",
+        "tags": [
+          "M10 · Herramientas"
+        ]
+      }
+    },
+    "/api/v1/works": {
+      "post": {
+        "operationId": "create_work_api_v1_works_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Organizar consigna y borrador (sin juzgar la autoría)",
+        "tags": [
+          "M3 · Material"
+        ]
+      }
+    },
+    "/api/v1/works/{work_id}/claim-review": {
+      "post": {
+        "operationId": "review_claims_api_v1_works__work_id__claim_review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "work_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Work Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Revisar las afirmaciones del borrador",
+        "tags": [
+          "M9 · Revisión de afirmaciones"
+        ]
+      }
+    },
+    "/api/v1/works/{work_id}/claims": {
+      "get": {
+        "operationId": "get_claims_api_v1_works__work_id__claims_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "work_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Work Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimReviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Volver a ver la revisión",
+        "tags": [
+          "M9 · Revisión de afirmaciones"
+        ]
+      }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "health"
+    },
+    {
+      "name": "M1 · Cuenta y acceso"
+    },
+    {
+      "name": "M2 · Primera configuración"
+    },
+    {
+      "name": "M3 · Material"
+    },
+    {
+      "name": "M4 y M5 · Adaptación"
+    },
+    {
+      "name": "M6 · Escalera de ayuda"
+    },
+    {
+      "name": "M7 · Entrenador de instrucciones"
+    },
+    {
+      "name": "M8 · Verificación"
+    },
+    {
+      "name": "M9 · Revisión de afirmaciones"
+    },
+    {
+      "name": "M10 · Herramientas"
+    },
+    {
+      "name": "M11 · Progreso y cierre"
+    },
+    {
+      "name": "M12 · Clase del docente"
+    },
+    {
+      "name": "M13 · Ajustes y privacidad"
+    }
+  ]
 }

@@ -2,8 +2,19 @@
 
 Backend for FROBI (Hack4Edu 2026): FastAPI + PostgreSQL + Redis, organized as a hexagonal modular monolith.
 
-> Status: Phase 0 in progress. The shared base is ready (settings, database, Redis, `problem+json`
-> errors, CORS, `/api/v1/health`); module endpoints are not implemented yet.
+> Status: Phase 0 done. Every endpoint of `PLAN_BACKEND.md` §6 exists under `/api/v1` with its
+> final schema, but **module endpoints are stubs that return example data** (they keep no state).
+> Phase 1 replaces them with the real use cases without changing the contract.
+
+## Authentication
+
+1. `POST /api/v1/sessions` with `{"alias": "Ana", "career": "Mecatrónica", "role": "learner"}`
+   (optional `"class_code"`; the stub accepts `SENSOR1`, anything else is
+   `422 Classrooms.InvalidCode`).
+2. Send the returned token on every other call: `Authorization: Bearer <token>`.
+   Without it you get `401 Identity.Unauthenticated`.
+
+While the endpoints are stubs, any non-empty token is accepted. In `/docs`, use **Authorize**.
 
 ## Requirements
 
