@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: frobi
+          POSTGRES_PASSWORD: frobi
+          POSTGRES_DB: frobi
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U frobi -d frobi"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - name: Lint
+        run: uv run ruff check .
+      - name: Format
+        run: uv run ruff format --check .
+      - name: Types
+        run: uv run mypy
+      - name: Architecture rules
+        run: uv run lint-imports
+      - name: Tests (includes the openapi.json contract check)
+        run: uv run pytest
+      - name: Upload OpenAPI contract
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi
+          path: openapi.json

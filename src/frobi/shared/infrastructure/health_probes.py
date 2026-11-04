@@ -1,0 +1,26 @@
+"""Health probes for Postgres and Redis."""
+
+from redis.asyncio import Redis
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncEngine
+
+
+class PostgresProbe:
+    name = "postgres"
+
+    def __init__(self, engine: AsyncEngine) -> None:
+        self._engine = engine
+
+    async def check(self) -> None:
+        async with self._engine.connect() as connection:
+            await connection.execute(text("SELECT 1"))
+
+
+class RedisProbe:
+    name = "redis"
+
+    def __init__(self, redis: "Redis") -> None:
+        self._redis = redis
+
+    async def check(self) -> None:
+        await self._redis.ping()

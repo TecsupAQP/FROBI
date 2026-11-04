@@ -220,13 +220,13 @@ Cada módulo define su propio puerto según su intención, y sus adaptadores usa
 
 ### Fase 0 · Repo y contrato para el front (4 de noviembre)
 
-- [ ] `git init` propio en `forbi/`. Hoy `~` es un repo git; hay que evitar que `forbi` quede dentro.
+- [x] `git init` propio en `forbi/`. Hoy `~` es un repo git; hay que evitar que `forbi` quede dentro.
 - [ ] Repo en GitHub con licencia libre (RNF09); nombre y visibilidad por confirmar.
-- [ ] `pyproject.toml` (uv), `ruff`, `mypy`, `pytest` y `docker-compose.yml` con api, postgres y redis.
-- [ ] App factory, `/health`, problem+json y CORS para el origen del front.
+- [x] `pyproject.toml` (uv), `ruff`, `mypy`, `pytest` y `docker-compose.yml` con api, postgres y redis.
+- [x] App factory, `/health`, problem+json y CORS para el origen del front.
 - [ ] **Todos los esquemas Pydantic de la sección 6** y routers stub que devuelven fixtures de ejemplo.
-- [ ] `openapi.json` exportado en CI y publicado en el repo. **Es lo que se le entrega al front.**
-- [ ] README con cómo levantarlo (`docker compose up`) y cómo autenticarse.
+- [x] `openapi.json` exportado en CI y publicado en el repo. **Es lo que se le entrega al front.**
+- [ ] README con cómo levantarlo (`docker compose up`) y cómo autenticarse. Falta autenticarse (llega con M1).
 
 ### Fase 1 · Núcleo «Debe» (5 de noviembre)
 

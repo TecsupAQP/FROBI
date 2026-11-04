@@ -44,7 +44,8 @@ src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "N", "SIM", "RUF", "ASYNC", "PT", "C4"]
-ignore = ["RUF001", "RUF002", "RUF003"]
+# N818: domain errors are named after the rule they protect (FinalLocked), see ARCHITECTURE.md.
+ignore = ["RUF001", "RUF002", "RUF003", "N818"]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.File", "fastapi.Form", "fastapi.Path", "fastapi.Body"]
@@ -66,3 +67,76 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 addopts = "-ra --strict-markers"
+markers = [
+    "integration: needs the Postgres and Redis from docker/compose.yml running",
+]
+
+[tool.importlinter]
+root_package = "frobi"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Hexagonal layers inside each module"
+type = "layers"
+layers = ["presentation", "infrastructure", "application", "domain"]
+containers = [
+    "frobi.shared",
+    "frobi.modules.identity",
+    "frobi.modules.onboarding",
+    "frobi.modules.settings",
+    "frobi.modules.materials",
+    "frobi.modules.adaptations",
+    "frobi.modules.tutoring",
+    "frobi.modules.prompt_coach",
+    "frobi.modules.comprehension",
+    "frobi.modules.claim_review",
+    "frobi.modules.tools",
+    "frobi.modules.classrooms",
+    "frobi.modules.progress",
+]
+
+[[tool.importlinter.contracts]]
+name = "Domain and application stay framework-free"
+type = "forbidden"
+source_modules = [
+    "frobi.shared.domain",
+    "frobi.shared.application",
+    "frobi.modules.*.domain",
+    "frobi.modules.*.application",
+]
+forbidden_modules = ["fastapi", "starlette", "sqlalchemy", "redis", "pydantic", "pydantic_settings"]
+
+[[tool.importlinter.contracts]]
+name = "Domain only depends on shared.domain"
+type = "forbidden"
+source_modules = ["frobi.modules.*.domain"]
+forbidden_modules = ["frobi.shared.application", "frobi.shared.infrastructure", "frobi.shared.presentation"]
+
+[[tool.importlinter.contracts]]
+name = "Shared knows nothing about modules"
+type = "forbidden"
+source_modules = ["frobi.shared"]
+forbidden_modules = ["frobi.modules", "frobi.main"]
+
+[[tool.importlinter.contracts]]
+# Modules talk only through another module's public API (its __init__.py), and only from
+# infrastructure adapters. Any other cross-module import breaks this contract.
+name = "Modules are independent except through public APIs"
+type = "independence"
+modules = [
+    "frobi.modules.identity",
+    "frobi.modules.onboarding",
+    "frobi.modules.settings",
+    "frobi.modules.materials",
+    "frobi.modules.adaptations",
+    "frobi.modules.tutoring",
+    "frobi.modules.prompt_coach",
+    "frobi.modules.comprehension",
+    "frobi.modules.claim_review",
+    "frobi.modules.tools",
+    "frobi.modules.classrooms",
+    "frobi.modules.progress",
+]
+ignore_imports = ["frobi.modules.*.infrastructure.** -> frobi.modules.*"]
+# The rule is valid before any adapter exists; do not fail while nothing matches it yet.
+unmatched_ignore_imports_alerting = "none"
