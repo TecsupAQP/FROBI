@@ -20,7 +20,7 @@ def render() -> str:
 
 def main() -> None:
     target = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_PATH
-    target.write_text(render(), encoding="utf-8")
+    target.write_text(render(), encoding="utf-8", newline="\n")
     print(f"OpenAPI written to {target}")
 
 

@@ -14,7 +14,7 @@
 ## 2. Estructura del repositorio
 
 ```
-forbi/
+forbi/backend/
 ├── pyproject.toml            # uv, ruff, mypy, pytest, import-linter
 ├── alembic/                  # Migraciones
 ├── docker/                   # Dockerfile y compose.yml (api, postgres, redis)
