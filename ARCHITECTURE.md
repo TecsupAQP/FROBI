@@ -127,8 +127,10 @@ El módulo que necesita algo **define el puerto con su propio vocabulario**, y u
 class AdaptationReader(Protocol):
     async def get_for_tutoring(self, adaptation_id: UUID) -> TutoringContext | None: ...
 
+
 # modules/tutoring/infrastructure/adaptation_reader_adapter.py
-from frobi.modules.adaptations import GetAdaptationHandler   # API pública, no su dominio
+from frobi.modules.adaptations import GetAdaptationHandler  # API pública, no su dominio
+
 
 class AdaptationReaderAdapter:
     def __init__(self, get_adaptation: GetAdaptationHandler) -> None:
