@@ -2,29 +2,37 @@
 
 Backend for FROBI (Hack4Edu 2026): FastAPI + PostgreSQL + Redis, organized as a hexagonal modular monolith.
 
-> Status: Phase 1 in progress. Every endpoint of `PLAN_BACKEND.md` §6 exists under `/api/v1` with
-> its final schema.
+> Status: phases 0, 1 and 2 done. Every endpoint of `PLAN_BACKEND.md` §6 exists under `/api/v1`
+> with its final schema and real behaviour, except `POST /classes/{id}/materials` (still example
+> data). No AI provider is connected yet: AI features answer from their fallbacks
+> (`fallback: true`).
 >
-> | Real | Still example data (stubs, keep no state) |
+> | Module | What works |
 > | --- | --- |
-> | M1: sessions, `/me`, logout | M11, M12 |
-> | M2: onboarding wizard, profiles and their switches | M13 except `/me/settings` |
-> | M3: sample guide, paste text, PDF upload, brief + draft (`/works`) | |
-> | M4/M5: formats, adaptations with recipe, 15 s cap, fallback, cache | |
-> | M6: help ladder, own attempt without AI, hints with fallback | |
-> | M7: prompt scoring (0–4 per piece), improved prompt, autonomy, compare | |
-> | M8: comprehension and transfer questions, answers, «Prueba con…» | |
-> | M9: claim review (supported, unverifiable, contradicts) against own guides | |
-> | M10: fixed catalogue of 5 tools, recommendation by need or reviewed claim | |
-> | M13: `GET` and `PATCH /me/settings` | |
+> | M1 | Sessions (alias, career, role), `/me`, logout, optional class code |
+> | M2 | Onboarding wizard, accessibility profiles and their switches |
+> | M3 | Sample guide, paste text, PDF upload, brief + draft (`/works`) |
+> | M4/M5 | Formats, adaptations with the 4-piece recipe, 15 s cap, fallback, cache |
+> | M6 | Help ladder, «Inténtalo sin IA», hints with fallback |
+> | M7 | Prompt scoring (0–4 per piece), improved prompt, autonomy, compare |
+> | M8 | Comprehension and transfer questions, answers, «Prueba con…» |
+> | M9 | Claim review (supported, unverifiable, contradicts) against own guides |
+> | M10 | Fixed catalogue of 5 tools, recommendation by need or reviewed claim |
+> | M11 | Personal progress and closing summary |
+> | M12 | Classes, invitations, join by code, teacher panel with alerts, student detail |
+> | M13 | Settings, alias, leave the class, «Qué ve tu docente», languages |
+>
+> Privacy (RNF16): every activity row stores the active `class_id`; the teacher panel can only
+> read activity of its own class (a test checks before-joining, after-leaving and other-class
+> activity never shows up).
 
 ## Authentication
 
 1. `POST /api/v1/sessions` with `{"alias": "Ana", "career": "Mecatrónica", "role": "learner"}`.
    The person is stored in Postgres and the token in Redis for 30 days.
-   `class_code` is optional; until classrooms (M12) exists only `SENSOR1` is a valid code,
-   anything else is `422 Classrooms.InvalidCode` and nothing is created.
-2. Send the returned token on every other call, stubs included:
+   `class_code` is optional: a teacher's class code, or `SENSOR1` for the seeded demo class.
+   An unknown code is `422 Classrooms.InvalidCode` and nothing is created.
+2. Send the returned token on every other call:
    `Authorization: Bearer <token>`. A missing, made-up or logged-out token is
    `401 Identity.Unauthenticated`.
 

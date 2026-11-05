@@ -1,13 +1,13 @@
-"""M11 · Progreso y cierre.
+"""M11 · Progreso y cierre: the person's own activity, inside or outside a class."""
 
-Stub: returns example data so the front can integrate. The real use cases replace each body.
-"""
-
-from datetime import UTC, datetime
+from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from frobi.shared.presentation import AUTH_RESPONSES, require_token
+from frobi.modules.progress.application import GetJourneySummaryHandler, GetProgressHandler
+from frobi.modules.progress.infrastructure import PersonActivityReaderAdapter
+from frobi.shared.presentation import AUTH_RESPONSES, CurrentPersonId, get_db_session
 
 from .schemas import (
     FormatAccuracy,
@@ -18,46 +18,49 @@ from .schemas import (
     PromptScorePoint,
 )
 
-router = APIRouter(
-    prefix="/me",
-    tags=["M11 · Progreso y cierre"],
-    dependencies=[Depends(require_token)],
-    responses=AUTH_RESPONSES,
-)
+router = APIRouter(prefix="/me", tags=["M11 · Progreso y cierre"], responses=AUTH_RESPONSES)
+
+
+def get_reader(
+    db: Annotated[AsyncSession, Depends(get_db_session)],
+) -> PersonActivityReaderAdapter:
+    return PersonActivityReaderAdapter(db)
+
+
+Reader = Annotated[PersonActivityReaderAdapter, Depends(get_reader)]
 
 
 @router.get("/progress", summary="Progreso de la persona (o estado vacío explícito)")
-async def get_progress() -> ProgressOut:
+async def get_progress(person_id: CurrentPersonId, reader: Reader) -> ProgressOut:
+    progress = await GetProgressHandler(reader).handle(person_id)
     return ProgressOut(
-        has_data=True,
-        formats_used=[
-            FormatUsage(format="easy_read", count=3),
-            FormatUsage(format="visual_map", count=1),
-        ],
+        has_data=progress.has_data,
+        formats_used=[FormatUsage(format=f, count=n) for f, n in progress.formats_used],  # type: ignore[arg-type]
         accuracy_by_format=[
-            FormatAccuracy(format="easy_read", correct=4, total=5),
-            FormatAccuracy(format="visual_map", correct=1, total=2),
+            FormatAccuracy(format=a.format, correct=a.correct, total=a.total)  # type: ignore[arg-type]
+            for a in progress.accuracy_by_format
         ],
-        prompt_scores=[
-            PromptScorePoint(at=datetime(2026, 11, 4, 12, 10, tzinfo=UTC), total=6),
-            PromptScorePoint(at=datetime(2026, 11, 4, 12, 30, tzinfo=UTC), total=11),
-        ],
-        solved_without_ai=2,
-        message="Aprendes mejor con lectura fácil y tus instrucciones mejoran cada vez.",
+        prompt_scores=[PromptScorePoint(at=at, total=t) for at, t in progress.prompt_scores],
+        solved_without_ai=progress.solved_without_ai,
+        message=progress.message,
     )
 
 
 @router.get("/journey-summary", summary="Cierre del recorrido")
-async def get_journey_summary() -> JourneySummaryOut:
+async def get_journey_summary(person_id: CurrentPersonId, reader: Reader) -> JourneySummaryOut:
+    summary = await GetJourneySummaryHandler(reader).handle(person_id)
+    recipe = summary.learned_recipe
     return JourneySummaryOut(
-        favorite_format="easy_read",
-        learned_recipe=LearnedRecipe(
-            context="Estudiante de Mecatrónica con la guía de sensores.",
-            goal="Diferenciar tipos de sensores.",
-            level="Primer año.",
-            format="easy_read",
+        favorite_format=summary.favorite_format,  # type: ignore[arg-type]
+        learned_recipe=None
+        if recipe is None
+        else LearnedRecipe(
+            context=recipe.context,
+            goal=recipe.goal,
+            level=recipe.level,
+            format=recipe.format,  # type: ignore[arg-type]
         ),
-        best_prompt_score=11,
-        autonomy_level=2,
-        message="Ya sabes pedirle a la IA lo que necesitas y comprobarlo con tu material.",
+        best_prompt_score=summary.best_prompt_score,
+        autonomy_level=summary.autonomy_level,
+        message=summary.message,
     )

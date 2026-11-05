@@ -1,7 +1,8 @@
 """M12 · Clase del docente.
 
 Real: create a class, join with a code, see the class, invite by alias, list members.
-Still stubs (example data): class materials and the student detail (phase 3).
+Real: the teacher panel and the student detail, both only with activity of this class.
+Still a stub (example data): class materials.
 """
 
 from typing import Annotated
@@ -12,10 +13,12 @@ from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 from frobi.modules.classrooms.application import (
     CreateClassCommand,
     CreateClassHandler,
+    DashboardHandler,
     GetClassHandler,
     InviteStudentsHandler,
     JoinWithCodeHandler,
     ListMembersHandler,
+    StudentDetailHandler,
 )
 from frobi.modules.classrooms.domain import Classroom, Membership
 from frobi.shared.presentation import (
@@ -32,6 +35,10 @@ from .dependencies import (
     get_invite_students,
     get_join_class,
     get_list_members,
+    get_student_detail,
+)
+from .dependencies import (
+    get_dashboard as get_dashboard_handler,
 )
 from .schemas import (
     AiUsage,
@@ -55,8 +62,6 @@ from .schemas import (
 router = APIRouter(prefix="/classes", tags=["M12 · Clase del docente"], responses=AUTH_RESPONSES)
 
 TEACHER_ONLY = {**TEACHER_RESPONSES, **NOT_FOUND_RESPONSES}
-STUDENT_1 = UUID("00000000-0000-4000-8000-000000000001")
-STUDENT_2 = UUID("00000000-0000-4000-8000-000000000002")
 
 
 def _class_out(classroom: Classroom) -> ClassOut:
@@ -173,28 +178,37 @@ async def list_members(
     return MembersOut(invite_code=view.invite_code, members=[_member_out(m) for m in view.members])
 
 
-@router.get("/{class_id}/dashboard", summary="Panel docente", responses=TEACHER_ONLY)
-async def get_dashboard(class_id: UUID, _: CurrentPersonId) -> DashboardOut:
+@router.get(
+    "/{class_id}/dashboard",
+    summary="Panel docente (solo actividad hecha dentro de la clase)",
+    responses=TEACHER_ONLY,
+)
+async def get_dashboard(
+    class_id: UUID,
+    person_id: CurrentPersonId,
+    handler: Annotated[DashboardHandler, Depends(get_dashboard_handler)],
+) -> DashboardOut:
+    panel = await handler.handle(person_id, class_id)
     return DashboardOut(
-        class_id=class_id,
-        sample_data=True,
+        class_id=panel.class_id,
+        sample_data=panel.sample_data,
         students=[
-            StudentRow(person_id=STUDENT_1, alias="Ana", progress_label="Va bien", alerts=[]),
             StudentRow(
-                person_id=STUDENT_2,
-                alias="Luis",
-                progress_label="Necesita apoyo",
-                alerts=[Alert(code="stuck_on_hint_1", text="Se traba en la pista 1", icon="help")],
-            ),
+                person_id=s.person_id,
+                alias=s.alias,
+                progress_label=s.progress_label,
+                alerts=[Alert(code=a.code, text=a.text, icon=a.icon) for a in s.alerts],
+            )
+            for s in panel.students
         ],
-        top_formats=[
-            FormatCount(format="easy_read", count=7),
-            FormatCount(format="visual_map", count=4),
-        ],
+        top_formats=[FormatCount(format=f, count=n) for f, n in panel.top_formats],  # type: ignore[arg-type]
         most_failed_questions=[
-            FailedQuestion(statement="¿Qué sensor detecta una botella de plástico?", fail_rate=0.4)
+            FailedQuestion(statement=q.statement, fail_rate=q.fail_rate)
+            for q in panel.most_failed_questions
         ],
-        ai_usage=AiUsage(help_requests=12, solved_without_ai=5),
+        ai_usage=AiUsage(
+            help_requests=panel.help_requests, solved_without_ai=panel.solved_without_ai
+        ),
     )
 
 
@@ -203,17 +217,20 @@ async def get_dashboard(class_id: UUID, _: CurrentPersonId) -> DashboardOut:
     summary="Detalle de un estudiante (solo actividad de esta clase)",
     responses=TEACHER_ONLY,
 )
-async def get_student(class_id: UUID, person_id: UUID, _: CurrentPersonId) -> StudentDetailOut:
+async def get_student(
+    class_id: UUID,
+    person_id: UUID,
+    teacher_id: CurrentPersonId,
+    handler: Annotated[StudentDetailHandler, Depends(get_student_detail)],
+) -> StudentDetailOut:
+    detail = await handler.handle(teacher_id, class_id, person_id)
     return StudentDetailOut(
-        person_id=person_id,
-        alias="Luis",
-        preferred_format="visual_map",
-        correct_answers=3,
-        total_answers=6,
-        help_by_step=[
-            HelpByStep(step="hint_1", count=4),
-            HelpByStep(step="hint_2", count=2),
-        ],
-        solved_without_ai=1,
-        most_failed_question="¿Qué sensor detecta una botella de plástico?",
+        person_id=detail.person_id,
+        alias=detail.alias,
+        preferred_format=detail.preferred_format,  # type: ignore[arg-type]
+        correct_answers=detail.correct_answers,
+        total_answers=detail.total_answers,
+        help_by_step=[HelpByStep(step=s, count=n) for s, n in detail.help_by_step],  # type: ignore[arg-type]
+        solved_without_ai=detail.solved_without_ai,
+        most_failed_question=detail.most_failed_question,
     )

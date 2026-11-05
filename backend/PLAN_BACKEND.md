@@ -246,15 +246,15 @@ Orden según el flujo de la demo; cada paso en TDD (rojo, verde, refactor):
 
 ### Fase 2 · «Debería» (6 de noviembre)
 
-- [ ] M11: progreso y cierre.
-- [ ] M12: clases, invitaciones, unirse, panel con alertas y caché del panel.
-- [ ] M13: ajustes, cambio de alias, salir de la clase y «Qué ve tu docente».
-- [ ] RF14, RF24 y RF43.
-- [ ] **Test de privacidad (RNF16):** la actividad de un alumno fuera de la clase nunca aparece en el panel ni en el detalle.
+- [x] M11: progreso y cierre.
+- [x] M12: clases, invitaciones, unirse, panel con alertas (sin caché del panel todavía; el contenido de clase sigue de ejemplo).
+- [x] M13: ajustes, cambio de alias, salir de la clase y «Qué ve tu docente».
+- [x] RF14, RF24 y RF43.
+- [x] **Test de privacidad (RNF16):** la actividad de un alumno fuera de la clase nunca aparece en el panel ni en el detalle.
 
 ### Fase 3 · «Podría» y cierre (7 de noviembre, mañana)
 
-- [ ] RF22 (catálogo filtrable), RF26 y RF48 (detalle del alumno) y RF50 (idiomas).
+- [x] RF22 (catálogo filtrable), RF26 y RF48 (detalle del alumno) y RF50 (idiomas).
 - [ ] Seed de demo: un docente, 2 alumnos y actividad marcada como `sample_data` (RF54, RNF12).
 - [ ] Prueba completa de la demo contra el front y congelamiento del contrato.
 

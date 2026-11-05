@@ -7,14 +7,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from frobi.modules.classrooms.application import (
     CreateClassHandler,
+    DashboardHandler,
     GetClassHandler,
     InviteStudentsHandler,
     JoinClassHandler,
     JoinWithCodeHandler,
     ListMembersHandler,
+    StudentDetailHandler,
 )
 from frobi.modules.classrooms.domain import new_invite_code
 from frobi.modules.classrooms.infrastructure import (
+    ClassActivityReaderAdapter,
     PersonDirectoryAdapter,
     SqlAlchemyClassRepository,
     SqlAlchemyMembershipRepository,
@@ -52,6 +55,24 @@ def get_invite_students(db: DbSession, clock: AppClock) -> InviteStudentsHandler
 
 def get_list_members(db: DbSession) -> ListMembersHandler:
     return ListMembersHandler(SqlAlchemyClassRepository(db), SqlAlchemyMembershipRepository(db))
+
+
+def get_dashboard(db: DbSession) -> DashboardHandler:
+    return DashboardHandler(
+        SqlAlchemyClassRepository(db),
+        SqlAlchemyMembershipRepository(db),
+        PersonDirectoryAdapter(db),
+        ClassActivityReaderAdapter(db),
+    )
+
+
+def get_student_detail(db: DbSession) -> StudentDetailHandler:
+    return StudentDetailHandler(
+        SqlAlchemyClassRepository(db),
+        SqlAlchemyMembershipRepository(db),
+        PersonDirectoryAdapter(db),
+        ClassActivityReaderAdapter(db),
+    )
 
 
 def get_join_class(db: DbSession, clock: AppClock) -> JoinWithCodeHandler:
