@@ -100,7 +100,10 @@ export const useCmpEscaleraStore = defineStore("CmpEscaleraStore", () => {
       criterios.value = await obtenerCriteriosSinIaService(tareaId);
       const abierto = await abrirIntentoService(tareaId);
       tarea.value = abierto?.tarea ?? null;
-      if (!abierto) return;
+      if (!abierto) {
+        error.value = "No encontramos ese tema en tu guía. Elige uno desde la guía.";
+        return;
+      }
       intentos.value[tareaId] = { escalera: abierto.intentoId };
       estado.value = abierto.estado;
       progresos.value[tareaId] = progresoNuevo();

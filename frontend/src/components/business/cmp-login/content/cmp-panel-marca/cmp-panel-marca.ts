@@ -13,9 +13,9 @@ export default defineComponent({
     // Ejemplo fijo de la pantalla de bienvenida (texto de marketing, no viene del backend).
     const receta: PiezaInstruccion[] = [
       { pieza: "contexto", texto: "Soy estudiante de primer ciclo de Mecatrónica." },
-      { pieza: "objetivo", texto: "Necesito elegir un sensor para una faja." },
+      { pieza: "objetivo", texto: "Necesito entender el tema de mi guía para el examen." },
       { pieza: "nivel", texto: "Explícalo sin fórmulas, con palabras simples." },
-      { pieza: "formato", texto: "Usa un ejemplo de una línea de embotellado." },
+      { pieza: "formato", texto: "Usa un ejemplo de la vida real." },
     ];
 
     return { PREFIX, LOGO_RETO, receta };

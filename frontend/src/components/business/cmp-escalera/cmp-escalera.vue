@@ -59,7 +59,7 @@
               id="escalera-intento"
               :model-value="progreso.intento"
               etiqueta="Tu intento"
-              placeholder="Creo que es el capacitivo porque…"
+              placeholder="Con mis palabras, esto significa…"
               @update:model-value="escribirIntento"
             />
             <v-cargando v-if="probando">Revisando tu intento…</v-cargando>

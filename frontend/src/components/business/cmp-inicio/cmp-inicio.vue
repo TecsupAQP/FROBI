@@ -9,15 +9,37 @@
       </p>
     </header>
 
+    <v-aviso v-if="vieneSinGuia && sinGuia" tipo="aviso" icono="info">
+      Para estudiar, primero sube tu guía o pega su texto.
+    </v-aviso>
+
     <div :class="`${PREFIX}__columnas`">
       <cmp-tarjeta-guia v-if="guia" :class="`${PREFIX}__guia`" :guia="guia" />
+      <v-estado-vacio
+        v-else-if="sinGuia"
+        :class="`${PREFIX}__guia`"
+        icono="upload"
+        titulo="Empieza con tu guía"
+        texto="Sube el PDF de tu curso o pega su texto. FROBI lo adapta a tu manera de aprender."
+      >
+        <v-button icono="upload" @click="abrirModal">Subir mi PDF</v-button>
+        <v-button
+          v-if="guiaEjemplo"
+          variante="texto"
+          :deshabilitado="eligiendo !== null"
+          @click="estudiar(guiaEjemplo.id)"
+        >
+          Solo quiero probar con una guía de ejemplo
+        </v-button>
+      </v-estado-vacio>
       <div v-else :class="`${PREFIX}__guia ${PREFIX}__cargando`">
         <v-cargando>Cargando tus guías…</v-cargando>
       </div>
-      <cmp-tarjeta-subir :class="`${PREFIX}__subir`" @subir="abrirModal" />
+      <!-- Sin guía, el estado vacío ya invita a subirla: no se repite la tarjeta. -->
+      <cmp-tarjeta-subir v-if="!sinGuia" :class="`${PREFIX}__subir`" @subir="abrirModal" />
     </div>
 
-    <cmp-mis-guias v-if="guias.length > 1" :guias="guias" :eligiendo="eligiendo" @elegir="estudiar" />
+    <cmp-mis-guias v-if="propias.length > 1" :guias="propias" :eligiendo="eligiendo" @elegir="estudiar" />
 
     <cmp-subir-pdf
       v-model="modalAbierto"

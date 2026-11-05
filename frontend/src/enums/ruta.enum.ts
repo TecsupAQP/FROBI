@@ -25,8 +25,8 @@ export enum RutaEnum {
   PERSONAS = "personas",
 }
 
-// Tarea de ejemplo de la escalera de ayuda (Figma · 20).
-export const TAREA_EJEMPLO = "sensor-vidrio";
+// La escalera de ayuda practica un tema de la guía actual; por defecto, el primero.
+export const TAREA_EJEMPLO = "tema-1";
 
 // Pestaña de la barra superior que queda marcada en cada ruta.
 export enum SeccionNavEnum {

@@ -39,8 +39,19 @@
       </div>
 
       <form :class="`${PREFIX}__formulario`" novalidate @submit.prevent="crearYSeguir">
-        <v-field id="clase-nombre" v-model="nombre" etiqueta="Nombre de la clase" :error="errorNombre" />
-        <v-field id="clase-tarea" v-model="primeraTarea" etiqueta="Primera tarea" />
+        <v-field
+          id="clase-nombre"
+          v-model="nombre"
+          etiqueta="Nombre de la clase"
+          placeholder="Ej. Física 1 · Mecatrónica"
+          :error="errorNombre"
+        />
+        <v-field
+          id="clase-tarea"
+          v-model="primeraTarea"
+          etiqueta="Primera tarea"
+          placeholder="Ej. Resolver los ejercicios del tema 1"
+        />
         <v-button tipo="submit" bloque :deshabilitado="ocupado">
           {{ ocupado ? "Creando clase…" : "Crear clase e invitar alumnos" }}
         </v-button>

@@ -3,11 +3,14 @@ import { RutaEnum, SeccionNavEnum } from "@/enums/ruta.enum";
 import { esFormatoValido } from "@/constants/formatos.constant";
 import { useCmpSesionStore } from "@/store/common/cmp-sesion/cmp-sesion.store";
 import { registrarAlPerderSesion } from "@/core/shared/infraestructure/http/api.client";
+import { hayGuiaActual } from "@/core/shared/infraestructure/http/contexto-estudio";
 
 declare module "vue-router" {
   interface RouteMeta {
     titulo: string;
     seccion?: SeccionNavEnum;
+    // Pantallas de estudio: sin una guía elegida, se vuelve a Inicio para subir o elegir una.
+    requiereGuia?: boolean;
   }
 }
 
@@ -28,13 +31,13 @@ const routes: RouteRecordRaw[] = [
     path: "/guia",
     name: RutaEnum.GUIA,
     component: () => import("@/views/vw-guia/vw-guia.vue"),
-    meta: { titulo: "Guía y formatos", seccion: SeccionNavEnum.GUIA },
+    meta: { titulo: "Guía y formatos", seccion: SeccionNavEnum.GUIA, requiereGuia: true },
   },
   {
     path: "/resultado/:formato",
     name: RutaEnum.RESULTADO,
     component: () => import("@/views/vw-resultado/vw-resultado.vue"),
-    meta: { titulo: "Resultado", seccion: SeccionNavEnum.GUIA },
+    meta: { titulo: "Resultado", seccion: SeccionNavEnum.GUIA, requiereGuia: true },
     beforeEnter: (to) =>
       esFormatoValido(to.params.formato)
         ? true
@@ -44,7 +47,7 @@ const routes: RouteRecordRaw[] = [
     path: "/verificacion",
     name: RutaEnum.VERIFICACION,
     component: () => import("@/views/vw-verificacion/vw-verificacion.vue"),
-    meta: { titulo: "Verificación", seccion: SeccionNavEnum.GUIA },
+    meta: { titulo: "Verificación", seccion: SeccionNavEnum.GUIA, requiereGuia: true },
   },
   {
     path: "/pidelo-tu",
@@ -123,13 +126,13 @@ const routes: RouteRecordRaw[] = [
     path: "/guia/:tarea/ayuda",
     name: RutaEnum.AYUDA,
     component: () => import("@/views/vw-ayuda/vw-ayuda.vue"),
-    meta: { titulo: "Escalera de ayuda", seccion: SeccionNavEnum.GUIA },
+    meta: { titulo: "Escalera de ayuda", seccion: SeccionNavEnum.GUIA, requiereGuia: true },
   },
   {
     path: "/guia/:tarea/sin-ia",
     name: RutaEnum.SIN_IA,
     component: () => import("@/views/vw-sin-ia/vw-sin-ia.vue"),
-    meta: { titulo: "Inténtalo sin IA", seccion: SeccionNavEnum.GUIA },
+    meta: { titulo: "Inténtalo sin IA", seccion: SeccionNavEnum.GUIA, requiereGuia: true },
   },
   {
     path: "/docente/clase/nueva",
@@ -173,13 +176,20 @@ const router = createRouter({
 // Pantallas que se ven sin entrar: el login y las de presentación (Figma · 21 y 23).
 const RUTAS_PUBLICAS: string[] = [RutaEnum.LOGIN, RutaEnum.COMO_SE_USA, RutaEnum.PERSONAS];
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const sesion = useCmpSesionStore();
   if (!RUTAS_PUBLICAS.includes(to.name as string) && !sesion.haIniciado) {
     return { name: RutaEnum.LOGIN, query: { volver: to.fullPath } };
   }
   if (to.name === RutaEnum.LOGIN && sesion.haIniciado) {
     return { name: RutaEnum.INICIO };
+  }
+  if (to.meta.requiereGuia && sesion.haIniciado) {
+    try {
+      if (!(await hayGuiaActual())) return { name: RutaEnum.INICIO, query: { sinGuia: "1" } };
+    } catch {
+      // Sin conexión: se deja pasar y la pantalla muestra su propio aviso.
+    }
   }
 });
 

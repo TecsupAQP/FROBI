@@ -1,31 +1,13 @@
 import { PdfIlegibleError, type MaterialPort } from "@/core/material/infraestructure/ports/in/material.port";
-import type { ArchivoLeido, GuiaResumen, Material, Tema } from "@/core/shared/domain/view/material.view";
+import type { ArchivoLeido, GuiaResumen, Material } from "@/core/shared/domain/view/material.view";
 import { api, esErrorApi } from "@/core/shared/infraestructure/http/api.client";
 import type { MaterialDto, MaterialResumenDto } from "@/core/shared/infraestructure/http/api.dto";
 import { elegirMaterial, materialActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
 import { CARRERAS } from "@/constants/carreras.constant";
-import { tituloDeGuia, tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
+import { temasDesdeTexto, tituloDeGuia, tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
 
 const PALABRAS_POR_MINUTO = 180;
 const LARGO_VISTA_PREVIA = 420;
-
-// El texto extraído usa "## Título" para cada sección: cada una es un tema de la guía.
-export function temasDesdeTexto(texto: string): Tema[] {
-  const bloques = texto
-    .split(/^##\s+/m)
-    .map((bloque) => bloque.trim())
-    .filter(Boolean);
-  const conTitulo = /^##\s+/m.test(texto);
-  return bloques.map((bloque, indice) => {
-    const [primera = "", ...resto] = bloque.split("\n");
-    return {
-      id: `tema-${indice + 1}`,
-      numero: indice + 1,
-      titulo: conTitulo ? primera.trim() : bloques.length === 1 ? "Todo el material" : `Parte ${indice + 1}`,
-      textoOriginal: (conTitulo ? resto.join(" ") : bloque).replace(/\s+/g, " ").trim(),
-    };
-  });
-}
 
 export function materialDesdeApi(dto: MaterialDto, carrera: string): Material {
   const temas = temasDesdeTexto(dto.extracted_text);
@@ -35,10 +17,7 @@ export function materialDesdeApi(dto: MaterialDto, carrera: string): Material {
     titulo: tituloDeGuia(dto.title),
     carrera,
     descripcion: temas[0]?.textoOriginal.split(". ").slice(0, 2).join(". ") ?? "",
-    etiquetas: temas
-      .slice(1, 4)
-      .map((tema) => tema.titulo.replace(/^Sensores\s+/i, ""))
-      .map((titulo) => titulo.charAt(0).toUpperCase() + titulo.slice(1)),
+    etiquetas: temas.slice(1, 4).map((tema) => tema.titulo.charAt(0).toUpperCase() + tema.titulo.slice(1)),
     minutosLectura: Math.max(1, Math.round(palabras / PALABRAS_POR_MINUTO)),
     temas,
   };
@@ -67,7 +46,8 @@ export class MaterialUseCase implements MaterialPort {
   async listarGuias(): Promise<GuiaResumen[]> {
     const [guias, actual] = await Promise.all([
       api.get<MaterialResumenDto[]>("/materials/guides"),
-      materialActualId(),
+      // Sin guía elegida todavía, ninguna se marca como actual.
+      materialActualId().catch(() => null),
     ]);
     const ORIGEN: Record<MaterialResumenDto["source"], GuiaResumen["origen"]> = {
       sample: "ejemplo",
