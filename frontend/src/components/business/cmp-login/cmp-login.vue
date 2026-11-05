@@ -74,6 +74,18 @@
 
         <p :class="`${PREFIX}__privacidad`">Tu material no se usa para otros fines.</p>
       </form>
+
+      <div :class="`${PREFIX}__reto`">
+        <span :class="`${PREFIX}__reto-texto`">Proyecto para el</span>
+        <img
+          :class="`${PREFIX}__reto-logo`"
+          :src="LOGO_RETO"
+          alt="Reto ProFuturo"
+          width="2000"
+          height="667"
+          decoding="async"
+        />
+      </div>
     </main>
   </div>
 </template>

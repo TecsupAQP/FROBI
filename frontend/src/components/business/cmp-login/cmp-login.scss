@@ -139,4 +139,29 @@ $prefix: cmp-login;
       margin-top: $esp-2;
     }
   }
+
+  // Reto del hackatón: discreto y debajo de la tarjeta, en todos los tamaños.
+  &__reto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $esp-6;
+
+    @include escritorio {
+      width: 440px;
+      margin: 0 auto;
+    }
+  }
+
+  &__reto-texto {
+    color: $texto-secundario;
+  }
+
+  &__reto-logo {
+    display: block;
+    width: auto;
+    height: 56px;
+    max-width: 100%;
+    object-fit: contain;
+  }
 }
