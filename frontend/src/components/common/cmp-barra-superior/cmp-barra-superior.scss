@@ -79,18 +79,30 @@ $prefix: cmp-barra-superior;
   }
 
   // El alias solo cabe en escritorio (Figma: la barra móvil y tablet no lo muestran).
+  // En móvil y tablet solo se ve la inicial; en escritorio, también el alias. Lleva a Ajustes.
   &__alias {
-    display: none;
+    display: flex;
+    flex-shrink: 0;
     align-items: center;
+    justify-content: center;
     gap: $esp-10;
-    padding: $esp-6 $esp-16 $esp-6 $esp-6;
+    min-width: $alto-tactil;
+    min-height: $alto-tactil;
     border-radius: $radio-pildora;
-    background-color: $fondo-app;
     @include texto-etiqueta;
     color: $texto-principal;
 
     @include escritorio {
-      display: flex;
+      padding: $esp-6 $esp-16 $esp-6 $esp-6;
+      background-color: $fondo-app;
+    }
+  }
+
+  &__alias-texto {
+    display: none;
+
+    @include escritorio {
+      display: inline;
     }
   }
 
