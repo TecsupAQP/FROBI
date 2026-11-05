@@ -4,8 +4,9 @@ Add a module's ``infrastructure.models`` here when it gets its first table.
 """
 
 from frobi.modules.identity.infrastructure import models as identity_models
+from frobi.modules.settings.infrastructure import models as settings_models
 from frobi.shared.infrastructure import Base
 
 metadata = Base.metadata
 
-__all__ = ["identity_models", "metadata"]
+__all__ = ["identity_models", "metadata", "settings_models"]

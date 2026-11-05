@@ -23,6 +23,16 @@ class SqlAlchemyPersonRepository:
             )
         )
 
+    async def save(self, person: Person) -> None:
+        row = await self._session.get(PersonModel, person.id)
+        if row is None:
+            await self.add(person)
+            return
+        row.alias = person.alias
+        row.career = person.career
+        row.role = person.role.value
+        row.configured_by = person.configured_by.value
+
     async def get(self, person_id: UUID) -> Person | None:
         row = await self._session.get(PersonModel, person_id)
         if row is None:

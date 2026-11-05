@@ -1,18 +1,25 @@
 """M13 · Ajustes y privacidad.
 
-Stub: returns example data so the front can integrate. The real use cases replace each body.
+Real: GET and PATCH /me/settings. The rest are stubs that return example data until phase 2.
 """
 
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
-from frobi.shared.presentation import AUTH_RESPONSES, problem, require_token
+from frobi.modules.settings.application import (
+    GetSettingsHandler,
+    UpdateSettingsCommand,
+    UpdateSettingsHandler,
+)
+from frobi.modules.settings.domain import TOGGLES, Language
+from frobi.shared.presentation import AUTH_RESPONSES, CurrentPersonId, problem, require_token
 
+from .dependencies import get_get_settings, get_update_settings
 from .schemas import (
     AccountOut,
     AliasPatch,
-    Language,
     LanguageOut,
     PrivacyItem,
     PrivacyOut,
@@ -27,22 +34,14 @@ router = APIRouter(
 )
 
 EXAMPLE_PERSON_ID = UUID("00000000-0000-4000-8000-000000000001")
-EXAMPLE_SETTINGS = SettingsOut(
-    profiles=["reading"],
-    voice=True,
-    high_contrast=False,
-    large_text=False,
-    short_texts=True,
-    captions=False,
-    large_buttons=False,
-    keyboard_mode=False,
-    language=Language.ES,
-)
 
 
 @router.get("/me/settings", summary="Ajustes actuales")
-async def get_settings() -> SettingsOut:
-    return EXAMPLE_SETTINGS
+async def get_settings(
+    person_id: CurrentPersonId,
+    handler: Annotated[GetSettingsHandler, Depends(get_get_settings)],
+) -> SettingsOut:
+    return SettingsOut.from_domain(await handler.handle(person_id))
 
 
 @router.patch(
@@ -50,8 +49,20 @@ async def get_settings() -> SettingsOut:
     summary="Cambiar interruptores de accesibilidad e idioma",
     responses={422: problem("Valor inválido o idioma todavía no disponible.")},
 )
-async def update_settings(body: SettingsPatch) -> SettingsOut:
-    return EXAMPLE_SETTINGS.model_copy(update=body.model_dump(exclude_none=True))
+async def update_settings(
+    body: SettingsPatch,
+    person_id: CurrentPersonId,
+    handler: Annotated[UpdateSettingsHandler, Depends(get_update_settings)],
+) -> SettingsOut:
+    sent = body.model_dump(exclude_none=True)
+    updated = await handler.handle(
+        UpdateSettingsCommand(
+            person_id=person_id,
+            toggles={name: sent[name] for name in TOGGLES if name in sent},
+            language=body.language,
+        )
+    )
+    return SettingsOut.from_domain(updated)
 
 
 @router.patch("/me", summary="Cambiar el alias")

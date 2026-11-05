@@ -1,10 +1,8 @@
 """Temporary adapters for ports whose owning module is not built yet.
 
-- ``ExampleClassMembership`` stands in for classrooms (M12, phase 2): one example class whose
-  code is ``SENSOR1``. Joins are kept in Redis so ``/me`` reflects them. Replace it with an
-  adapter over the classrooms public API when M12 lands.
-- ``PendingOnboardingStatus`` stands in for onboarding/settings (M2): nobody has finished the
-  wizard yet.
+``ExampleClassMembership`` stands in for classrooms (M12, phase 2): one example class whose
+code is ``SENSOR1``. Joins are kept in Redis so ``/me`` reflects them. Replace it with an
+adapter over the classrooms public API when M12 lands.
 """
 
 from datetime import timedelta
@@ -12,7 +10,7 @@ from uuid import UUID
 
 from redis.asyncio import Redis
 
-from frobi.modules.identity.application.ports import ActiveMembership, ClassRef, OnboardingStatus
+from frobi.modules.identity.application.ports import ActiveMembership, ClassRef
 
 EXAMPLE_CLASS = ClassRef(id=UUID("00000000-0000-4000-8000-0000000000c1"), name="Sensores 2026-II")
 EXAMPLE_CODE = "SENSOR1"
@@ -39,8 +37,3 @@ class ExampleClassMembership:
         if value != str(EXAMPLE_CLASS.id):
             return None
         return ActiveMembership(class_id=EXAMPLE_CLASS.id, class_name=EXAMPLE_CLASS.name)
-
-
-class PendingOnboardingStatus:
-    async def for_person(self, person_id: UUID) -> OnboardingStatus:
-        return OnboardingStatus(done=False, intro_status="pending")
