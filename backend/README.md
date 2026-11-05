@@ -7,9 +7,10 @@ Backend for FROBI (Hack4Edu 2026): FastAPI + PostgreSQL + Redis, organized as a 
 >
 > | Real | Still example data (stubs, keep no state) |
 > | --- | --- |
-> | M1: sessions, `/me`, logout | M4–M12 |
+> | M1: sessions, `/me`, logout | M6–M12 |
 > | M2: onboarding wizard, profiles and their switches | M13 except `/me/settings` |
 > | M3: sample guide, paste text, PDF upload, brief + draft (`/works`) | |
+> | M4/M5: formats, adaptations with recipe, 15 s cap, fallback, cache | |
 > | M13: `GET` and `PATCH /me/settings` | |
 
 ## Authentication
@@ -81,6 +82,18 @@ Errors are always `application/problem+json` (RFC 9457) with a stable `code`, fo
 
 Environment variables with the `FROBI_` prefix; see [`.env.example`](./.env.example).
 `FROBI_CORS_ORIGINS` takes a comma-separated list.
+
+## AI engine
+
+No provider is connected yet, so every AI call answers with its fallback and the response says
+`fallback: true`. For the sample guide the fallback is prewritten
+(`modules/adaptations/infrastructure/fallbacks/`); for other materials it reorganizes and
+shortens the person's own text without adding anything.
+
+To connect a provider: implement `LlmClient.complete_json` in `shared/infrastructure/llm/`,
+read `FROBI_LLM_API_KEY`, and set `app.state.llm` in `main.py`. The 15 s cap
+(`FROBI_LLM_TIMEOUT_SECONDS`), the per-person limit (`FROBI_LLM_REQUESTS_PER_MINUTE`), output
+validation and the fallback already wrap every call; use cases do not change.
 
 ## Docs
 

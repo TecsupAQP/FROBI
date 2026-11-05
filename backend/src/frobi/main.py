@@ -11,7 +11,7 @@ from frobi.modules.adaptations.presentation.router import router as adaptations_
 from frobi.modules.claim_review.presentation.router import router as claim_review_router
 from frobi.modules.classrooms.presentation.router import router as classrooms_router
 from frobi.modules.comprehension.presentation.router import router as comprehension_router
-from frobi.modules.identity.infrastructure import RedisSessionStore
+from frobi.modules.identity.infrastructure import ExampleClassContext, RedisSessionStore
 from frobi.modules.identity.presentation.router import router as identity_router
 from frobi.modules.materials.presentation.router import router as materials_router
 from frobi.modules.onboarding.presentation.router import me_router as onboarding_me_router
@@ -31,6 +31,7 @@ from frobi.shared.infrastructure import (
     create_session_factory,
     get_settings,
 )
+from frobi.shared.infrastructure.llm import DisabledLlmClient
 from frobi.shared.presentation import PROBLEM_RESPONSES, health_router, register_problem_handlers
 
 API_PREFIX = "/api/v1"
@@ -99,6 +100,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.clock = SystemClock()
     # Every router authenticates through this resolver (see shared.presentation.auth).
     app.state.token_resolver = RedisSessionStore(redis)
+    # class_id stored on every activity row (RNF16). Placeholder until classrooms (M12).
+    app.state.class_context = ExampleClassContext(redis)
+    # No AI provider chosen yet: every AI call uses its fallback and answers `fallback: true`.
+    app.state.llm = DisabledLlmClient()
 
     app.add_middleware(
         CORSMiddleware,

@@ -1,0 +1,138 @@
+{
+  "material_id": "00000000-0000-4000-8000-00000000a001",
+  "formats": {
+    "easy_read": {
+      "title": "Sensores industriales",
+      "sections": [
+        {
+          "heading": "¿Qué es un sensor?",
+          "body": "Un sensor mide algo del mundo. Por ejemplo, el calor o la presión. Luego lo cambia por una señal eléctrica.",
+          "items": []
+        },
+        {
+          "heading": "Dos tipos de señal",
+          "body": "La señal digital tiene solo dos estados: sí o no. La señal analógica dice cuánto mide.",
+          "items": ["Digital: hay pieza o no hay pieza.", "Analógica: de 4 a 20 mA."]
+        },
+        {
+          "heading": "Sensores que detectan objetos",
+          "body": "Cada tipo detecta cosas distintas.",
+          "items": [
+            "Inductivo: detecta metales sin tocarlos.",
+            "Capacitivo: detecta metales, plásticos y líquidos.",
+            "Fotoeléctrico: usa luz y llega más lejos."
+          ]
+        },
+        {
+          "heading": "Sensores de temperatura",
+          "body": "El termopar aguanta mucho calor. La RTD es más precisa, pero para menos calor.",
+          "items": []
+        },
+        {
+          "heading": "¿Cómo elijo un sensor?",
+          "body": "Piensa en estas preguntas.",
+          "items": [
+            "¿Qué quiero medir?",
+            "¿De qué material es el objeto?",
+            "¿A qué distancia está?",
+            "¿Hay polvo, agua o calor?"
+          ]
+        }
+      ]
+    },
+    "visual_map": {
+      "title": "Sensores industriales",
+      "sections": [
+        {
+          "heading": "Sensor",
+          "body": "Mide una magnitud física y la convierte en señal eléctrica.",
+          "items": ["Temperatura", "Presión", "Distancia", "Presencia de un objeto"]
+        },
+        {
+          "heading": "Señal",
+          "body": "Lo que el sensor le entrega al controlador.",
+          "items": ["Digital → dos estados", "Analógica → valor continuo (4 a 20 mA, 0 a 10 V)"]
+        },
+        {
+          "heading": "Detectar objetos",
+          "body": "Según el material y la distancia.",
+          "items": [
+            "Inductivo → solo metales, pocos milímetros",
+            "Capacitivo → metales, plásticos, granos y líquidos",
+            "Fotoeléctrico → haz de luz, varios metros"
+          ]
+        },
+        {
+          "heading": "Medir temperatura",
+          "body": "Dos opciones principales.",
+          "items": ["Termopar → muy alta temperatura", "RTD (Pt100) → más precisión, menos rango"]
+        },
+        {
+          "heading": "Medir presión",
+          "body": "Transmisor de presión.",
+          "items": ["Compresores", "Tuberías", "Sistemas hidráulicos"]
+        }
+      ]
+    },
+    "real_example": {
+      "title": "Sensores en una línea de envasado de jugo",
+      "sections": [
+        {
+          "heading": "La planta",
+          "body": "Una línea llena botellas de plástico con jugo, les pone una tapa metálica y las guarda en cajas.",
+          "items": []
+        },
+        {
+          "heading": "¿Llegó la botella?",
+          "body": "Un sensor fotoeléctrico ve pasar cada botella porque interrumpe su haz de luz. Así la máquina sabe cuándo empezar a llenar.",
+          "items": []
+        },
+        {
+          "heading": "¿Está llena?",
+          "body": "Un sensor capacitivo mide el nivel de jugo a través del plástico, sin tocar el líquido.",
+          "items": []
+        },
+        {
+          "heading": "¿Tiene tapa?",
+          "body": "Un sensor inductivo confirma la tapa metálica. Si no la detecta, la botella sale de la línea.",
+          "items": []
+        },
+        {
+          "heading": "¿Está bien pasteurizado?",
+          "body": "Una RTD controla la temperatura del pasteurizador, y un transmisor de presión vigila la tubería de jugo con una señal de 4 a 20 mA.",
+          "items": []
+        }
+      ]
+    },
+    "audio": {
+      "title": "Sensores industriales",
+      "sections": [
+        {
+          "heading": "Qué es un sensor",
+          "body": "Un sensor es como un sentido de la máquina. Mide algo del mundo, como la temperatura o la presión, y lo convierte en una señal eléctrica que el controlador puede leer.",
+          "items": []
+        },
+        {
+          "heading": "Las señales",
+          "body": "Hay señales digitales, que solo dicen sí o no, y señales analógicas, que dicen cuánto. La más común va de cuatro a veinte miliamperios.",
+          "items": []
+        },
+        {
+          "heading": "Detectar objetos",
+          "body": "El sensor inductivo detecta metales sin tocarlos y a poca distancia. El capacitivo detecta también plásticos y líquidos. El fotoeléctrico usa un haz de luz y llega a varios metros.",
+          "items": []
+        },
+        {
+          "heading": "Temperatura y presión",
+          "body": "El termopar soporta temperaturas muy altas. La RTD es más precisa. Para la presión se usa un transmisor de presión.",
+          "items": []
+        },
+        {
+          "heading": "Para elegir",
+          "body": "Pregúntate qué quieres medir, de qué material es el objeto, a qué distancia está y en qué ambiente trabaja.",
+          "items": []
+        }
+      ]
+    }
+  }
+}
