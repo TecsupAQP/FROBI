@@ -17,11 +17,25 @@
               :class="[`${PREFIX}__pestana`, { [`${PREFIX}__pestana--activa`]: pestana.activa }]"
               :aria-current="pestana.activa ? 'page' : undefined"
             >
-              {{ pestana.nombre }}
+              <span :class="`${PREFIX}__pestana-corta`" aria-hidden="true">{{ pestana.nombreCorto }}</span>
+              <span :class="`${PREFIX}__pestana-larga`">{{ pestana.nombre }}</span>
             </router-link>
           </li>
         </ul>
       </nav>
+      <!-- Menú con todas las pantallas (la barra solo tiene 3 pestañas). -->
+      <button
+        v-if="estudiante"
+        type="button"
+        :class="`${PREFIX}__menu`"
+        aria-haspopup="dialog"
+        aria-controls="menu-lateral"
+        :aria-expanded="menuAbierto"
+        @click="menuAbierto = true"
+      >
+        <v-icon nombre="menu" :tamano="24" />
+        <span :class="`${PREFIX}__menu-texto`">Menú</span>
+      </button>
       <!-- El alias lleva a Ajustes (Mi cuenta). -->
       <router-link
         v-if="estudiante"
@@ -33,6 +47,7 @@
         <span :class="`${PREFIX}__alias-texto`">{{ estudiante.alias }}</span>
       </router-link>
     </div>
+    <cmp-menu-lateral v-model="menuAbierto" />
   </header>
 </template>
 

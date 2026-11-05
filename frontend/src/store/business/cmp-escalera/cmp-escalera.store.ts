@@ -16,8 +16,8 @@ import {
 const ORDEN: EscalonId[] = ["pista-1", "pista-2", "paso-a-paso", "respuesta"];
 
 export interface ProgresoTarea {
-  // Último escalón abierto. Empieza en la pista 1: nunca en la respuesta.
-  alcanzado: EscalonId;
+  // Último escalón abierto; null mientras no se pida ninguna ayuda.
+  alcanzado: EscalonId | null;
   intento: string;
   resultado: ResultadoIntento | null;
   pasoAPasoAbierto: boolean;
@@ -29,7 +29,7 @@ export interface ProgresoTarea {
 }
 
 const progresoNuevo = (): ProgresoTarea => ({
-  alcanzado: "pista-1",
+  alcanzado: null,
   intento: "",
   resultado: null,
   pasoAPasoAbierto: false,
@@ -57,9 +57,15 @@ export const useCmpEscaleraStore = defineStore("CmpEscaleraStore", () => {
   });
 
   // La respuesta final solo se desbloquea cuando hay un intento propio.
-  const respuestaDesbloqueada = computed(
-    () => progreso.value.resultado !== null && (estado.value?.respuestaDesbloqueada ?? false),
-  );
+  const respuestaDesbloqueada = computed(() => estado.value?.respuestaDesbloqueada ?? false);
+
+  // El siguiente escalón que se puede pedir (RF39: cada uno se abre solo si la persona lo pide).
+  const siguiente = computed<EscalonId | null>(() => {
+    const alcanzado = progreso.value.alcanzado;
+    const proximo = ORDEN[alcanzado ? ORDEN.indexOf(alcanzado) + 1 : 0] ?? null;
+    if (proximo === "respuesta" && !respuestaDesbloqueada.value) return null;
+    return proximo;
+  });
 
   const nivelAyuda = computed(() => estado.value?.nivel ?? "Nivel 0, sin ayuda");
 
@@ -72,7 +78,10 @@ export const useCmpEscaleraStore = defineStore("CmpEscaleraStore", () => {
 
   const avanzar = (hasta: EscalonId) => {
     const registro = actual();
-    if (registro && ORDEN.indexOf(hasta) > ORDEN.indexOf(registro.alcanzado)) registro.alcanzado = hasta;
+    if (!registro) return;
+    const actualIndice = registro.alcanzado ? ORDEN.indexOf(registro.alcanzado) : -1;
+    if (ORDEN.indexOf(hasta) > actualIndice) registro.alcanzado = hasta;
+    if (hasta === "paso-a-paso") registro.pasoAPasoAbierto = true;
   };
 
   const abrir = async (id: EscalonId) => {
@@ -100,23 +109,20 @@ export const useCmpEscaleraStore = defineStore("CmpEscaleraStore", () => {
     }
   };
 
-  // La escalera arranca mostrando las dos pistas (Figma · 20); el paso a paso y la respuesta esperan.
-  const abrirPistas = async () => {
-    try {
-      if (progreso.value.alcanzado === "pista-1" && !tarea.value?.escalones[0]?.contenido.length) {
-        await abrir("pista-1");
-      }
-      if (ORDEN.indexOf(progreso.value.alcanzado) < ORDEN.indexOf("pista-2")) await abrir("pista-2");
-    } catch {
-      error.value = "No pudimos abrir las pistas. Inténtalo de nuevo.";
-    }
-  };
+  const abriendo = ref(false);
 
-  const abrirPasoAPaso = async () => {
-    const registro = actual();
-    if (!registro || registro.pasoAPasoAbierto) return;
-    await abrir("paso-a-paso");
-    registro.pasoAPasoAbierto = true;
+  const abrirSiguiente = async () => {
+    const proximo = siguiente.value;
+    if (!proximo || abriendo.value) return;
+    abriendo.value = true;
+    error.value = null;
+    try {
+      await abrir(proximo);
+    } catch {
+      error.value = "No pudimos abrir esta ayuda. Inténtalo de nuevo.";
+    } finally {
+      abriendo.value = false;
+    }
   };
 
   const escribirIntento = (texto: string) => {
@@ -133,9 +139,6 @@ export const useCmpEscaleraStore = defineStore("CmpEscaleraStore", () => {
       const revision = await enviarIntentoService(intentoId, registro.intento);
       estado.value = revision.estado;
       registro.resultado = revision.resultado;
-      // La API abre los escalones en orden: el paso a paso va antes de la respuesta final.
-      if (!registro.pasoAPasoAbierto) await abrirPasoAPaso();
-      await abrir("respuesta");
     } catch {
       error.value = "No pudimos revisar tu intento. Inténtalo de nuevo.";
     } finally {
@@ -185,6 +188,15 @@ export const useCmpEscaleraStore = defineStore("CmpEscaleraStore", () => {
     }
   };
 
+  // Al cambiar de guía, los intentos abiertos quedan atados a la adaptación anterior.
+  const reiniciar = () => {
+    tarea.value = null;
+    progresos.value = {};
+    intentos.value = {};
+    estado.value = null;
+    error.value = null;
+  };
+
   return {
     criterios,
     error,
@@ -194,13 +206,16 @@ export const useCmpEscaleraStore = defineStore("CmpEscaleraStore", () => {
     respuestaDesbloqueada,
     tarea,
 
-    abrirPasoAPaso,
-    abrirPistas,
+    abriendo,
+    siguiente,
+
+    abrirSiguiente,
     alternarCriterio,
     cargar,
     escribirIntento,
     escribirRespuestaSinIa,
     marcarResueltoSinIa,
     probarIntento,
+    reiniciar,
   };
 });

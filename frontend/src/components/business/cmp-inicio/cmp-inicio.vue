@@ -17,6 +17,8 @@
       <cmp-tarjeta-subir :class="`${PREFIX}__subir`" @subir="abrirModal" />
     </div>
 
+    <cmp-mis-guias v-if="guias.length > 1" :guias="guias" :eligiendo="eligiendo" @elegir="estudiar" />
+
     <cmp-subir-pdf
       v-model="modalAbierto"
       :fase="fase"

@@ -22,22 +22,18 @@ export default defineComponent({
   setup(props) {
     const PREFIX = "cmp-escalera";
 
-    const BLOQUEOS: Record<EscalonId, string> = {
-      "pista-1": "",
-      "pista-2": "",
-      "paso-a-paso": "Se abre si lo necesitas.",
-      respuesta: "Se desbloquea después de tu intento.",
-    };
+    const ORDEN: EscalonId[] = ["pista-1", "pista-2", "paso-a-paso", "respuesta"];
 
     const {
+      abriendo,
       error,
       nivelAyuda,
       probando,
       progreso,
       respuestaDesbloqueada,
+      siguiente,
       tarea,
-      abrirPasoAPaso,
-      abrirPistas,
+      abrirSiguiente,
       cargar,
       escribirIntento,
       probarIntento,
@@ -47,25 +43,34 @@ export default defineComponent({
 
     const { vozActiva, leer } = useVoz();
 
+    const indiceAlcanzado = computed(() =>
+      progreso.value.alcanzado ? ORDEN.indexOf(progreso.value.alcanzado) : -1,
+    );
+
+    // Los escalones abiertos quedan "hechos"; el último abierto es el actual. Nada se abre solo (RF39).
     const estadoDe = (id: EscalonId): EstadoEscalon => {
-      switch (id) {
-        case "pista-1":
-          return "hecho";
-        case "pista-2":
-          return progreso.value.resultado ? "hecho" : "activo";
-        case "paso-a-paso":
-          return progreso.value.pasoAPasoAbierto ? "abierto" : "bloqueado";
-        case "respuesta":
-          // La respuesta final llega al último y solo después de un intento propio.
-          return respuestaDesbloqueada.value ? "abierto" : "bloqueado";
-      }
+      const indice = ORDEN.indexOf(id);
+      if (indice < indiceAlcanzado.value) return "hecho";
+      if (indice === indiceAlcanzado.value) return id === "respuesta" ? "abierto" : "activo";
+      return "bloqueado";
+    };
+
+    const tituloDe = (id: EscalonId) =>
+      tarea.value?.escalones.find((escalon) => escalon.id === id)?.titulo ?? "";
+
+    // Qué dice un escalón cerrado: si se puede pedir ya, o qué falta para pedirlo.
+    const textoBloqueo = (id: EscalonId): string => {
+      if (id === siguiente.value) return id === "paso-a-paso" ? "Se abre si lo necesitas." : "";
+      if (id === "respuesta" && !respuestaDesbloqueada.value) return "Se desbloquea después de tu intento.";
+      const anterior = ORDEN[ORDEN.indexOf(id) - 1];
+      return anterior ? `Se abre después de ${tituloDe(anterior).toLowerCase()}.` : "";
     };
 
     // "Textos cortos, un paso a la vez": se ocultan los escalones bloqueados.
     const escalonesVisibles = computed(() => {
       const todos = tarea.value?.escalones ?? [];
       return ajustes.value.activos["textos-cortos"]
-        ? todos.filter((escalon) => estadoDe(escalon.id) !== "bloqueado")
+        ? todos.filter((escalon) => estadoDe(escalon.id) !== "bloqueado" || escalon.id === siguiente.value)
         : todos;
     });
 
@@ -85,24 +90,24 @@ export default defineComponent({
       if (vozActiva.value && texto) leer(texto);
     });
 
-    onMounted(async () => {
-      await cargar(props.tareaId);
-      await abrirPistas();
-    });
+    onMounted(() => cargar(props.tareaId));
 
     return {
       RutaEnum,
       PREFIX,
-      BLOQUEOS,
+      abriendo,
       error,
       nivelAyuda,
       probando,
       progreso,
+      siguiente,
       tarea,
-      abrirPasoAPaso,
+      abrirSiguiente,
       escribirIntento,
       probarIntento,
       estadoDe,
+      textoBloqueo,
+      tituloDe,
       escalonesVisibles,
       escalonesOcultos,
     };

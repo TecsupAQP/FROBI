@@ -29,3 +29,13 @@ export interface ArchivoLeido {
 
 // Estados del modal de subida (Figma · 4 y 13): elegir → subiendo → listo | error.
 export type FaseSubida = "elegir" | "subiendo" | "listo" | "error";
+
+// Una guía de la lista "Mis guías": las que subió o pegó la persona y las de ejemplo.
+export interface GuiaResumen {
+  id: string;
+  titulo: string;
+  origen: "ejemplo" | "pdf" | "texto";
+  vistaPrevia: string;
+  // La que se está estudiando ahora.
+  actual: boolean;
+}

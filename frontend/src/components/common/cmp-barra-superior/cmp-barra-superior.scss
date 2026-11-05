@@ -79,9 +79,62 @@ $prefix: cmp-barra-superior;
   }
 
   // El alias solo cabe en escritorio (Figma: la barra móvil y tablet no lo muestran).
-  // En móvil y tablet solo se ve la inicial; en escritorio, también el alias. Lleva a Ajustes.
-  &__alias {
+  // El nombre corto se ve en móvil; el lector de pantalla siempre lee el largo.
+  &__pestana-corta {
+    @include tablet {
+      display: none;
+    }
+  }
+
+  &__pestana-larga {
+    @include solo-lector;
+
+    @include tablet {
+      position: static;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+      clip-path: none;
+      white-space: nowrap;
+    }
+  }
+
+  // Botón del menú lateral: en móvil solo el ícono, desde tablet también la palabra.
+  &__menu {
     display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: $esp-8;
+    min-width: $alto-tactil;
+    min-height: $alto-tactil;
+    padding: 0 $esp-8;
+    border-radius: $radio-12;
+    @include texto-etiqueta;
+    color: $texto-principal;
+
+    &:hover {
+      background-color: $fondo-app;
+    }
+
+    @include tablet {
+      padding: 0 $esp-12;
+    }
+  }
+
+  &__menu-texto {
+    display: none;
+
+    @include tablet {
+      display: inline;
+    }
+  }
+
+  // En móvil no se muestra (Ajustes está en el menú); en tablet, la inicial; en escritorio, también el alias.
+  &__alias {
+    display: none;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -91,6 +144,10 @@ $prefix: cmp-barra-superior;
     border-radius: $radio-pildora;
     @include texto-etiqueta;
     color: $texto-principal;
+
+    @include tablet {
+      display: flex;
+    }
 
     @include escritorio {
       padding: $esp-6 $esp-16 $esp-6 $esp-6;

@@ -1,0 +1,101 @@
+$prefix: cmp-mis-guias;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-16;
+  padding: $esp-20;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-20;
+  background-color: $fondo-superficie;
+
+  @include tablet {
+    padding: $esp-28 $esp-32;
+  }
+
+  &__encabezado {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__secundario {
+    color: $texto-secundario;
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+  }
+
+  // Móvil: icono y textos arriba, acción abajo. Tablet en adelante: todo en una fila.
+  &__guia {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: $esp-12 $esp-16;
+    padding: $esp-14 $esp-16;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-16;
+
+    > :last-child {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+
+    @include tablet {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+
+      > :last-child {
+        grid-column: auto;
+      }
+    }
+
+    &--actual {
+      border-color: $marca-azul;
+      background-color: $marca-azul-claro;
+    }
+  }
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+    color: $marca-azul;
+  }
+
+  &__textos {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-2;
+    min-width: 0;
+  }
+
+  &__nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+    overflow-wrap: anywhere;
+  }
+
+  &__origen {
+    color: $texto-secundario;
+  }
+
+  // Un adelanto de una línea para reconocer la guía.
+  &__vista {
+    overflow: hidden;
+    color: $texto-cuerpo;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
