@@ -241,7 +241,7 @@ Orden según el flujo de la demo; cada paso en TDD (rojo, verde, refactor):
 7. [x] M7: evaluación de las 4 piezas y comparación (sin proveedor: rúbrica y simulación).
 8. [x] M8: preguntas y respuestas con formato sugerido (incluye la pregunta de transferencia, RF24).
 9. [x] M9: revisión de afirmaciones con caso guionado (fuente de verdad: guías de la persona y la guía de ejemplo).
-10. [ ] M10: recomendación sobre el catálogo fijo.
+10. [x] M10: recomendación sobre el catálogo fijo (catálogo versionado en el código; por afirmación de M9 o por necesidad).
 11. [ ] Conectar el proveedor real de IA (si ya se decidió) detrás del puerto.
 
 ### Fase 2 · «Debería» (6 de noviembre)
