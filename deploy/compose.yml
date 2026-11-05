@@ -9,9 +9,11 @@ name: frobi-vps
 
 services:
   web:
+    image: frobi-web:latest
     build:
       context: ../frontend
     restart: unless-stopped
+    mem_limit: 96m
     environment:
       # Sin dominio, Caddy escucha en :80 (http con la IP del VPS).
       FROBI_DOMAIN: ${FROBI_DOMAIN:-:80}
@@ -25,10 +27,12 @@ services:
       - api
 
   api:
+    image: frobi-api:latest
     build:
       context: ../backend
       dockerfile: docker/Dockerfile
     restart: unless-stopped
+    mem_limit: 320m
     environment:
       FROBI_ENVIRONMENT: ${FROBI_ENVIRONMENT:-demo}
       FROBI_DATABASE_URL: postgresql+asyncpg://frobi:${POSTGRES_PASSWORD:?Pon POSTGRES_PASSWORD en deploy/.env}@postgres:5432/frobi
@@ -48,6 +52,7 @@ services:
   postgres:
     image: postgres:16
     restart: unless-stopped
+    mem_limit: 256m
     environment:
       POSTGRES_USER: frobi
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Pon POSTGRES_PASSWORD en deploy/.env}
@@ -63,6 +68,7 @@ services:
   redis:
     image: redis:7
     restart: unless-stopped
+    mem_limit: 64m
     # Guarda las sesiones en disco para que sobrevivan a un reinicio.
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
