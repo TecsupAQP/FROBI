@@ -1,0 +1,35 @@
+$prefix: v-estado-vacio;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $esp-12;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: $esp-32 $esp-20;
+  border-radius: $radio-20;
+  text-align: center;
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: $radio-16;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__texto {
+    color: $texto-cuerpo;
+  }
+}

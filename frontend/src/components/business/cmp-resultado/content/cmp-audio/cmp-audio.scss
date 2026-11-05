@@ -1,0 +1,105 @@
+$prefix: cmp-audio;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-16;
+
+  &__reproductor {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-16;
+    padding: $esp-16;
+    border-radius: $radio-16;
+    background-color: $marca-marino;
+    color: $texto-inverso;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+  }
+
+  &__detalle {
+    color: $marca-azul-claro;
+  }
+
+  &__progreso {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+  }
+
+  &__tiempos {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  // En móvil los controles se reparten en dos filas para no salirse de la tarjeta.
+  &__controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: $esp-12;
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $esp-6;
+    min-height: $alto-tactil;
+    padding: $esp-10 $esp-14;
+    border: $linea-15 solid $marca-azul-claro;
+    border-radius: $radio-pildora;
+    @include texto-etiqueta;
+    color: $texto-inverso;
+
+    &:hover {
+      background-color: $fondo-hover-inverso;
+    }
+
+    &:focus-visible {
+      outline-color: $marca-azul-claro;
+    }
+  }
+
+  &__reproducir {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+
+    &:focus-visible {
+      outline-color: $marca-azul-claro;
+    }
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-10;
+  }
+
+  &__subtitulo {
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__frase {
+    padding: $esp-10 $esp-12;
+    border: $linea-15 solid transparent;
+    border-radius: $radio-10;
+    @include texto-cuerpo-grande;
+    color: $texto-principal;
+
+    &--actual {
+      border-color: $marca-azul;
+      background-color: $marca-azul-claro;
+    }
+  }
+}

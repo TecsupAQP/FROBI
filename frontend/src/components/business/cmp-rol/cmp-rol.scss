@@ -1,0 +1,59 @@
+$prefix: cmp-rol;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-24;
+  }
+
+  &__formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-20;
+    width: 100%;
+
+    @include tablet {
+      gap: $esp-24;
+    }
+  }
+
+  // Móvil y tablet: apiladas. Escritorio: 3 columnas (Figma · 17, paso 1).
+  &__opciones {
+    display: grid;
+    gap: $esp-16;
+    width: 100%;
+
+    @include escritorio {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  &__codigo {
+    margin-top: $esp-4;
+  }
+
+  &__privacidad {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-8;
+    color: $texto-secundario;
+
+    .v-icon {
+      margin-top: $esp-2;
+    }
+  }
+
+  &__continuar {
+    width: 100%;
+
+    @include tablet {
+      width: auto;
+    }
+  }
+}

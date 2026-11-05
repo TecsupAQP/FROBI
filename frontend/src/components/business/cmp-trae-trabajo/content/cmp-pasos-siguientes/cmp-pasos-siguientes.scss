@@ -1,0 +1,61 @@
+$prefix: cmp-pasos-siguientes;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+  border: $linea-15 solid $marca-azul;
+  border-radius: $radio-16;
+  background-color: $marca-azul-claro;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $marca-marino;
+  }
+
+  &__pasos {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+  }
+
+  &__paso {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    color: $texto-principal;
+  }
+
+  &__numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul;
+    @include texto-etiqueta;
+    color: $texto-inverso;
+  }
+
+  &__privacidad {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-10;
+    padding: $esp-12;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+    color: $texto-cuerpo;
+
+    .v-icon {
+      color: $marca-azul;
+      margin-top: 1px;
+    }
+  }
+}

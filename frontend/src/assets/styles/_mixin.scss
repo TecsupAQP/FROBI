@@ -1,0 +1,104 @@
+@use "variables" as *;
+
+// Mobile-first: la base es móvil (desde 360 px) y solo se usa min-width.
+@mixin tablet {
+  @media (min-width: $tablet) {
+    @content;
+  }
+}
+
+@mixin escritorio {
+  @media (min-width: $escritorio) {
+    @content;
+  }
+}
+
+@mixin texto-titulo-xl {
+  font-size: 40px;
+  font-weight: $peso-bold;
+  line-height: 48px;
+}
+
+@mixin texto-titulo {
+  font-size: 28px;
+  font-weight: $peso-bold;
+  line-height: 36px;
+}
+
+@mixin texto-subtitulo {
+  font-size: 20px;
+  font-weight: $peso-bold;
+  line-height: 28px;
+}
+
+@mixin texto-cuerpo-grande {
+  font-size: 18px;
+  font-weight: $peso-regular;
+  line-height: 28px;
+}
+
+@mixin texto-cuerpo {
+  font-size: 16px;
+  font-weight: $peso-regular;
+  line-height: 24px;
+}
+
+@mixin texto-etiqueta {
+  font-size: 16px;
+  font-weight: $peso-semibold;
+  line-height: 24px;
+}
+
+@mixin texto-boton {
+  font-size: 16px;
+  font-weight: $peso-bold;
+  line-height: 24px;
+}
+
+// Modificadores --contexto/--objetivo/--nivel/--formato con su fondo y borde fijos.
+@mixin colores-pieza {
+  &--contexto {
+    background-color: $pieza-contexto-fondo;
+    border-color: $pieza-contexto-borde;
+  }
+
+  &--objetivo {
+    background-color: $pieza-objetivo-fondo;
+    border-color: $pieza-objetivo-borde;
+  }
+
+  &--nivel {
+    background-color: $pieza-nivel-fondo;
+    border-color: $pieza-nivel-borde;
+  }
+
+  &--formato {
+    background-color: $pieza-formato-fondo;
+    border-color: $pieza-formato-borde;
+  }
+}
+
+@mixin foco-visible {
+  &:focus-visible {
+    outline: 3px solid $marca-azul;
+    outline-offset: 2px;
+  }
+}
+
+@mixin tarjeta {
+  background-color: $fondo-superficie;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-16;
+}
+
+@mixin solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

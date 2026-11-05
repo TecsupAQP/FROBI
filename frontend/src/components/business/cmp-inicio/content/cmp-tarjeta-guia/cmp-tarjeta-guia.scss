@@ -1,0 +1,71 @@
+$prefix: cmp-tarjeta-guia;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-16;
+  padding: $esp-20;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-20;
+  background-color: $fondo-superficie;
+
+  @include tablet {
+    padding: $esp-32;
+  }
+
+  &__encabezado {
+    display: flex;
+    align-items: center;
+    gap: $esp-16;
+  }
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: $radio-16;
+    background-color: $marca-azul;
+    color: $texto-inverso;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__meta {
+    color: $texto-secundario;
+  }
+
+  &__descripcion {
+    @include texto-cuerpo-grande;
+    color: $texto-cuerpo;
+  }
+
+  &__etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $esp-8;
+  }
+
+  &__etiqueta {
+    padding: $esp-4 $esp-12;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-8;
+    background-color: $fondo-app;
+    color: $texto-cuerpo;
+  }
+
+  // Móvil: a todo el ancho. Tablet+: tamaño de su contenido.
+  &__abrir {
+    width: 100%;
+
+    @include tablet {
+      align-self: flex-start;
+      width: auto;
+    }
+  }
+}

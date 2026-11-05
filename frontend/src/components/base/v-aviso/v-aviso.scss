@@ -1,0 +1,52 @@
+$prefix: v-aviso;
+
+.#{$prefix} {
+  display: flex;
+  align-items: center;
+  gap: $esp-10;
+  width: 100%;
+  padding: $esp-12 $esp-16;
+  border-radius: $radio-12;
+  @include texto-cuerpo;
+
+  &__texto {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &--info {
+    background-color: $fondo-app;
+    color: $texto-cuerpo;
+
+    .v-icon {
+      color: $marca-azul;
+    }
+  }
+
+  // Nota sin fondo: "La IA puede equivocarse; contrasta con tu guía."
+  &--nota {
+    align-items: flex-start;
+    gap: $esp-8;
+    padding: 0;
+    color: $texto-secundario;
+
+    .v-icon {
+      margin-top: $esp-2;
+    }
+  }
+
+  &--aviso {
+    background-color: $estado-aviso-fondo;
+    color: $estado-aviso-texto;
+  }
+
+  &--exito {
+    background-color: $estado-exito-fondo;
+    color: $estado-exito;
+  }
+
+  &--error {
+    background-color: $estado-error-fondo;
+    color: $estado-error;
+  }
+}

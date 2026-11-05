@@ -1,0 +1,151 @@
+$prefix: cmp-pregunta;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-14;
+  padding: $esp-16;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__enunciado {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__opciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-10;
+    width: 100%;
+  }
+
+  &__opcion {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    width: 100%;
+    min-height: $alto-campo;
+    padding: $esp-12 $esp-16;
+    border: $linea-15 solid $borde-campo;
+    border-radius: $radio-14;
+    background-color: $fondo-superficie;
+    text-align: left;
+
+    &:hover:not([aria-disabled="true"]) {
+      border-color: $marca-azul;
+    }
+
+    &[aria-disabled="true"] {
+      cursor: default;
+    }
+
+    &--correcta {
+      border: $linea-2 solid $estado-exito;
+      background-color: $estado-exito-fondo;
+
+      .#{$prefix}__letra {
+        background-color: $estado-exito;
+        color: $texto-inverso;
+      }
+
+      .#{$prefix}__veredicto {
+        color: $estado-exito;
+      }
+    }
+
+    &--incorrecta {
+      border: $linea-2 solid $estado-error;
+      background-color: $estado-error-fondo;
+
+      .#{$prefix}__letra {
+        background-color: $estado-error;
+        color: $texto-inverso;
+      }
+
+      .#{$prefix}__veredicto {
+        color: $estado-error;
+      }
+    }
+  }
+
+  &__letra {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__texto {
+    flex: 1 1 0;
+    @include texto-cuerpo-grande;
+    color: $texto-principal;
+  }
+
+  &__veredicto {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    @include texto-etiqueta;
+  }
+
+  &__opcion--revisando {
+    border: $linea-2 solid $marca-azul;
+    background-color: $marca-azul-claro;
+  }
+
+  &__opcion--atenuada {
+    opacity: 0.45;
+  }
+
+  &__revisando {
+    padding: $esp-12 $esp-14;
+    border: $linea-15 solid $marca-azul;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+  }
+
+  &__vivo {
+    width: 100%;
+  }
+
+  &__respuesta {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-12;
+    width: 100%;
+    padding: $esp-14 $esp-16;
+    border: $linea-15 solid;
+    border-radius: $radio-14;
+
+    &--bien {
+      border-color: $estado-exito;
+      background-color: $estado-exito-fondo;
+      color: $estado-exito;
+    }
+
+    &--mal {
+      border-color: $estado-error;
+      background-color: $estado-error-fondo;
+      color: $estado-error;
+    }
+  }
+
+  &__respuesta-titulo {
+    @include texto-etiqueta;
+  }
+
+  &__respuesta-texto {
+    color: $texto-cuerpo;
+  }
+}

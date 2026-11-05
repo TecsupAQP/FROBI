@@ -1,0 +1,106 @@
+$prefix: cmp-autonomia;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+
+  @include tablet {
+    padding: $esp-20;
+  }
+
+  @include escritorio {
+    padding: $esp-24;
+  }
+
+  &__encabezado {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__titulo {
+    flex: 1 1 0;
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__nivel {
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  // Móvil: niveles apilados. Tablet y escritorio: 3 en fila.
+  &__niveles {
+    display: grid;
+    gap: $esp-10;
+
+    @include tablet {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    padding: $esp-12 $esp-14;
+    border: $linea-15 solid $borde-suave;
+    border-radius: $radio-14;
+    background-color: $fondo-superficie;
+
+    &--superado {
+      border-color: $estado-exito;
+      background-color: $estado-exito-fondo;
+
+      .#{$prefix}__marca {
+        background-color: $estado-exito;
+        color: $texto-inverso;
+      }
+    }
+
+    &--actual {
+      border: $linea-2 solid $marca-azul;
+      background-color: $marca-azul-claro;
+
+      .#{$prefix}__marca {
+        background-color: $marca-azul;
+        color: $texto-inverso;
+      }
+    }
+  }
+
+  &__marca {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $borde-suave;
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  &__textos {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__detalle {
+    color: $texto-cuerpo;
+  }
+
+  &__mensaje {
+    color: $texto-secundario;
+  }
+}

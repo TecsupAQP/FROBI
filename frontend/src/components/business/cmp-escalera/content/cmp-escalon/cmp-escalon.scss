@@ -1,0 +1,63 @@
+$prefix: cmp-escalon;
+
+.#{$prefix} {
+  display: flex;
+  align-items: flex-start;
+  gap: $esp-12;
+  padding: $esp-14;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-12;
+  background-color: $fondo-app;
+
+  &__marca {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul;
+    @include texto-etiqueta;
+    color: $texto-inverso;
+  }
+
+  &__cuerpo {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-6;
+    min-width: 0;
+  }
+
+  &__titulo {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__texto {
+    color: $texto-cuerpo;
+  }
+
+  &__bloqueo {
+    color: $texto-secundario;
+  }
+
+  &--hecho .#{$prefix}__marca {
+    background-color: $estado-exito;
+  }
+
+  &--activo {
+    border: $linea-2 solid $marca-azul;
+    background-color: $marca-azul-claro;
+  }
+
+  &--abierto {
+    border-color: $marca-azul;
+    background-color: $fondo-superficie;
+  }
+
+  &--bloqueado .#{$prefix}__marca {
+    background-color: $borde-campo;
+  }
+}

@@ -1,0 +1,96 @@
+$prefix: cmp-comparacion;
+
+// Móvil: una debajo de otra. Tablet y escritorio: lado a lado.
+.#{$prefix} {
+  display: grid;
+  gap: $esp-16;
+
+  @include tablet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  @include escritorio {
+    gap: $esp-16;
+  }
+
+  &__tuya,
+  &__mejorada {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+    border-radius: $radio-16;
+    background-color: $fondo-superficie;
+
+    @include tablet {
+      padding: $esp-20;
+    }
+
+    @include escritorio {
+      padding: $esp-20 $esp-20 $esp-20;
+    }
+  }
+
+  &__tuya {
+    border: $linea-1 solid $borde-suave;
+  }
+
+  &__mejorada {
+    border: $linea-15 solid $estado-exito;
+  }
+
+  &__encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-12;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__conteo {
+    @include texto-etiqueta;
+    white-space: nowrap;
+
+    &--falta {
+      color: $estado-error;
+    }
+
+    &--completa {
+      color: $estado-exito;
+    }
+  }
+
+  &__original {
+    padding: $esp-10 $esp-12;
+    border: $linea-15 solid $borde-campo;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+    @include texto-cuerpo-grande;
+    color: $texto-principal;
+  }
+
+  &__faltan {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-10;
+  }
+
+  &__falta {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    @include texto-etiqueta;
+    color: $estado-error;
+  }
+
+  &__piezas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+  }
+}

@@ -1,0 +1,23 @@
+$prefix: v-tarjeta-pieza;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-2;
+  width: 100%;
+  padding: $esp-10 $esp-12 $esp-10 $esp-14;
+  border: $linea-15 solid;
+  border-left-width: $linea-6;
+  border-radius: $radio-12;
+  color: $texto-principal;
+
+  &__nombre {
+    @include texto-etiqueta;
+  }
+
+  &__texto {
+    @include texto-cuerpo;
+  }
+
+  @include colores-pieza;
+}

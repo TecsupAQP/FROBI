@@ -1,0 +1,168 @@
+$prefix: cmp-asistente;
+
+.#{$prefix} {
+  &__encabezado {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+  }
+
+  &__titulo {
+    @include texto-titulo;
+    color: $texto-principal;
+
+    @include tablet {
+      @include texto-titulo-xl;
+    }
+  }
+
+  &__subtitulo {
+    @include texto-cuerpo-grande;
+    color: $texto-secundario;
+  }
+
+  &__opciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-24;
+  }
+
+  &__grupo {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-24;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  // Móvil: una columna. Tablet y escritorio: dos (Figma · 22, paso 2).
+  &__rejilla {
+    display: grid;
+    gap: $esp-12;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__no-se {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    min-height: $alto-tactil;
+    padding: $esp-14;
+    border: $linea-1 dashed $borde-suave;
+    border-radius: $radio-16;
+    background-color: $fondo-superficie;
+    @include texto-etiqueta;
+    color: $texto-principal;
+    cursor: pointer;
+
+    span {
+      flex: 1 1 0;
+    }
+
+    .v-icon {
+      color: $texto-principal;
+    }
+
+    &:has(:focus-visible) {
+      outline: 3px solid $marca-azul;
+      outline-offset: 2px;
+    }
+
+    &--elegida {
+      border: $linea-2 solid $marca-azul;
+      background-color: $marca-azul-claro;
+    }
+  }
+
+  &__check.v-icon {
+    color: $marca-azul;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: $esp-12;
+
+    @include tablet {
+      flex-direction: row;
+    }
+  }
+
+  &__vista {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__vista-etiqueta {
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__vista-paso {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  &__vista-texto {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__vista-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $esp-8;
+    margin-top: $esp-4;
+  }
+
+  &__activamos {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-10;
+  }
+
+  &__subtitulo-seccion {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: $esp-8;
+      color: $texto-cuerpo;
+    }
+
+    .v-icon {
+      margin-top: $esp-2;
+      color: $estado-exito;
+    }
+  }
+
+  &__secundario {
+    color: $texto-secundario;
+  }
+
+  &__acompanante {
+    align-self: stretch;
+    white-space: normal;
+  }
+}

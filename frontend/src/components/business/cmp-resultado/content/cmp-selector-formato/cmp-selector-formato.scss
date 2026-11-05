@@ -1,0 +1,64 @@
+$prefix: cmp-selector-formato;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-8;
+
+  &__titulo {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  // Móvil: 2 × 2. Tablet y escritorio: 4 en fila.
+  &__opciones {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $esp-8;
+
+    @include tablet {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: $esp-12;
+    }
+  }
+
+  &__opcion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $esp-8;
+    min-height: $alto-tactil;
+    padding: $esp-8 $esp-12;
+    border: $linea-15 solid $borde-campo;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+    @include texto-etiqueta;
+    color: $texto-principal;
+    white-space: nowrap;
+    transition:
+      background-color $duracion-rapida,
+      border-color $duracion-rapida;
+
+    .v-icon {
+      color: $marca-azul;
+    }
+
+    &:hover:not(.#{$prefix}__opcion--activa) {
+      border-color: $marca-azul;
+    }
+
+    &--activa {
+      border-color: $marca-azul;
+      background-color: $marca-azul;
+      color: $texto-inverso;
+
+      .v-icon {
+        color: $texto-inverso;
+      }
+    }
+
+    @include escritorio {
+      padding: $esp-12;
+    }
+  }
+}

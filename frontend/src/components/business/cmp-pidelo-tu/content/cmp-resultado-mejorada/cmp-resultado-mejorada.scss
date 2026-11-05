@@ -1,0 +1,37 @@
+$prefix: cmp-resultado-mejorada;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-12;
+  padding: $esp-16;
+  color: $texto-cuerpo;
+
+  @include tablet {
+    padding: $esp-20;
+  }
+
+  &__titulo {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    @include texto-subtitulo;
+    color: $texto-principal;
+
+    .v-icon {
+      color: $marca-azul;
+    }
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    margin-top: $esp-4;
+
+    @include tablet {
+      flex-direction: row;
+    }
+  }
+}

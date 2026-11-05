@@ -1,0 +1,104 @@
+$prefix: v-modal;
+
+// Móvil: hoja inferior a todo el ancho. Tablet/escritorio: diálogo centrado (560 / 720 px).
+.#{$prefix} {
+  position: fixed;
+  inset: 0;
+  z-index: $capa-modal;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background-color: $fondo-oscuro;
+
+  @include tablet {
+    align-items: center;
+    padding: $esp-24;
+  }
+
+  &__dialogo {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+    width: 100%;
+    max-height: calc(100dvh - #{$esp-24});
+    overflow-y: auto;
+    padding: $esp-24 $esp-16 $esp-16;
+    border-radius: $radio-24 $radio-24 0 0;
+    background-color: $fondo-superficie;
+    box-shadow: $sombra-modal;
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    @include tablet {
+      max-width: 560px;
+      padding: $esp-32;
+      border-radius: $radio-24;
+    }
+
+    @include escritorio {
+      max-width: 720px;
+    }
+  }
+
+  &__encabezado {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__titulos {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-4;
+    min-width: 0;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__descripcion {
+    @include texto-cuerpo;
+    color: $texto-secundario;
+  }
+
+  &__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+  }
+
+  // Móvil: acción principal arriba y a todo el ancho. Tablet+: alineadas a la derecha.
+  &__pie {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: $esp-12;
+
+    :slotted(.v-button) {
+      width: 100%;
+    }
+
+    @include tablet {
+      flex-direction: row;
+      justify-content: flex-end;
+
+      :slotted(.v-button) {
+        width: auto;
+      }
+    }
+  }
+}
+
+.#{$prefix}-enter-active,
+.#{$prefix}-leave-active {
+  transition: opacity $duracion-rapida ease;
+}
+
+.#{$prefix}-enter-from,
+.#{$prefix}-leave-to {
+  opacity: 0;
+}

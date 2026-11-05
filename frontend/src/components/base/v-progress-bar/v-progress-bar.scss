@@ -1,0 +1,35 @@
+$prefix: v-progress-bar;
+
+.#{$prefix} {
+  display: flex;
+  width: 100%;
+  height: $esp-8;
+  border-radius: $radio-pildora;
+  overflow: hidden;
+  background-color: $borde-suave;
+
+  &__relleno {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    transition: width $duracion-carga ease;
+  }
+
+  &--marca .#{$prefix}__relleno {
+    background-color: $marca-azul;
+  }
+
+  &--exito .#{$prefix}__relleno {
+    background-color: $estado-exito;
+  }
+
+  // Sobre fondo marino (reproductor de audio)
+  &--claro {
+    background-color: $texto-secundario;
+
+    .#{$prefix}__relleno {
+      border-radius: 0;
+      background-color: $marca-azul-claro;
+    }
+  }
+}

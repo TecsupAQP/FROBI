@@ -1,0 +1,44 @@
+$prefix: cmp-plantilla;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-14;
+  padding: $esp-16;
+  border: $linea-15 solid $marca-azul;
+  border-radius: $radio-16;
+  background-color: $marca-azul-claro;
+  color: $texto-cuerpo;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__titulo {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    @include texto-subtitulo;
+    color: $marca-marino;
+
+    .v-icon {
+      color: $marca-azul;
+    }
+  }
+
+  &__piezas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    width: 100%;
+  }
+
+  .v-button {
+    width: 100%;
+
+    @include tablet {
+      width: auto;
+    }
+  }
+}

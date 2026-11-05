@@ -1,0 +1,116 @@
+$prefix: cmp-sin-ia;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-24;
+  }
+
+  @include escritorio {
+    gap: $esp-28;
+  }
+
+  > :deep(.cmp-encabezado-pagina) {
+    align-self: stretch;
+  }
+
+  &__cargando {
+    display: flex;
+    align-self: stretch;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+    width: 100%;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-24;
+    }
+  }
+
+  &__principal {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-20;
+    min-width: 0;
+
+    @include escritorio {
+      gap: $esp-24;
+    }
+  }
+
+  &__tarjeta,
+  &__lateral {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__lateral {
+    align-items: flex-start;
+
+    @include escritorio {
+      width: $ancho-lateral;
+      flex-shrink: 0;
+    }
+
+    .v-button {
+      align-self: stretch;
+    }
+  }
+
+  &__enunciado,
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__texto {
+    color: $texto-cuerpo;
+  }
+
+  &__criterios {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  &__guia {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+    padding: $esp-12 $esp-14;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+    color: $texto-principal;
+  }
+
+  &__guia-titulo {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  &__secundario {
+    color: $texto-secundario;
+  }
+}

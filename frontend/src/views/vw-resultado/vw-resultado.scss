@@ -1,0 +1,8 @@
+// Móvil: botón a todo el ancho. Tablet: alineado a la derecha.
+.vw-resultado__pidelo {
+  width: 100%;
+
+  @include tablet {
+    width: auto;
+  }
+}

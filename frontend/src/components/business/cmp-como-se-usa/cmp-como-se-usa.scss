@@ -1,0 +1,86 @@
+.cmp-como-se-usa {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-24;
+
+  &__encabezado {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-6;
+  }
+
+  &__titulo {
+    @include texto-titulo;
+    color: $texto-principal;
+
+    @include tablet {
+      @include texto-titulo-xl;
+    }
+  }
+
+  &__descripcion {
+    @include texto-cuerpo-grande;
+    color: $texto-secundario;
+  }
+
+  &__leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__leyenda-texto {
+    color: $texto-secundario;
+  }
+
+  // Móvil una columna, tablet dos, escritorio tres (Figma: 3 × 3).
+  &__pasos {
+    display: grid;
+    gap: $esp-20;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include escritorio {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  &__paso {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-10;
+    padding: $esp-20 $esp-24 $esp-24;
+  }
+
+  &__chip {
+    margin-bottom: $esp-4;
+  }
+
+  &__paso-titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__paso-texto {
+    color: $texto-cuerpo;
+  }
+
+  &__enlace {
+    display: inline-flex;
+    align-items: center;
+    gap: $esp-8;
+    min-height: $alto-tactil;
+    @include texto-etiqueta;
+    color: $marca-azul;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

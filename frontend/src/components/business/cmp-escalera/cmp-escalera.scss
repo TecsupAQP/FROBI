@@ -1,0 +1,123 @@
+$prefix: cmp-escalera;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-24;
+  }
+
+  @include escritorio {
+    gap: $esp-28;
+  }
+
+  > :deep(.cmp-encabezado-pagina) {
+    align-self: stretch;
+  }
+
+  &__cargando {
+    display: flex;
+    align-self: stretch;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+    width: 100%;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-24;
+    }
+  }
+
+  &__escalera,
+  &__lateral {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__escalera {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &__lateral {
+    align-items: flex-start;
+
+    @include escritorio {
+      width: $ancho-lateral;
+      flex-shrink: 0;
+    }
+
+    .v-button {
+      align-self: stretch;
+    }
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__texto {
+    color: $texto-cuerpo;
+  }
+
+  &__escalones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+  }
+
+  &__intento {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+    margin-top: $esp-2;
+  }
+
+  &__resultado {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-8;
+    margin-top: $esp-4;
+    padding: $esp-10 $esp-12;
+    border-radius: $radio-10;
+
+    .v-icon {
+      margin-top: $esp-2;
+    }
+
+    &--bien {
+      background-color: $estado-exito-fondo;
+      color: $estado-exito;
+    }
+
+    &--revisar {
+      background-color: $estado-aviso-fondo;
+      color: $estado-aviso-texto;
+    }
+  }
+
+  &__nota {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    color: $texto-secundario;
+  }
+}

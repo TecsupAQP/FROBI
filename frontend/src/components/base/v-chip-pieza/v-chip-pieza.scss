@@ -1,0 +1,20 @@
+$prefix: v-chip-pieza;
+
+.#{$prefix} {
+  display: inline-flex;
+  align-items: center;
+  padding: $esp-4 $esp-14;
+  border: $linea-2 solid;
+  border-radius: $radio-8;
+  @include texto-etiqueta;
+  color: $texto-principal;
+  white-space: nowrap;
+
+  @include colores-pieza;
+}
+
+// Variante de los puntajes y listas: borde más fino.
+.#{$prefix}--compacto {
+  padding: $esp-4 $esp-12;
+  border-width: $linea-15;
+}
