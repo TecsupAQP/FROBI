@@ -17,6 +17,50 @@
           <h3 :class="`${PREFIX}__nombre`">{{ guia.titulo }}</h3>
           <p :class="`${PREFIX}__origen`">{{ ORIGENES[guia.origen] }}</p>
           <p :class="`${PREFIX}__vista`">{{ guia.vistaPrevia }}</p>
+          <div v-if="guia.enClase" :class="`${PREFIX}__clase`">
+            <div :class="`${PREFIX}__avance`">
+              <v-progress-bar
+                :class="`${PREFIX}__barra`"
+                :valor="guia.enClase.avance"
+                :etiqueta="`Avance en ${guia.titulo}`"
+                :texto-valor="resumenAvance(guia.enClase)"
+                :tono="guia.enClase.avance === 100 ? 'exito' : 'marca'"
+              />
+              <span :class="`${PREFIX}__porcentaje`">{{ guia.enClase.avance }} %</span>
+            </div>
+            <p :class="`${PREFIX}__secundario`">{{ resumenAvance(guia.enClase) }}</p>
+            <ol v-if="guia.enClase.modo === 'tareas'" :class="`${PREFIX}__tareas`">
+              <li v-for="tarea in guia.enClase.tareas" :key="tarea.ref" :class="`${PREFIX}__tarea`">
+                <v-icon
+                  :class="`${PREFIX}__marca`"
+                  :nombre="tarea.hecha ? 'check-circle' : 'clock'"
+                  :tamano="20"
+                  :etiqueta="tarea.hecha ? 'Hecha' : 'Pendiente'"
+                />
+                <span :class="`${PREFIX}__enunciado`">{{ tarea.enunciado }}</span>
+                <v-button
+                  variante="texto"
+                  icono-fin="arrow"
+                  :deshabilitado="eligiendo !== null"
+                  :etiqueta="`${tarea.hecha ? 'Repasar' : 'Resolver'} la tarea ${tarea.numero}`"
+                  @click="$emit('resolver', guia.id, tarea.ref)"
+                >
+                  {{ tarea.hecha ? "Repasar" : "Resolver" }}
+                </v-button>
+              </li>
+            </ol>
+            <v-button
+              v-else
+              variante="secundario"
+              icono="check"
+              :class="`${PREFIX}__evaluar`"
+              :deshabilitado="eligiendo !== null"
+              :etiqueta="`Evaluación final de ${guia.titulo}`"
+              @click="$emit('evaluar', guia.id)"
+            >
+              {{ guia.enClase.evaluacion ? "Repetir la evaluación final" : "Hacer la evaluación final" }}
+            </v-button>
+          </div>
         </div>
         <v-chip v-if="guia.actual" tono="exito" icono="check">Estás estudiando esta</v-chip>
         <v-button

@@ -104,7 +104,7 @@ export class MaterialUseCase implements MaterialPort {
       };
     } catch (error) {
       if (esErrorApi(error, "Materials.PdfUnreadable") || (esErrorApi(error) && error.status === 422)) {
-        throw new PdfIlegibleError();
+        throw new PdfIlegibleError(error instanceof Error ? error.message : undefined);
       }
       throw error;
     } finally {

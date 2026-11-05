@@ -11,6 +11,9 @@
       <div :class="`${PREFIX}__progreso`">
         <v-progress-bar :valor="progreso" etiqueta="Leyendo tu PDF" />
         <p :class="`${PREFIX}__progreso-texto`" aria-live="polite">Leyendo tu PDF… {{ progreso }} %</p>
+        <p :class="`${PREFIX}__archivo-detalle`">
+          Si es un PDF escaneado o con fotos, lo leemos con IA: puede tardar hasta un minuto.
+        </p>
       </div>
       <v-button :class="`${PREFIX}__cancelar`" variante="secundario" @click="$emit('cancelar')"
         >Cancelar</v-button
@@ -21,7 +24,7 @@
       <div :class="`${PREFIX}__error`" role="alert">
         <v-icon nombre="alert" :tamano="28" />
         <p :class="`${PREFIX}__error-titulo`">No pudimos leer este PDF</p>
-        <p>Parece una imagen escaneada. Prueba con un PDF con texto seleccionable o pega el texto aquí.</p>
+        <p>{{ motivoError || "Prueba con otro PDF o pega el texto aquí." }}</p>
       </div>
       <div :class="`${PREFIX}__acciones-error`">
         <v-button @click="abrirSelector">Elegir otro PDF</v-button>

@@ -14,6 +14,7 @@ from .deps import (
     get_clock,
     get_db_session,
     get_llm,
+    get_pdf_transcriber,
     get_redis,
     get_settings,
 )
@@ -35,6 +36,7 @@ __all__ = [
     "get_clock",
     "get_db_session",
     "get_llm",
+    "get_pdf_transcriber",
     "get_redis",
     "get_settings",
     "health_router",

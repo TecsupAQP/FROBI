@@ -97,6 +97,7 @@ export const api = {
   get: <T>(ruta: string, consulta?: OpcionesPeticion["consulta"]) => peticion<T>("GET", ruta, { consulta }),
   post: <T>(ruta: string, cuerpo?: unknown) => peticion<T>("POST", ruta, { cuerpo }),
   patch: <T>(ruta: string, cuerpo: unknown) => peticion<T>("PATCH", ruta, { cuerpo }),
+  put: <T>(ruta: string, cuerpo: unknown) => peticion<T>("PUT", ruta, { cuerpo }),
   delete: <T = void>(ruta: string) => peticion<T>("DELETE", ruta),
   enviarFormulario: <T>(ruta: string, formulario: FormData) => peticion<T>("POST", ruta, { formulario }),
 };

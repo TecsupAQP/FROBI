@@ -249,6 +249,33 @@ export interface MaterialClaseDto {
   title: string;
   preview: string;
   created_at: string;
+  mode: ModoGuiaApi;
+  tasks: TareaGuiaDto[];
+}
+
+export type ModoGuiaApi = "study" | "tasks";
+
+export interface TareaGuiaDto {
+  id: string;
+  position: number;
+  statement: string;
+  task_ref: string;
+}
+
+export interface AvanceGuiaDto {
+  material_id: string;
+  mode: ModoGuiaApi;
+  completion: number;
+  done_task_ids: string[];
+  evaluation: { correct: number; total: number } | null;
+}
+
+export interface AvanceGuiaClaseDto {
+  material_id: string;
+  title: string;
+  mode: ModoGuiaApi;
+  tasks_total: number;
+  students: { person_id: string; alias: string; completion: number }[];
 }
 
 export interface MiembroDto {

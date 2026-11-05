@@ -89,7 +89,7 @@ class UploadMaterialHandler:
         spans = await self._topics.find(
             normalize_title(command.title),
             text,
-            page_offsets=page_offsets,
+            page_offsets=page_offsets if pdf.paginated else (),
             outline=pdf.outline,
             headings=pdf.headings,
         )

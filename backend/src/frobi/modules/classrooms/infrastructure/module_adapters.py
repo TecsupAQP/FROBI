@@ -5,8 +5,8 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from frobi.modules import adaptations, comprehension, identity, materials, prompt_coach, tutoring
-from frobi.modules.classrooms.application.ports import ClassActivity, ClassMaterial
-from frobi.shared.infrastructure.llm import LlmClient
+from frobi.modules.classrooms.application.ports import ClassActivity, ClassMaterial, GuideActivity
+from frobi.shared.infrastructure.llm import LlmClient, PdfTranscriber
 
 from .sqlalchemy_repositories import SqlAlchemyMembershipRepository
 
@@ -23,6 +23,23 @@ class ClassActivityReaderAdapter:
             help=await tutoring.help_in_class(self._session, class_id),
             answers=await comprehension.answers_in_class(self._session, class_id),
             prompt_scores=await prompt_coach.scores_in_class(self._session, class_id),
+        )
+
+
+class GuideActivityReaderAdapter:
+    """What the guides' progress is made of, read «in this class» from each module (RNF16)."""
+
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
+    async def read(self, class_id: UUID) -> GuideActivity:
+        guide_adaptations = await adaptations.guide_adaptations_in_class(self._session, class_id)
+        return GuideActivity(
+            adaptations=guide_adaptations,
+            questions=await comprehension.question_results(
+                self._session, [a.adaptation_id for a in guide_adaptations]
+            ),
+            attempts=await tutoring.task_attempts_in_class(self._session, class_id),
         )
 
 
@@ -68,9 +85,15 @@ def _class_material(material: materials.Material) -> ClassMaterial:
 
 class ClassMaterialsAdapter:
     def __init__(
-        self, session: AsyncSession, llm: LlmClient | None = None, timeout_seconds: float = 15.0
+        self,
+        session: AsyncSession,
+        transcriber: PdfTranscriber | None = None,
+        llm: LlmClient | None = None,
+        timeout_seconds: float = 15.0,
     ) -> None:
-        self._content = materials.class_content_handler(session, llm, timeout_seconds)
+        """Only the upload needs ``transcriber`` (scanned PDFs) and ``llm`` (topics of long
+        texts with no headings)."""
+        self._content = materials.class_content_handler(session, transcriber, llm, timeout_seconds)
 
     async def add_text(
         self, teacher_id: UUID, class_id: UUID, title: str, text: str

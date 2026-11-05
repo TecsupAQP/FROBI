@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     llm_model: str | None = None
     llm_base_url: str | None = None
     llm_timeout_seconds: float = Field(default=15.0, gt=0)
+    # Reading a scanned PDF with Claude (up to 20 pages) takes longer than a normal AI call.
+    llm_pdf_timeout_seconds: float = Field(default=90.0, gt=0)
     llm_requests_per_minute: int = Field(default=10, ge=1)
     health_timeout_seconds: float = Field(default=2.0, gt=0)
     # Chat assistant (needs FROBI_LLM_PROVIDER=anthropic and FROBI_LLM_API_KEY).

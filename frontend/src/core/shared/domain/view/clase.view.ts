@@ -41,11 +41,46 @@ export interface ClaseResumen {
 }
 
 // Material que el docente sube a la clase: lo ven sus alumnos unidos.
+// Guía de estudio: sin tareas, la IA evalúa al final. Guía con tareas: las escribe el docente.
+export type ModoGuia = "estudio" | "tareas";
+
+export interface TareaGuia {
+  id: string;
+  numero: number;
+  enunciado: string;
+  // Lo que la escalera de ayuda registra como tarea ("tarea-{id}").
+  ref: string;
+}
+
 export interface MaterialClase {
   id: string;
   titulo: string;
   vistaPrevia: string;
   fecha: string;
+  modo: ModoGuia;
+  tareas: TareaGuia[];
+}
+
+export interface PlanGuia {
+  modo: ModoGuia;
+  tareas: string[];
+}
+
+// Avance de 0 a 100: tareas hechas sobre el total, o aciertos de la evaluación final.
+export interface AvanceGuia {
+  materialId: string;
+  modo: ModoGuia;
+  avance: number;
+  tareasHechas: string[];
+  evaluacion: { aciertos: number; total: number } | null;
+}
+
+export interface AvanceGuiaClase {
+  materialId: string;
+  titulo: string;
+  modo: ModoGuia;
+  totalTareas: number;
+  alumnos: { personaId: string; alias: string; avance: number }[];
 }
 
 export interface NuevaClase {

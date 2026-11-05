@@ -10,8 +10,11 @@ import { tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
 import { SinGuiaError } from "@/core/shared/application/util/errores.util";
 import { useCmpEscaleraStore } from "@/store/business/cmp-escalera/cmp-escalera.store";
 import { useCmpSesionStore } from "@/store/common/cmp-sesion/cmp-sesion.store";
-import { listarMaterialesClaseService } from "@/core/clase/infraestructure/adapters/in/service/clase.service";
-import type { MaterialClase } from "@/core/shared/domain/view/clase.view";
+import {
+  listarMaterialesClaseService,
+  miAvanceGuiasService,
+} from "@/core/clase/infraestructure/adapters/in/service/clase.service";
+import type { AvanceGuia, MaterialClase } from "@/core/shared/domain/view/clase.view";
 import { useCmpResultadoStore } from "@/store/business/cmp-resultado/cmp-resultado.store";
 import { PdfIlegibleError } from "@/core/material/infraestructure/ports/in/material.port";
 import {
@@ -32,6 +35,8 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
   const archivoElegido = ref<File | null>(null);
   const nombreArchivo = ref("");
   const tamanoArchivoMb = ref(0);
+  // Por qué no se pudo leer el PDF, en palabras de la API.
+  const motivoError = ref("");
 
   let subidaActual = 0;
 
@@ -47,24 +52,43 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
 
   // Lo que el docente subió a la clase del estudiante (vacío si no está en una clase).
   const materialesClase = ref<MaterialClase[]>([]);
+  const avancesClase = ref<AvanceGuia[]>([]);
   const nombreClase = computed(() => useCmpSesionStore().clase?.nombre ?? "");
   const guiasClase = computed<GuiaResumen[]>(() =>
-    materialesClase.value.map((material) => ({
-      id: material.id,
-      titulo: material.titulo,
-      origen: "clase",
-      vistaPrevia: material.vistaPrevia,
-      actual: material.id === guia.value?.id,
-    })),
+    materialesClase.value.map((material) => {
+      const avance = avancesClase.value.find((item) => item.materialId === material.id);
+      return {
+        id: material.id,
+        titulo: material.titulo,
+        origen: "clase",
+        vistaPrevia: material.vistaPrevia,
+        actual: material.id === guia.value?.id,
+        enClase: {
+          modo: material.modo,
+          avance: avance?.avance ?? 0,
+          tareas: material.tareas.map((tarea) => ({
+            ref: tarea.ref,
+            numero: tarea.numero,
+            enunciado: tarea.enunciado,
+            hecha: avance?.tareasHechas.includes(tarea.id) ?? false,
+          })),
+          evaluacion: avance?.evaluacion ?? null,
+        },
+      };
+    }),
   );
 
   const cargarMaterialesClase = async () => {
     const sesion = useCmpSesionStore();
     if (sesion.estudiante?.rol !== "estudiante") {
       materialesClase.value = [];
+      avancesClase.value = [];
       return;
     }
-    materialesClase.value = await listarMaterialesClaseService().catch(() => []);
+    [materialesClase.value, avancesClase.value] = await Promise.all([
+      listarMaterialesClaseService().catch(() => []),
+      miAvanceGuiasService().catch(() => []),
+    ]);
   };
 
   const cargarGuia = async () => {
@@ -121,6 +145,7 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
       fase.value = "listo";
     } catch (error) {
       if (subida !== subidaActual) return;
+      if (error instanceof PdfIlegibleError) motivoError.value = error.message;
       fase.value = error instanceof PdfIlegibleError ? "error" : "elegir";
     }
   };
@@ -141,6 +166,7 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
   };
 
   return {
+    motivoError,
     guias,
     guiasClase,
     nombreClase,

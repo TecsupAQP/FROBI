@@ -47,6 +47,8 @@ class PdfContent:
     outline: tuple[OutlineEntry, ...] = ()
     # (page, line) written clearly bigger than the body text: likely headings.
     headings: tuple[tuple[int, str], ...] = ()
+    # False when the text is not split by real pages (a scan transcribed as one text).
+    paginated: bool = True
 
 
 class PdfTextExtractor(Protocol):

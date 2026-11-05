@@ -3,7 +3,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from frobi.shared.infrastructure import SqlAlchemyUnitOfWork, SystemClock
-from frobi.shared.infrastructure.llm import LlmClient
+from frobi.shared.infrastructure.llm import LlmClient, PdfTranscriber
 
 from .application import (
     ClassContentHandler,
@@ -52,11 +52,15 @@ def guides_handler(session: AsyncSession) -> GuidesHandler:
 
 
 def class_content_handler(
-    session: AsyncSession, llm: LlmClient | None = None, timeout_seconds: float = 15.0
+    session: AsyncSession,
+    transcriber: PdfTranscriber | None = None,
+    llm: LlmClient | None = None,
+    timeout_seconds: float = 15.0,
 ) -> ClassContentHandler:
     """Stores and lists ``class_content``. Classrooms checks who may do it before calling.
 
-    With ``llm``, long texts with no headings are split into topics by the AI."""
+    ``transcriber`` reads scanned PDFs; with ``llm``, long texts with no headings are split into
+    topics by the AI."""
     from .application import TopicFinder
     from .infrastructure import (
         LlmTopicSegmenter,
@@ -70,7 +74,9 @@ def class_content_handler(
     topics = TopicFinder(None if llm is None else LlmTopicSegmenter(llm, timeout_seconds))
     return ClassContentHandler(
         CreateMaterialHandler(uow, repository, clock, topics),
-        UploadMaterialHandler(uow, repository, PypdfTextExtractor(), clock, topics=topics),
+        UploadMaterialHandler(
+            uow, repository, PypdfTextExtractor(transcriber), clock, topics=topics
+        ),
         repository,
     )
 

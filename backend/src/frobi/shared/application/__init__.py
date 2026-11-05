@@ -1,4 +1,12 @@
-from .activity import AnswerRow, FormatUse, HelpUse, PromptScoreRow
+from .activity import (
+    AnswerRow,
+    FormatUse,
+    GuideAdaptation,
+    HelpUse,
+    PromptScoreRow,
+    QuestionResult,
+    TaskAttempt,
+)
 from .errors import Forbidden, NotFound, Unauthenticated
 from .health import HealthProbe, check_health
 from .sessions import ClassContext, TokenResolver
@@ -9,10 +17,13 @@ __all__ = [
     "ClassContext",
     "Forbidden",
     "FormatUse",
+    "GuideAdaptation",
     "HealthProbe",
     "HelpUse",
     "NotFound",
     "PromptScoreRow",
+    "QuestionResult",
+    "TaskAttempt",
     "TokenResolver",
     "Unauthenticated",
     "UnitOfWork",

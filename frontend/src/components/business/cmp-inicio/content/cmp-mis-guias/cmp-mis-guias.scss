@@ -98,4 +98,58 @@ $prefix: cmp-mis-guias;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  &__clase {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+    margin-top: $esp-8;
+  }
+
+  &__avance {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__barra {
+    flex: 1;
+  }
+
+  &__porcentaje {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__tareas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__tarea {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $esp-8;
+  }
+
+  &__marca {
+    flex-shrink: 0;
+    color: $marca-azul;
+  }
+
+  &__enunciado {
+    flex: 1;
+    min-width: 0;
+    color: $texto-cuerpo;
+    overflow-wrap: anywhere;
+  }
+
+  &__evaluar {
+    align-self: flex-start;
+  }
 }

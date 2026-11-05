@@ -2,9 +2,14 @@
 
 Besides the text of each page it reads what tells the topics apart at no AI cost: the outline
 (bookmarks) and the lines written in a font clearly bigger than the body text.
+
+A scanned PDF has pages that are only images, so pypdf finds (almost) no text. Then, if there is
+a ``PdfTranscriber`` (Claude), it reads the page images; if it fails or there is none, the text
+stays empty and the upload answers "unreadable" as before.
 """
 
 import asyncio
+import logging
 import math
 from collections import Counter
 from io import BytesIO
@@ -15,8 +20,15 @@ from pypdf.errors import PyPdfError
 
 from frobi.modules.materials.application.ports import OutlineEntry, PdfContent
 from frobi.modules.materials.domain import PdfUnreadable
+from frobi.shared.infrastructure.llm import LlmUnavailable, PdfTranscriber
+
+logger = logging.getLogger(__name__)
 
 MAX_PAGES = 200
+# Reading images is slow and costs tokens per page: scans up to this many pages.
+MAX_SCANNED_PAGES = 20
+# Fewer visible characters per page than this means the pages are images (a scan).
+MIN_CHARS_PER_PAGE = 25
 # A line counts as a heading from this many times the body font size.
 HEADING_SCALE = 1.25
 MAX_HEADING_CHARS = 90
@@ -92,7 +104,8 @@ def _headings(pages: list[list[tuple[str, float]]]) -> tuple[tuple[int, str], ..
     )
 
 
-def _extract(data: bytes) -> PdfContent:
+def _extract(data: bytes) -> tuple[PdfContent, int]:
+    """The text of each page with its structure, and how many pages the PDF has."""
     if not data.lstrip()[:5].startswith(b"%PDF"):
         raise PdfUnreadable()
     try:
@@ -109,13 +122,42 @@ def _extract(data: bytes) -> PdfContent:
                 text, page_lines = page.extract_text() or "", []
             texts.append(text)
             lines.append(page_lines)
-        return PdfContent(pages=tuple(texts), outline=_outline(reader), headings=_headings(lines))
+        content = PdfContent(
+            pages=tuple(texts), outline=_outline(reader), headings=_headings(lines)
+        )
+        return content, len(reader.pages)
     except PdfUnreadable:
         raise
     except (PyPdfError, ValueError, KeyError, TypeError, OSError) as error:
         raise PdfUnreadable() from error
 
 
+def looks_scanned(text: str, pages: int) -> bool:
+    visible = len("".join(text.split()))
+    return visible < MIN_CHARS_PER_PAGE * max(pages, 1)
+
+
 class PypdfTextExtractor:
+    def __init__(self, transcriber: PdfTranscriber | None = None) -> None:
+        self._transcriber = transcriber
+
     async def extract(self, data: bytes) -> PdfContent:
-        return await asyncio.to_thread(_extract, data)
+        content, pages = await asyncio.to_thread(_extract, data)
+        text = "\n\n".join(content.pages)
+        if self._transcriber is None or not looks_scanned(text, pages):
+            return content
+        if pages > MAX_SCANNED_PAGES:
+            raise PdfUnreadable(
+                f"Ese PDF es escaneado y tiene {pages} páginas. Leemos escaneos de hasta "
+                f"{MAX_SCANNED_PAGES} páginas: divídelo o pega el texto."
+            )
+        try:
+            transcript = await self._transcriber.transcribe(data)
+        except LlmUnavailable:
+            logger.warning("Scanned PDF of %s pages not transcribed", pages, exc_info=True)
+            return content
+        if len(transcript.strip()) <= len(text.strip()):
+            return content
+        # The transcript marks its titles with «## »: the topics come from there. It is one
+        # text for the whole PDF, so its topics carry no page numbers.
+        return PdfContent(pages=(transcript,), paginated=False)

@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from frobi.shared.application import ClassContext
 from frobi.shared.domain import Clock
 from frobi.shared.infrastructure import Settings
-from frobi.shared.infrastructure.llm import LlmClient
+from frobi.shared.infrastructure.llm import DisabledPdfTranscriber, LlmClient, PdfTranscriber
 
 from .auth import current_person_id
 
@@ -36,6 +36,11 @@ def get_settings(request: Request) -> Settings:
 
 def get_llm(request: Request) -> LlmClient:
     return cast(LlmClient, request.app.state.llm)
+
+
+def get_pdf_transcriber(request: Request) -> PdfTranscriber:
+    transcriber = getattr(request.app.state, "pdf_transcriber", None)
+    return cast(PdfTranscriber, transcriber or DisabledPdfTranscriber())
 
 
 async def class_context(

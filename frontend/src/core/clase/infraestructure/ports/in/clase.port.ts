@@ -1,9 +1,12 @@
 import type {
+  AvanceGuia,
+  AvanceGuiaClase,
   Clase,
   ClaseResumen,
   DetalleAlumno,
   MaterialClase,
   NuevaClase,
+  PlanGuia,
 } from "@/core/shared/domain/view/clase.view";
 
 export interface ClasePort {
@@ -20,5 +23,11 @@ export interface ClasePort {
   salirDeClase(): Promise<void>;
   // Contenido de la clase: lo sube el docente y lo ven sus alumnos unidos.
   listarMateriales(): Promise<MaterialClase[]>;
-  subirMaterial(archivo: File): Promise<MaterialClase[]>;
+  // Cada material es una guía de estudio (evaluación final) o una guía con tareas.
+  subirMaterial(archivo: File, plan: PlanGuia): Promise<MaterialClase[]>;
+  guardarPlan(materialId: string, plan: PlanGuia): Promise<MaterialClase[]>;
+  // Avance de la persona en cada guía de su clase.
+  miAvance(): Promise<AvanceGuia[]>;
+  // Docente: avance de cada alumno en cada guía.
+  avanceClase(): Promise<AvanceGuiaClase[]>;
 }

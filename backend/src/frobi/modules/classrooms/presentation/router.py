@@ -3,6 +3,8 @@
 Real: create a class, list my classes, join with a code, see the class, invite, list members.
 Real: the teacher panel and the student detail, both only with activity of this class.
 Real: class content uploaded by the teacher, read by the teacher and joined students.
+Real: each class material is a study guide (final evaluation) or a guide with tasks, and both
+the student and the teacher see its completion percentage.
 """
 
 from typing import Annotated
@@ -11,20 +13,32 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 
 from frobi.modules.classrooms.application import (
+    ClassGuide,
+    ClassGuidesProgressHandler,
     CreateClassCommand,
     CreateClassHandler,
     DashboardHandler,
     GetClassHandler,
     InviteStudentsHandler,
     JoinWithCodeHandler,
-    ListClassContentHandler,
+    ListClassGuidesHandler,
     ListMembersHandler,
     ListMyClassesHandler,
+    MyGuidesProgressHandler,
+    SaveGuidePlanCommand,
+    SaveGuidePlanHandler,
     StudentDetailHandler,
     UploadClassContentCommand,
     UploadClassContentHandler,
 )
-from frobi.modules.classrooms.domain import Classroom, Membership
+from frobi.modules.classrooms.domain import (
+    Classroom,
+    GuideMode,
+    GuidePlan,
+    GuideProgress,
+    Membership,
+    task_ref_of,
+)
 from frobi.shared.presentation import (
     AUTH_RESPONSES,
     NOT_FOUND_RESPONSES,
@@ -34,13 +48,16 @@ from frobi.shared.presentation import (
 )
 
 from .dependencies import (
+    get_class_guides_progress,
     get_create_class,
     get_get_class,
     get_invite_students,
     get_join_class,
-    get_list_class_content,
+    get_list_class_guides,
     get_list_members,
     get_list_my_classes,
+    get_my_guides_progress,
+    get_save_guide_plan,
     get_student_detail,
     get_upload_class_content,
 )
@@ -55,8 +72,14 @@ from .schemas import (
     ClassOut,
     CreateClassRequest,
     DashboardOut,
+    EvaluationOut,
     FailedQuestion,
     FormatCount,
+    GuideClassProgressOut,
+    GuidePlanOut,
+    GuidePlanRequest,
+    GuideProgressOut,
+    GuideTaskOut,
     HelpByStep,
     InvitationsRequest,
     JoinClassOut,
@@ -64,10 +87,39 @@ from .schemas import (
     MemberOut,
     MembersOut,
     StudentDetailOut,
+    StudentGuideProgressOut,
     StudentRow,
 )
 
 router = APIRouter(prefix="/classes", tags=["M12 · Clase del docente"], responses=AUTH_RESPONSES)
+
+
+def _tasks_out(plan: GuidePlan) -> list[GuideTaskOut]:
+    return [
+        GuideTaskOut(
+            id=task.id,
+            position=task.position,
+            statement=task.statement,
+            task_ref=task_ref_of(task.id),
+        )
+        for task in plan.tasks
+    ]
+
+
+def _progress_out(progress: GuideProgress) -> GuideProgressOut:
+    evaluation = progress.evaluation
+    return GuideProgressOut(
+        material_id=progress.material_id,
+        mode=progress.mode,
+        completion=progress.completion,
+        done_task_ids=list(progress.done_task_ids),
+        evaluation=(
+            None
+            if evaluation is None
+            else EvaluationOut(correct=evaluation[0], total=evaluation[1])
+        ),
+    )
+
 
 TEACHER_ONLY = {**TEACHER_RESPONSES, **NOT_FOUND_RESPONSES}
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
@@ -156,7 +208,8 @@ async def get_class(
     description=(
         "Solo el docente de la clase. Envía `text` o `file` (PDF de hasta 10 MB), no los dos. "
         "Los estudiantes unidos a la clase lo ven en `GET /classes/{id}/materials` y lo usan "
-        "como cualquier material (`GET /materials/{id}`, adaptaciones, revisión de afirmaciones)."
+        "como cualquier material (`GET /materials/{id}`, adaptaciones, revisión de afirmaciones). "
+        "Con `mode=tasks` envía las tareas como varios campos `tasks`."
     ),
     responses={
         **TEACHER_ONLY,
@@ -171,8 +224,15 @@ async def upload_class_material(
     person_id: CurrentPersonId,
     handler: Annotated[UploadClassContentHandler, Depends(get_upload_class_content)],
     title: Annotated[str, Form(min_length=1, max_length=120)],
+    save_plan: Annotated[SaveGuidePlanHandler, Depends(get_save_guide_plan)],
     text: Annotated[str | None, Form(max_length=100_000)] = None,
     file: Annotated[UploadFile | None, File(description="PDF de hasta 10 MB.")] = None,
+    mode: Annotated[
+        GuideMode, Form(description="`study` (por defecto) o `tasks`.")
+    ] = GuideMode.STUDY,
+    tasks: Annotated[
+        list[str] | None, Form(description="Enunciados de las tareas (solo con `mode=tasks`).")
+    ] = None,
 ) -> ClassMaterialOut:
     # Read one byte past the limit so a huge upload is rejected without loading it all.
     pdf = None if file is None else await file.read(MAX_UPLOAD_BYTES + 1)
@@ -181,11 +241,22 @@ async def upload_class_material(
             teacher_id=person_id, class_id=class_id, title=title, text=text, pdf=pdf
         )
     )
+    plan = await save_plan.handle(
+        SaveGuidePlanCommand(
+            teacher_id=person_id,
+            class_id=class_id,
+            material_id=material.id,
+            mode=mode,
+            tasks=tasks or [],
+        )
+    )
     return ClassMaterialOut(
         id=material.id,
         class_id=material.class_id,
         title=material.title,
         extracted_text=material.text,
+        mode=plan.mode,
+        tasks=_tasks_out(plan),
     )
 
 
@@ -198,13 +269,99 @@ async def upload_class_material(
 async def list_class_materials(
     class_id: UUID,
     person_id: CurrentPersonId,
-    handler: Annotated[ListClassContentHandler, Depends(get_list_class_content)],
+    handler: Annotated[ListClassGuidesHandler, Depends(get_list_class_guides)],
 ) -> list[ClassMaterialSummaryOut]:
-    return [
-        ClassMaterialSummaryOut(
-            id=m.id, class_id=m.class_id, title=m.title, preview=m.preview, created_at=m.created_at
+    return [_summary(guide) for guide in await handler.handle(person_id, class_id)]
+
+
+def _summary(guide: ClassGuide) -> ClassMaterialSummaryOut:
+    material = guide.material
+    return ClassMaterialSummaryOut(
+        id=material.id,
+        class_id=material.class_id,
+        title=material.title,
+        preview=material.preview,
+        created_at=material.created_at,
+        mode=guide.plan.mode,
+        tasks=_tasks_out(guide.plan),
+    )
+
+
+@router.put(
+    "/{class_id}/materials/{material_id}/guide",
+    summary="Definir si una guía es de estudio o tiene tareas",
+    description=(
+        "Solo el docente de la clase. `study`: sin tareas, la IA evalúa al final. `tasks`: 1 a "
+        "20 tareas. Las tareas que no cambian conservan su id (y el avance de los alumnos)."
+    ),
+    responses={
+        **TEACHER_ONLY,
+        422: problem("Tipo de guía y tareas incompatibles (`Classrooms.InvalidGuide`)."),
+    },
+)
+async def save_guide_plan(
+    class_id: UUID,
+    material_id: UUID,
+    body: GuidePlanRequest,
+    person_id: CurrentPersonId,
+    handler: Annotated[SaveGuidePlanHandler, Depends(get_save_guide_plan)],
+) -> GuidePlanOut:
+    plan = await handler.handle(
+        SaveGuidePlanCommand(
+            teacher_id=person_id,
+            class_id=class_id,
+            material_id=material_id,
+            mode=body.mode,
+            tasks=body.tasks,
         )
-        for m in await handler.handle(person_id, class_id)
+    )
+    return GuidePlanOut(material_id=plan.material_id, mode=plan.mode, tasks=_tasks_out(plan))
+
+
+@router.get(
+    "/{class_id}/guides/my-progress",
+    summary="Mi avance en cada guía de la clase",
+    description=(
+        "Guía con tareas: tareas con intento propio sobre el total. Guía de estudio: resultado "
+        "de la última evaluación final respondida. Solo cuenta lo hecho dentro de la clase."
+    ),
+    responses=NOT_FOUND_RESPONSES,
+)
+async def my_guides_progress(
+    class_id: UUID,
+    person_id: CurrentPersonId,
+    handler: Annotated[MyGuidesProgressHandler, Depends(get_my_guides_progress)],
+) -> list[GuideProgressOut]:
+    return [_progress_out(progress) for progress in await handler.handle(person_id, class_id)]
+
+
+@router.get(
+    "/{class_id}/guides/progress",
+    summary="Avance de cada alumno en cada guía (docente)",
+    description="Solo el docente de la clase. Detecta a tiempo quién se traba; no califica.",
+    responses=TEACHER_ONLY,
+)
+async def class_guides_progress(
+    class_id: UUID,
+    person_id: CurrentPersonId,
+    handler: Annotated[ClassGuidesProgressHandler, Depends(get_class_guides_progress)],
+) -> list[GuideClassProgressOut]:
+    return [
+        GuideClassProgressOut(
+            material_id=item.guide.material.id,
+            title=item.guide.material.title,
+            mode=item.guide.plan.mode,
+            tasks_total=len(item.guide.plan.tasks),
+            students=[
+                StudentGuideProgressOut(
+                    person_id=student.person_id,
+                    alias=student.alias,
+                    completion=student.progress.completion,
+                )
+                for student in item.students
+            ],
+        )
+        for item in await handler.handle(person_id, class_id)
     ]
 
 
