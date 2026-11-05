@@ -4978,6 +4978,16 @@
             },
             "description": "Sin sesión (`Identity.Unauthenticated`)."
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
           "422": {
             "content": {
               "application/json": {
