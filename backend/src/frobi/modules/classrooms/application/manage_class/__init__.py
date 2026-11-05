@@ -5,6 +5,7 @@ from .handlers import (
     InviteStudentsHandler,
     ListMembersHandler,
     MembersView,
+    own_class,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "InviteStudentsHandler",
     "ListMembersHandler",
     "MembersView",
+    "own_class",
 ]

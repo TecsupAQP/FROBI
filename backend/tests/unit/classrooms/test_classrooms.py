@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import pytest
@@ -11,8 +12,12 @@ from frobi.modules.classrooms.application import (
     InviteStudentsHandler,
     JoinClassHandler,
     LeaveClassHandler,
+    ListClassContentHandler,
     ListMembersHandler,
+    UploadClassContentCommand,
+    UploadClassContentHandler,
 )
+from frobi.modules.classrooms.application.ports import ClassMaterial
 from frobi.modules.classrooms.domain import (
     CODE_ALPHABET,
     CODE_LENGTH,
@@ -22,6 +27,7 @@ from frobi.modules.classrooms.domain import (
     InvalidClassData,
     Membership,
     MembershipStatus,
+    MissingClassContent,
     NotInAClass,
     TeachersOnly,
     new_invite_code,
@@ -237,3 +243,80 @@ async def test_leaving_ends_the_active_class(classes: Classes, memberships: Memb
     assert await ActiveClassHandler(classes, memberships).handle(ANA) is None
     with pytest.raises(NotInAClass):
         await leave.handle(ANA)
+
+
+class ClassContent:
+    def __init__(self) -> None:
+        self.items: list[ClassMaterial] = []
+
+    def _add(self, class_id: UUID, title: str, text: str) -> ClassMaterial:
+        material = ClassMaterial(
+            uuid4(), class_id, title, text, text[:20], datetime(2026, 11, 6, tzinfo=UTC)
+        )
+        self.items.append(material)
+        return material
+
+    async def add_text(
+        self, teacher_id: UUID, class_id: UUID, title: str, text: str
+    ) -> ClassMaterial:
+        return self._add(class_id, title, text)
+
+    async def add_pdf(
+        self, teacher_id: UUID, class_id: UUID, title: str, data: bytes
+    ) -> ClassMaterial:
+        return self._add(class_id, title, data.decode())
+
+    async def list_for_class(self, class_id: UUID) -> list[ClassMaterial]:
+        return [m for m in self.items if m.class_id == class_id]
+
+
+async def test_the_teacher_uploads_text_or_a_pdf_to_their_class(classes: Classes) -> None:
+    classroom = await _create(classes)
+    content = ClassContent()
+    upload = UploadClassContentHandler(classes, content)
+
+    pasted = await upload.handle(UploadClassContentCommand(TEACHER, classroom.id, "Guía", "Texto"))
+    pdf = await upload.handle(UploadClassContentCommand(TEACHER, classroom.id, "PDF", pdf=b"Hoja"))
+
+    assert (pasted.text, pdf.text) == ("Texto", "Hoja")
+    assert content.items == [pasted, pdf]
+
+
+@pytest.mark.parametrize(("text", "pdf"), [(None, None), ("  ", None), ("Texto", b"PDF")])
+async def test_class_content_needs_exactly_one_of_text_or_pdf(
+    classes: Classes, text: str | None, pdf: bytes | None
+) -> None:
+    classroom = await _create(classes)
+
+    with pytest.raises(MissingClassContent):
+        await UploadClassContentHandler(classes, ClassContent()).handle(
+            UploadClassContentCommand(TEACHER, classroom.id, "Guía", text, pdf)
+        )
+
+
+async def test_nobody_but_the_teacher_of_the_class_uploads(classes: Classes) -> None:
+    classroom = await _create(classes)
+    content = ClassContent()
+
+    with pytest.raises(ClassNotFound):
+        await UploadClassContentHandler(classes, content).handle(
+            UploadClassContentCommand(ANA, classroom.id, "Guía", "Texto")
+        )
+    assert content.items == []
+
+
+async def test_class_content_is_for_the_teacher_and_joined_students_only(
+    classes: Classes, memberships: Memberships
+) -> None:
+    classroom = await _create(classes)
+    content = ClassContent()
+    await UploadClassContentHandler(classes, content).handle(
+        UploadClassContentCommand(TEACHER, classroom.id, "Guía", "Texto")
+    )
+    await _join(classes, memberships).handle(ANA, "Ana", classroom.invite_code)
+    listing = ListClassContentHandler(GetClassHandler(classes, memberships), content)
+
+    assert [m.title for m in await listing.handle(TEACHER, classroom.id)] == ["Guía"]
+    assert [m.title for m in await listing.handle(ANA, classroom.id)] == ["Guía"]
+    with pytest.raises(ClassNotFound):
+        await listing.handle(LUIS, classroom.id)

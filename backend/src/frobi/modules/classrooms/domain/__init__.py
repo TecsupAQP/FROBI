@@ -1,6 +1,8 @@
 from .classroom import (
     CODE_ALPHABET,
     CODE_LENGTH,
+    DEMO_CLASS_ID,
+    DEMO_TEACHER_ID,
     STATUS_LABELS,
     Classroom,
     Membership,
@@ -10,11 +12,20 @@ from .classroom import (
     normalize_code,
     same_alias,
 )
-from .errors import ClassNotFound, InvalidClassCode, InvalidClassData, NotInAClass, TeachersOnly
+from .errors import (
+    ClassNotFound,
+    InvalidClassCode,
+    InvalidClassData,
+    MissingClassContent,
+    NotInAClass,
+    TeachersOnly,
+)
 
 __all__ = [
     "CODE_ALPHABET",
     "CODE_LENGTH",
+    "DEMO_CLASS_ID",
+    "DEMO_TEACHER_ID",
     "STATUS_LABELS",
     "ClassNotFound",
     "Classroom",
@@ -22,6 +33,7 @@ __all__ = [
     "InvalidClassData",
     "Membership",
     "MembershipStatus",
+    "MissingClassContent",
     "NotInAClass",
     "TeachersOnly",
     "new_invite_code",

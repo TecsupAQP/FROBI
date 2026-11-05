@@ -2,10 +2,10 @@
 
 Backend for FROBI (Hack4Edu 2026): FastAPI + PostgreSQL + Redis, organized as a hexagonal modular monolith.
 
-> Status: phases 0, 1 and 2 done. Every endpoint of `PLAN_BACKEND.md` §6 exists under `/api/v1`
-> with its final schema and real behaviour, except `POST /classes/{id}/materials` (still example
-> data). No AI provider is connected yet: AI features answer from their fallbacks
-> (`fallback: true`).
+> Status: phases 0 to 3 done; contract `1.0.0`. Every endpoint of `PLAN_BACKEND.md` §6 exists
+> under `/api/v1` with real behaviour. The AI provider is chosen with environment variables
+> (Anthropic or any OpenAI-compatible API); without a key, AI features answer from their
+> fallbacks (`fallback: true`).
 >
 > | Module | What works |
 > | --- | --- |
@@ -19,7 +19,7 @@ Backend for FROBI (Hack4Edu 2026): FastAPI + PostgreSQL + Redis, organized as a 
 > | M9 | Claim review (supported, unverifiable, contradicts) against own guides |
 > | M10 | Fixed catalogue of 5 tools, recommendation by need or reviewed claim |
 > | M11 | Personal progress and closing summary |
-> | M12 | Classes, invitations, join by code, teacher panel with alerts, student detail |
+> | M12 | Classes, invitations, join by code, class content (text or PDF), teacher panel with alerts, student detail |
 > | M13 | Settings, alias, leave the class, «Qué ve tu docente», languages |
 >
 > Privacy (RNF16): every activity row stores the active `class_id`; the teacher panel can only
@@ -79,8 +79,8 @@ uv run pytest              # integration tests need postgres and redis running
 
 ## API contract
 
-`openapi.json` at the repo root is the contract with the front. A test fails when the code and the
-file disagree; after an intentional change run `uv run python -m frobi.openapi`, commit the file and
+`openapi.json` at the repo root is the contract with the front, frozen at `1.0.0` for the demo:
+from here only additive changes. A test fails when the code and the file disagree; after an intentional change run `uv run python -m frobi.openapi`, commit the file and
 tell the front.
 
 Errors are always `application/problem+json` (RFC 9457) with a stable `code`, for example:
@@ -98,15 +98,39 @@ Environment variables with the `FROBI_` prefix; see [`.env.example`](./.env.exam
 
 ## AI engine
 
-No provider is connected yet, so every AI call answers with its fallback and the response says
-`fallback: true`. For the sample guide the fallback is prewritten
-(`modules/adaptations/infrastructure/fallbacks/`); for other materials it reorganizes and
-shortens the person's own text without adding anything.
+Set the provider in `.env` (see [`.env.example`](./.env.example)) and restart the API:
 
-To connect a provider: implement `LlmClient.complete_json` in `shared/infrastructure/llm/`,
-read `FROBI_LLM_API_KEY`, and set `app.state.llm` in `main.py`. The 15 s cap
-(`FROBI_LLM_TIMEOUT_SECONDS`), the per-person limit (`FROBI_LLM_REQUESTS_PER_MINUTE`), output
-validation and the fallback already wrap every call; use cases do not change.
+```bash
+# Anthropic (Claude); the model defaults to claude-haiku-5-5
+FROBI_LLM_PROVIDER=anthropic
+FROBI_LLM_API_KEY=sk-ant-...
+
+# Or any OpenAI-compatible API (OpenAI, Groq, OpenRouter, Gemini, a local Ollama)
+FROBI_LLM_PROVIDER=openai
+FROBI_LLM_API_KEY=...
+FROBI_LLM_MODEL=llama-3.3-70b-versatile
+FROBI_LLM_BASE_URL=https://api.groq.com/openai/v1
+```
+
+Without `FROBI_LLM_API_KEY` every AI call answers with its fallback and the response says
+`fallback: true`. The same happens per call when the provider fails, takes longer than
+`FROBI_LLM_TIMEOUT_SECONDS` (15 s), returns something that does not validate, or the person goes
+over `FROBI_LLM_REQUESTS_PER_MINUTE`. For the sample guide the fallback is prewritten
+(`modules/adaptations/infrastructure/fallbacks/`); for other materials it reorganizes and
+shortens the person's own text without adding anything. The key never leaves the server
+(RNF07). Tests never call a provider.
+
+## Demo data
+
+```bash
+uv run python -m frobi.demo            # once the migrations are applied
+uv run python -m frobi.demo --reset    # start the demo class from scratch
+```
+
+The demo class «Sensores 2026-II» (code `SENSOR1`) comes with migration 0010. The script adds
+its class content and two students, «Ana (demo)» and «Luis (demo)», whose activity goes through
+the real API. It prints a session token for the demo teacher and for each student (use it in
+**Authorize** in `/docs`). The panel of the demo class is always `sample_data: true`.
 
 ## Docs
 

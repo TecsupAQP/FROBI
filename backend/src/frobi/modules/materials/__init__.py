@@ -2,15 +2,32 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .application import GetMaterialHandler, GuidesHandler, ReadWorkHandler, WorkTexts
+from frobi.shared.infrastructure import SqlAlchemyUnitOfWork, SystemClock
+
+from .application import (
+    ClassContentHandler,
+    CreateMaterialHandler,
+    GetMaterialHandler,
+    GuidesHandler,
+    ReadWorkHandler,
+    UploadMaterialHandler,
+    WorkTexts,
+)
 from .domain import Material, MaterialKind, MaterialSource
 
 
 def get_material_handler(session: AsyncSession) -> GetMaterialHandler:
-    """Reads a material the person may see (theirs or a sample); ``find`` returns None if not."""
-    from .infrastructure import FileSampleCatalog, SqlAlchemyMaterialRepository
+    """Reads a material the person may see (theirs, a sample or content of their class);
+    ``find`` returns None if not."""
+    from .infrastructure import (
+        ClassroomsActiveClass,
+        FileSampleCatalog,
+        SqlAlchemyMaterialRepository,
+    )
 
-    return GetMaterialHandler(SqlAlchemyMaterialRepository(session), FileSampleCatalog())
+    return GetMaterialHandler(
+        SqlAlchemyMaterialRepository(session), FileSampleCatalog(), ClassroomsActiveClass(session)
+    )
 
 
 def read_work_handler(session: AsyncSession) -> ReadWorkHandler:
@@ -21,13 +38,34 @@ def read_work_handler(session: AsyncSession) -> ReadWorkHandler:
 
 
 def guides_handler(session: AsyncSession) -> GuidesHandler:
-    """The guides a person studies from: their own ``guide`` materials and the samples."""
-    from .infrastructure import FileSampleCatalog, SqlAlchemyMaterialRepository
+    """The guides a person studies from: their own, their class's content and the samples."""
+    from .infrastructure import (
+        ClassroomsActiveClass,
+        FileSampleCatalog,
+        SqlAlchemyMaterialRepository,
+    )
 
-    return GuidesHandler(SqlAlchemyMaterialRepository(session), FileSampleCatalog())
+    return GuidesHandler(
+        SqlAlchemyMaterialRepository(session), FileSampleCatalog(), ClassroomsActiveClass(session)
+    )
+
+
+def class_content_handler(session: AsyncSession) -> ClassContentHandler:
+    """Stores and lists ``class_content``. Classrooms checks who may do it before calling."""
+    from .infrastructure import PypdfTextExtractor, SqlAlchemyMaterialRepository
+
+    repository = SqlAlchemyMaterialRepository(session)
+    uow = SqlAlchemyUnitOfWork(session)
+    clock = SystemClock()
+    return ClassContentHandler(
+        CreateMaterialHandler(uow, repository, clock),
+        UploadMaterialHandler(uow, repository, PypdfTextExtractor(), clock),
+        repository,
+    )
 
 
 __all__ = [
+    "ClassContentHandler",
     "GetMaterialHandler",
     "GuidesHandler",
     "Material",
@@ -35,6 +73,7 @@ __all__ = [
     "MaterialSource",
     "ReadWorkHandler",
     "WorkTexts",
+    "class_content_handler",
     "get_material_handler",
     "guides_handler",
     "read_work_handler",

@@ -63,6 +63,18 @@ class SqlAlchemyMaterialRepository:
         )
         return [_material(row) for row in (await self._session.scalars(query)).all()]
 
+    async def list_for_class(self, class_id: UUID) -> list[Material]:
+        query = (
+            select(MaterialModel)
+            .where(
+                MaterialModel.class_id == class_id,
+                MaterialModel.kind == MaterialKind.CLASS_CONTENT.value,
+            )
+            .order_by(MaterialModel.created_at.desc())
+            .limit(MAX_GUIDES)
+        )
+        return [_material(row) for row in (await self._session.scalars(query)).all()]
+
 
 class SqlAlchemyWorkRepository:
     def __init__(self, session: AsyncSession) -> None:

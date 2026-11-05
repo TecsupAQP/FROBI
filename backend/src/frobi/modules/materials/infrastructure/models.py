@@ -17,12 +17,12 @@ class MaterialModel(Base):
         CheckConstraint("kind IN ('guide', 'brief', 'draft', 'class_content')", name="kind"),
         CheckConstraint("source IN ('sample', 'upload', 'paste')", name="source"),
         Index("ix_materials_owner_id", "owner_id"),
+        Index("ix_materials_class_id", "class_id"),
     )
 
     id: Mapped[UUID] = mapped_column(primary_key=True)
     owner_id: Mapped[UUID] = mapped_column(ForeignKey("persons.id", ondelete="CASCADE"))
-    # FK to classes arrives with classrooms (M12).
-    class_id: Mapped[UUID | None] = mapped_column(Uuid)
+    class_id: Mapped[UUID | None] = mapped_column(ForeignKey("classes.id", ondelete="CASCADE"))
     title: Mapped[str] = mapped_column(String(120))
     kind: Mapped[str] = mapped_column(String(16))
     source: Mapped[str] = mapped_column(String(8))

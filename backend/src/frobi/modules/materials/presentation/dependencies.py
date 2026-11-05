@@ -13,6 +13,7 @@ from frobi.modules.materials.application import (
     UploadMaterialHandler,
 )
 from frobi.modules.materials.infrastructure import (
+    ClassroomsActiveClass,
     FileSampleCatalog,
     PypdfTextExtractor,
     SqlAlchemyMaterialRepository,
@@ -31,7 +32,9 @@ def get_list_samples() -> ListSamplesHandler:
 
 
 def get_get_material(db: DbSession) -> GetMaterialHandler:
-    return GetMaterialHandler(SqlAlchemyMaterialRepository(db), FileSampleCatalog())
+    return GetMaterialHandler(
+        SqlAlchemyMaterialRepository(db), FileSampleCatalog(), ClassroomsActiveClass(db)
+    )
 
 
 def get_create_material(db: DbSession, clock: AppClock) -> CreateMaterialHandler:

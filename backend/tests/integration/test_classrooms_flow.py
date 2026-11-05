@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from frobi.main import create_app
 from frobi.shared.infrastructure import Settings
+from pdf import make_pdf
 
 pytestmark = pytest.mark.integration
 
@@ -158,3 +159,77 @@ async def test_the_database_allows_one_active_class_per_person(db_session: Async
 
     with pytest.raises(IntegrityError):
         await db_session.execute(insert, {"id": uuid4(), "c": DEMO_CLASS, "p": person})
+
+
+async def test_class_content_reaches_the_students_of_that_class_only(client: AsyncClient) -> None:
+    teacher = await _enter(client, "Profe Lía", role="teacher")
+    created = await client.post(
+        "/api/v1/classes",
+        headers=teacher,
+        json={"name": "Sensores B", "subject": "Instrumentación", "tasks": []},
+    )
+    class_id, code = created.json()["id"], created.json()["invite_code"]
+    ana, luis = await _enter(client, "Ana"), await _enter(client, "Luis")
+    await client.post("/api/v1/classes/join", headers=ana, json={"code": code})
+
+    pasted = await client.post(
+        f"/api/v1/classes/{class_id}/materials",
+        headers=teacher,
+        data={"title": "Guía de la clase", "text": "Los sensores capacitivos detectan agua."},
+    )
+    pdf = await client.post(
+        f"/api/v1/classes/{class_id}/materials",
+        headers=teacher,
+        data={"title": "Hoja de datos"},
+        files={
+            "file": ("hoja.pdf", make_pdf("Sensor inductivo", "Alcance 8 mm"), "application/pdf")
+        },
+    )
+    assert pasted.status_code == 201, pasted.text
+    assert pdf.status_code == 201, pdf.text
+    assert "Alcance 8 mm" in pdf.json()["extracted_text"]
+    material_id = pasted.json()["id"]
+
+    listed = await client.get(f"/api/v1/classes/{class_id}/materials", headers=ana)
+    read = await client.get(f"/api/v1/materials/{material_id}", headers=ana)
+    adapted = await client.post(
+        f"/api/v1/materials/{material_id}/adaptations", headers=ana, json={"format": "easy_read"}
+    )
+    assert [m["title"] for m in listed.json()] == ["Hoja de datos", "Guía de la clase"]
+    assert read.json()["kind"] == "class_content"
+    assert adapted.status_code == 201, adapted.text
+
+    # Someone outside the class sees neither the list nor the material.
+    assert (
+        await client.get(f"/api/v1/classes/{class_id}/materials", headers=luis)
+    ).status_code == 404
+    assert (await client.get(f"/api/v1/materials/{material_id}", headers=luis)).status_code == 404
+
+    # After leaving, Ana loses access too.
+    await client.delete("/api/v1/me/membership", headers=ana)
+    assert (await client.get(f"/api/v1/materials/{material_id}", headers=ana)).status_code == 404
+
+
+async def test_only_the_teacher_uploads_and_needs_text_or_a_pdf(client: AsyncClient) -> None:
+    teacher = await _enter(client, "Profe Iván", role="teacher")
+    created = await client.post(
+        "/api/v1/classes", headers=teacher, json={"name": "Redes", "subject": "TIC", "tasks": []}
+    )
+    class_id, code = created.json()["id"], created.json()["invite_code"]
+    ana = await _enter(client, "Ana")
+    await client.post("/api/v1/classes/join", headers=ana, json={"code": code})
+    url = f"/api/v1/classes/{class_id}/materials"
+
+    by_student = await client.post(url, headers=ana, data={"title": "Mía", "text": "Hola"})
+    empty = await client.post(url, headers=teacher, data={"title": "Vacía"})
+    broken = await client.post(
+        url,
+        headers=teacher,
+        data={"title": "Rota"},
+        files={"file": ("x.pdf", b"nope", "application/pdf")},
+    )
+
+    assert by_student.status_code == 404
+    assert empty.json()["code"] == "Classrooms.MissingContent"
+    assert broken.json()["code"] == "Materials.PdfUnreadable"
+    assert (await client.get(url, headers=teacher)).json() == []

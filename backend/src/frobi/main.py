@@ -32,7 +32,7 @@ from frobi.shared.infrastructure import (
     create_session_factory,
     get_settings,
 )
-from frobi.shared.infrastructure.llm import DisabledLlmClient
+from frobi.shared.infrastructure.llm import build_llm_client
 from frobi.shared.presentation import PROBLEM_RESPONSES, health_router, register_problem_handlers
 
 API_PREFIX = "/api/v1"
@@ -86,7 +86,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title="FROBI API",
-        version="0.1.0",
+        version="1.0.0",
         description="Backend de FROBI (Hack4Edu 2026). Los errores siguen RFC 9457 "
         "(`application/problem+json`) con un `code` estable.",
         lifespan=lifespan,
@@ -103,8 +103,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.token_resolver = RedisSessionStore(redis)
     # class_id stored on every activity row (RNF16): the person's joined class.
     app.state.class_context = ClassroomsClassContext(app.state.session_factory)
-    # No AI provider chosen yet: every AI call uses its fallback and answers `fallback: true`.
-    app.state.llm = DisabledLlmClient()
+    # Without FROBI_LLM_API_KEY every AI call uses its fallback and answers `fallback: true`.
+    app.state.llm = build_llm_client(
+        provider=settings.llm_provider,
+        api_key=None if settings.llm_api_key is None else settings.llm_api_key.get_secret_value(),
+        model=settings.llm_model,
+        base_url=settings.llm_base_url,
+        timeout_seconds=settings.llm_timeout_seconds,
+    )
 
     app.add_middleware(
         CORSMiddleware,

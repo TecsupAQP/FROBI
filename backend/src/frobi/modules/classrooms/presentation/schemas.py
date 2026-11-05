@@ -32,6 +32,15 @@ class ClassMaterialOut(BaseModel):
     extracted_text: str
 
 
+class ClassMaterialSummaryOut(BaseModel):
+    id: UUID
+    class_id: UUID
+    title: str
+    kind: Literal["class_content"] = "class_content"
+    preview: str = Field(description="Primeras líneas del texto.")
+    created_at: datetime
+
+
 class InvitationsRequest(BaseModel):
     aliases: list[str] = Field(min_length=1, max_length=60)
 

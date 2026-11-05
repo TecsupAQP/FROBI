@@ -11,6 +11,10 @@ class MaterialRepository(Protocol):
 
     async def list_for_owner(self, owner_id: UUID, kind: MaterialKind) -> list[Material]: ...
 
+    async def list_for_class(self, class_id: UUID) -> list[Material]:
+        """The `class_content` of a class, most recent first."""
+        ...
+
 
 class SampleCatalog(Protocol):
     """Example guides shipped with FROBI (RF01). Read-only and visible to everyone."""

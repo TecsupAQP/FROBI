@@ -33,6 +33,7 @@ def _test_settings() -> Settings:
         _env_file=None,
         database_url=url.render_as_string(hide_password=False),
         redis_url=redis_url,
+        llm_api_key=None,  # tests never call a real AI provider
     )
 
 

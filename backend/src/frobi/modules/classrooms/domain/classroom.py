@@ -13,6 +13,10 @@ CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 CODE_LENGTH = 6
 MAX_TASKS = 20
 
+# Seeded by migration 0010 («Sensores 2026-II», code SENSOR1). Its panel is always demo data.
+DEMO_CLASS_ID = UUID("00000000-0000-4000-8000-0000000000c1")
+DEMO_TEACHER_ID = UUID("00000000-0000-4000-8000-00000000d0c0")
+
 
 def new_invite_code() -> str:
     return "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))

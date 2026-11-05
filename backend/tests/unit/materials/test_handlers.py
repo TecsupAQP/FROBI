@@ -6,16 +6,19 @@ from fakes.identity import FakeUnitOfWork, FixedClock
 from fakes.materials import (
     SAMPLE,
     FakeExtractor,
+    FixedClassContext,
     InMemoryMaterials,
     InMemoryWorks,
     StaticSamples,
 )
 from frobi.modules.materials.application import (
+    ClassContentHandler,
     CreateMaterialCommand,
     CreateMaterialHandler,
     CreateWorkCommand,
     CreateWorkHandler,
     GetMaterialHandler,
+    GuidesHandler,
     UploadMaterialCommand,
     UploadMaterialHandler,
 )
@@ -148,3 +151,65 @@ async def test_work_cannot_use_someone_elses_material(materials: InMemoryMateria
         await _work_handler(materials, InMemoryWorks()).handle(
             CreateWorkCommand(person_id=ANA, brief_material_id=brief.id, draft_material_id=draft.id)
         )
+
+
+CLASS, OTHER_CLASS, PROFE = uuid4(), uuid4(), uuid4()
+
+
+def _class_content(materials: InMemoryMaterials) -> ClassContentHandler:
+    return ClassContentHandler(
+        CreateMaterialHandler(FakeUnitOfWork(), materials, FixedClock()),
+        UploadMaterialHandler(FakeUnitOfWork(), materials, FakeExtractor(), FixedClock()),
+        materials,
+    )
+
+
+async def test_class_content_is_stored_with_its_class(materials: InMemoryMaterials) -> None:
+    content = _class_content(materials)
+
+    pasted = await content.add_text(PROFE, CLASS, "Guía de la clase", "Sensores capacitivos")
+    pdf = await content.add_pdf(PROFE, CLASS, "PDF de la clase", b"Sensores inductivos")
+
+    assert {m.kind for m in (pasted, pdf)} == {MaterialKind.CLASS_CONTENT}
+    assert {m.class_id for m in (pasted, pdf)} == {CLASS}
+    assert await content.list_for_class(CLASS) == [pasted, pdf]
+    assert await content.list_for_class(OTHER_CLASS) == []
+
+
+async def test_class_content_is_visible_only_inside_its_class(materials: InMemoryMaterials) -> None:
+    material = await _class_content(materials).add_text(PROFE, CLASS, "Guía", "Texto")
+    get = GetMaterialHandler(
+        materials, StaticSamples(), FixedClassContext({ANA: CLASS, LUIS: OTHER_CLASS})
+    )
+
+    assert await get.find(PROFE, material.id) == material
+    assert await get.find(ANA, material.id) == material
+    assert await get.find(LUIS, material.id) is None
+    assert await get.find(uuid4(), material.id) is None
+
+
+async def test_without_a_class_context_class_content_stays_with_its_teacher(
+    materials: InMemoryMaterials,
+) -> None:
+    material = await _class_content(materials).add_text(PROFE, CLASS, "Guía", "Texto")
+
+    assert await _get(materials).find(ANA, material.id) is None
+
+
+async def test_a_private_material_never_leaks_into_the_class(materials: InMemoryMaterials) -> None:
+    """Only ``class_content`` is shared: a guide of the teacher with a class_id stays private."""
+    own = await CreateMaterialHandler(FakeUnitOfWork(), materials, FixedClock()).handle(
+        CreateMaterialCommand(PROFE, "Mía", MaterialKind.GUIDE, "Privado", class_id=CLASS)
+    )
+    get = GetMaterialHandler(materials, StaticSamples(), FixedClassContext({ANA: CLASS}))
+
+    assert await get.find(ANA, own.id) is None
+
+
+async def test_guides_include_the_content_of_the_active_class(materials: InMemoryMaterials) -> None:
+    of_class = await _class_content(materials).add_text(PROFE, CLASS, "Guía", "Texto")
+    own = await _paste(materials, MaterialKind.GUIDE, "Mía")
+    guides = GuidesHandler(materials, StaticSamples(), FixedClassContext({ANA: CLASS}))
+
+    assert await guides.for_person(ANA) == [own, of_class, SAMPLE]
+    assert await guides.for_person(LUIS) == [SAMPLE]

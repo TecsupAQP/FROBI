@@ -1,6 +1,7 @@
 """What classrooms needs, in its own words. Adapters live in classrooms/infrastructure."""
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Protocol
 from uuid import UUID
 
@@ -61,9 +62,35 @@ class ClassActivityReader(Protocol):
     async def read(self, class_id: UUID) -> ClassActivity: ...
 
 
+@dataclass(frozen=True, slots=True)
+class ClassMaterial:
+    id: UUID
+    class_id: UUID
+    title: str
+    text: str
+    preview: str
+    created_at: datetime
+
+
+class ClassMaterials(Protocol):
+    """Over the public API of materials. Who may upload or read is decided here, not there."""
+
+    async def add_text(
+        self, teacher_id: UUID, class_id: UUID, title: str, text: str
+    ) -> ClassMaterial: ...
+
+    async def add_pdf(
+        self, teacher_id: UUID, class_id: UUID, title: str, data: bytes
+    ) -> ClassMaterial: ...
+
+    async def list_for_class(self, class_id: UUID) -> list[ClassMaterial]: ...
+
+
 __all__ = [
     "ClassActivity",
     "ClassActivityReader",
+    "ClassMaterial",
+    "ClassMaterials",
     "ClassRepository",
     "CodeGenerator",
     "MembershipRepository",

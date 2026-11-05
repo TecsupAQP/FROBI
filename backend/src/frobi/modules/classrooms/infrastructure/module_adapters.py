@@ -4,8 +4,8 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from frobi.modules import adaptations, comprehension, identity, prompt_coach, tutoring
-from frobi.modules.classrooms.application.ports import ClassActivity
+from frobi.modules import adaptations, comprehension, identity, materials, prompt_coach, tutoring
+from frobi.modules.classrooms.application.ports import ClassActivity, ClassMaterial
 
 from .sqlalchemy_repositories import SqlAlchemyMembershipRepository
 
@@ -51,3 +51,33 @@ class ClassroomsClassContext:
         async with self._session_factory() as session:
             membership = await SqlAlchemyMembershipRepository(session).active_for(person_id)
         return None if membership is None else membership.class_id
+
+
+def _class_material(material: materials.Material) -> ClassMaterial:
+    assert material.class_id is not None
+    return ClassMaterial(
+        id=material.id,
+        class_id=material.class_id,
+        title=material.title,
+        text=material.text,
+        preview=material.preview(),
+        created_at=material.created_at,
+    )
+
+
+class ClassMaterialsAdapter:
+    def __init__(self, session: AsyncSession) -> None:
+        self._content = materials.class_content_handler(session)
+
+    async def add_text(
+        self, teacher_id: UUID, class_id: UUID, title: str, text: str
+    ) -> ClassMaterial:
+        return _class_material(await self._content.add_text(teacher_id, class_id, title, text))
+
+    async def add_pdf(
+        self, teacher_id: UUID, class_id: UUID, title: str, data: bytes
+    ) -> ClassMaterial:
+        return _class_material(await self._content.add_pdf(teacher_id, class_id, title, data))
+
+    async def list_for_class(self, class_id: UUID) -> list[ClassMaterial]:
+        return [_class_material(m) for m in await self._content.list_for_class(class_id)]

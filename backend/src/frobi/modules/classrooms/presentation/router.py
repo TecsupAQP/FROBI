@@ -2,7 +2,7 @@
 
 Real: create a class, join with a code, see the class, invite by alias, list members.
 Real: the teacher panel and the student detail, both only with activity of this class.
-Still a stub (example data): class materials.
+Real: class content uploaded by the teacher, read by the teacher and joined students.
 """
 
 from typing import Annotated
@@ -17,8 +17,11 @@ from frobi.modules.classrooms.application import (
     GetClassHandler,
     InviteStudentsHandler,
     JoinWithCodeHandler,
+    ListClassContentHandler,
     ListMembersHandler,
     StudentDetailHandler,
+    UploadClassContentCommand,
+    UploadClassContentHandler,
 )
 from frobi.modules.classrooms.domain import Classroom, Membership
 from frobi.shared.presentation import (
@@ -34,8 +37,10 @@ from .dependencies import (
     get_get_class,
     get_invite_students,
     get_join_class,
+    get_list_class_content,
     get_list_members,
     get_student_detail,
+    get_upload_class_content,
 )
 from .dependencies import (
     get_dashboard as get_dashboard_handler,
@@ -44,6 +49,7 @@ from .schemas import (
     AiUsage,
     Alert,
     ClassMaterialOut,
+    ClassMaterialSummaryOut,
     ClassOut,
     CreateClassRequest,
     DashboardOut,
@@ -62,6 +68,7 @@ from .schemas import (
 router = APIRouter(prefix="/classes", tags=["M12 · Clase del docente"], responses=AUTH_RESPONSES)
 
 TEACHER_ONLY = {**TEACHER_RESPONSES, **NOT_FOUND_RESPONSES}
+MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 
 
 def _class_out(classroom: Classroom) -> ClassOut:
@@ -131,21 +138,59 @@ async def get_class(
     "/{class_id}/materials",
     status_code=status.HTTP_201_CREATED,
     summary="Subir contenido de la clase (texto o PDF)",
-    responses={**TEACHER_ONLY, 422: problem("Falta `text` o `file`, o el PDF es ilegible.")},
+    description=(
+        "Solo el docente de la clase. Envía `text` o `file` (PDF de hasta 10 MB), no los dos. "
+        "Los estudiantes unidos a la clase lo ven en `GET /classes/{id}/materials` y lo usan "
+        "como cualquier material (`GET /materials/{id}`, adaptaciones, revisión de afirmaciones)."
+    ),
+    responses={
+        **TEACHER_ONLY,
+        422: problem(
+            "Falta `text` o `file`, o vienen los dos (`Classrooms.MissingContent`); PDF ilegible "
+            "(`Materials.PdfUnreadable`) o de más de 10 MB (`Materials.FileTooLarge`)."
+        ),
+    },
 )
 async def upload_class_material(
     class_id: UUID,
-    _: CurrentPersonId,
+    person_id: CurrentPersonId,
+    handler: Annotated[UploadClassContentHandler, Depends(get_upload_class_content)],
     title: Annotated[str, Form(min_length=1, max_length=120)],
     text: Annotated[str | None, Form(max_length=100_000)] = None,
     file: Annotated[UploadFile | None, File(description="PDF de hasta 10 MB.")] = None,
 ) -> ClassMaterialOut:
-    return ClassMaterialOut(
-        id=UUID("00000000-0000-4000-8000-00000000a010"),
-        class_id=class_id,
-        title=title,
-        extracted_text=text or "Texto extraído del PDF de la clase.",
+    # Read one byte past the limit so a huge upload is rejected without loading it all.
+    pdf = None if file is None else await file.read(MAX_UPLOAD_BYTES + 1)
+    material = await handler.handle(
+        UploadClassContentCommand(
+            teacher_id=person_id, class_id=class_id, title=title, text=text, pdf=pdf
+        )
     )
+    return ClassMaterialOut(
+        id=material.id,
+        class_id=material.class_id,
+        title=material.title,
+        extracted_text=material.text,
+    )
+
+
+@router.get(
+    "/{class_id}/materials",
+    summary="Contenido de la clase",
+    description="El docente de la clase y sus estudiantes unidos. El más reciente primero.",
+    responses=NOT_FOUND_RESPONSES,
+)
+async def list_class_materials(
+    class_id: UUID,
+    person_id: CurrentPersonId,
+    handler: Annotated[ListClassContentHandler, Depends(get_list_class_content)],
+) -> list[ClassMaterialSummaryOut]:
+    return [
+        ClassMaterialSummaryOut(
+            id=m.id, class_id=m.class_id, title=m.title, preview=m.preview, created_at=m.created_at
+        )
+        for m in await handler.handle(person_id, class_id)
+    ]
 
 
 @router.post(

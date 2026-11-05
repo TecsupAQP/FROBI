@@ -13,15 +13,25 @@ HintGenerator, …) and its LLM adapter uses these pieces:
 from .client import DisabledLlmClient, LlmClient, LlmUnavailable
 from .fallback import call_with_fallback
 from .prompts import SYSTEM_PROMPT
+from .providers import (
+    AnthropicLlmClient,
+    OpenAiCompatibleLlmClient,
+    build_llm_client,
+    parse_json_object,
+)
 from .rate_limit import AllowAll, RateLimiter, RedisRateLimiter
 
 __all__ = [
     "SYSTEM_PROMPT",
     "AllowAll",
+    "AnthropicLlmClient",
     "DisabledLlmClient",
     "LlmClient",
     "LlmUnavailable",
+    "OpenAiCompatibleLlmClient",
     "RateLimiter",
     "RedisRateLimiter",
+    "build_llm_client",
     "call_with_fallback",
+    "parse_json_object",
 ]

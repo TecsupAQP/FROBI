@@ -34,6 +34,13 @@ class InMemoryMaterials:
     async def list_for_owner(self, owner_id: UUID, kind: MaterialKind) -> list[Material]:
         return [m for m in self.items.values() if m.owner_id == owner_id and m.kind is kind]
 
+    async def list_for_class(self, class_id: UUID) -> list[Material]:
+        return [
+            m
+            for m in self.items.values()
+            if m.class_id == class_id and m.kind is MaterialKind.CLASS_CONTENT
+        ]
+
 
 class StaticSamples:
     def list(self) -> list[Material]:
@@ -61,3 +68,13 @@ class FakeExtractor:
         if data.startswith(b"%BROKEN"):
             raise PdfUnreadable()
         return data.decode("utf-8")
+
+
+class FixedClassContext:
+    """``ClassContext`` with a fixed person → class map."""
+
+    def __init__(self, active: dict[UUID, UUID] | None = None) -> None:
+        self.active = active or {}
+
+    async def active_class(self, person_id: UUID) -> UUID | None:
+        return self.active.get(person_id)

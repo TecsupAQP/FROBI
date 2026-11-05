@@ -1,3 +1,4 @@
+from .class_content import ClassContentHandler
 from .create_material import (
     CreateMaterialCommand,
     CreateMaterialHandler,
@@ -10,6 +11,7 @@ from .list_samples import ListSamplesHandler
 from .read_work import GuidesHandler, ReadWorkHandler, WorkTexts
 
 __all__ = [
+    "ClassContentHandler",
     "CreateMaterialCommand",
     "CreateMaterialHandler",
     "CreateWorkCommand",

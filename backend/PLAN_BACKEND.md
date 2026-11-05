@@ -242,12 +242,13 @@ Orden según el flujo de la demo; cada paso en TDD (rojo, verde, refactor):
 8. [x] M8: preguntas y respuestas con formato sugerido (incluye la pregunta de transferencia, RF24).
 9. [x] M9: revisión de afirmaciones con caso guionado (fuente de verdad: guías de la persona y la guía de ejemplo).
 10. [x] M10: recomendación sobre el catálogo fijo (catálogo versionado en el código; por afirmación de M9 o por necesidad).
-11. [ ] Conectar el proveedor real de IA (si ya se decidió) detrás del puerto.
+11. [x] Conectar el proveedor real de IA detrás del puerto: Anthropic o una API compatible con OpenAI, elegido con `FROBI_LLM_PROVIDER`. Sin clave, respaldo.
 
 ### Fase 2 · «Debería» (6 de noviembre)
 
 - [x] M11: progreso y cierre.
-- [x] M12: clases, invitaciones, unirse, panel con alertas (sin caché del panel todavía; el contenido de clase sigue de ejemplo).
+- [x] M12: clases, invitaciones, unirse, panel con alertas (sin caché del panel todavía).
+- [x] RF45: contenido de clase (texto o PDF). Solo lo sube el docente; lo ven él y los alumnos unidos, y sirve como cualquier material.
 - [x] M13: ajustes, cambio de alias, salir de la clase y «Qué ve tu docente».
 - [x] RF14, RF24 y RF43.
 - [x] **Test de privacidad (RNF16):** la actividad de un alumno fuera de la clase nunca aparece en el panel ni en el detalle.
@@ -255,8 +256,9 @@ Orden según el flujo de la demo; cada paso en TDD (rojo, verde, refactor):
 ### Fase 3 · «Podría» y cierre (7 de noviembre, mañana)
 
 - [x] RF22 (catálogo filtrable), RF26 y RF48 (detalle del alumno) y RF50 (idiomas).
-- [ ] Seed de demo: un docente, 2 alumnos y actividad marcada como `sample_data` (RF54, RNF12).
-- [ ] Prueba completa de la demo contra el front y congelamiento del contrato.
+- [x] Seed de demo: un docente, 2 alumnos y actividad marcada como `sample_data` (RF54, RNF12). `uv run python -m frobi.demo`.
+- [x] Congelamiento del contrato: `openapi.json` versión `1.0.0`; desde aquí solo cambios aditivos.
+- [ ] Prueba completa de la demo contra el front (cuando el front esté listo).
 
 ## 9. Estrategia de tests (TDD estricto)
 
@@ -286,7 +288,7 @@ La IA **nunca** se llama en los tests: se usa el adaptador `Fake`, que es determ
 
 ## 11. Riesgos y decisiones abiertas para el backend
 
-- [ ] **Proveedor de IA:** sin él, la demo corre con `Fallback`. Hay que decidirlo antes del 5 de noviembre al mediodía.
+- [ ] **Proveedor de IA:** el backend ya soporta Anthropic o una API compatible con OpenAI; falta que el equipo elija uno y ponga la clave en `FROBI_LLM_API_KEY`. Sin clave, la demo corre con `Fallback`.
 - [ ] **Nombre y visibilidad del repo** en GitHub.
 - [ ] **Umbrales de las alertas** del panel: «propuesta por validar» según el documento. Se dejan configurables.
 - [ ] **Verificación externa frente al catálogo fijo** (M9): por ahora solo el material subido es la fuente de verdad.

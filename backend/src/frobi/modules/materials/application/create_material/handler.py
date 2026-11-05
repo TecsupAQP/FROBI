@@ -29,6 +29,7 @@ class CreateMaterialHandler:
             source=MaterialSource.PASTE,
             text=command.text,
             now=self._clock.now(),
+            class_id=command.class_id,
         )
         async with self._uow:
             await self._materials.add(material)
@@ -61,6 +62,7 @@ class UploadMaterialHandler:
                 source=MaterialSource.UPLOAD,
                 text=text,
                 now=self._clock.now(),
+                class_id=command.class_id,
             )
         except EmptyText as error:
             # A scanned PDF without a text layer reads as empty: tell the person it is unreadable.

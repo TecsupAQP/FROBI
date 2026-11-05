@@ -26,6 +26,7 @@ def settings() -> Settings:
         _env_file=None,
         cors_origins=[FRONT_ORIGIN],
         health_timeout_seconds=0.5,
+        llm_api_key=None,  # tests never call a real AI provider
     )
 
 

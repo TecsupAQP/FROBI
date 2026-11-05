@@ -1,5 +1,6 @@
 """Teacher panel and student detail. Only the class's teacher; only activity of this class."""
 
+from dataclasses import replace
 from uuid import UUID
 
 from frobi.modules.classrooms.application.manage_class.handlers import own_class
@@ -9,7 +10,12 @@ from frobi.modules.classrooms.application.ports import (
     MembershipRepository,
     PersonDirectory,
 )
-from frobi.modules.classrooms.domain import ClassNotFound, MembershipStatus, TeachersOnly
+from frobi.modules.classrooms.domain import (
+    DEMO_CLASS_ID,
+    ClassNotFound,
+    MembershipStatus,
+    TeachersOnly,
+)
 
 from .panel import Panel, StudentDetail, build_panel, build_student_detail, sample_panel
 
@@ -40,7 +46,9 @@ class DashboardHandler:
             for m in members
             if m.person_id is not None and m.status is MembershipStatus.JOINED
         ]
-        return build_panel(class_id, students, activity)
+        panel = build_panel(class_id, students, activity)
+        # The seeded demo class is all demo data, even once it has activity (RNF12, RNF18).
+        return replace(panel, sample_data=True) if class_id == DEMO_CLASS_ID else panel
 
 
 class StudentDetailHandler:

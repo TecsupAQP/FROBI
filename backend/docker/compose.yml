@@ -11,6 +11,11 @@ services:
       FROBI_DATABASE_URL: postgresql+asyncpg://frobi:frobi@postgres:5432/frobi
       FROBI_REDIS_URL: redis://redis:6379/0
       FROBI_CORS_ORIGINS: http://localhost:5173
+      # AI provider: export these before `docker compose up` (no key = fallbacks only).
+      FROBI_LLM_PROVIDER: ${FROBI_LLM_PROVIDER:-anthropic}
+      FROBI_LLM_API_KEY: ${FROBI_LLM_API_KEY:-}
+      FROBI_LLM_MODEL: ${FROBI_LLM_MODEL:-}
+      FROBI_LLM_BASE_URL: ${FROBI_LLM_BASE_URL:-}
     depends_on:
       postgres:
         condition: service_healthy

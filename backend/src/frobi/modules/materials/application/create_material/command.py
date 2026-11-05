@@ -10,6 +10,7 @@ class CreateMaterialCommand:
     title: str
     kind: MaterialKind
     text: str
+    class_id: UUID | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -18,3 +19,4 @@ class UploadMaterialCommand:
     title: str
     kind: MaterialKind
     data: bytes
+    class_id: UUID | None = None

@@ -9,6 +9,7 @@ from frobi.modules.materials.application.ports import (
     WorkRepository,
 )
 from frobi.modules.materials.domain import Material, MaterialKind
+from frobi.shared.application import ClassContext
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,12 +44,21 @@ class ReadWorkHandler:
 
 
 class GuidesHandler:
-    """The guides a person studies from: their own ``guide`` materials and the sample guides."""
+    """The guides a person studies from: their own ``guide`` materials, the content of the class
+    they are active in and the sample guides."""
 
-    def __init__(self, materials: MaterialRepository, samples: SampleCatalog) -> None:
+    def __init__(
+        self,
+        materials: MaterialRepository,
+        samples: SampleCatalog,
+        classes: ClassContext | None = None,
+    ) -> None:
         self._materials = materials
         self._samples = samples
+        self._classes = classes
 
     async def for_person(self, person_id: UUID) -> list[Material]:
         own = await self._materials.list_for_owner(person_id, MaterialKind.GUIDE)
-        return [*own, *self._samples.list()]
+        active = None if self._classes is None else await self._classes.active_class(person_id)
+        of_class = [] if active is None else await self._materials.list_for_class(active)
+        return [*own, *of_class, *self._samples.list()]

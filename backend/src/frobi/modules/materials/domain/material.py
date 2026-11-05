@@ -77,9 +77,19 @@ class Material:
             created_at=now,
         )
 
-    def visible_to(self, person_id: UUID) -> bool:
-        """Samples are for everyone; anything else only for whoever brought it (RNF08)."""
-        return self.source is MaterialSource.SAMPLE or self.owner_id == person_id
+    def visible_to(self, person_id: UUID, active_class_id: UUID | None = None) -> bool:
+        """Samples are for everyone; class content for the class; the rest only for its owner.
+
+        RNF08: a person's own material is never shown to anyone else. Class content is what the
+        teacher uploaded for the class, so the people active in that class may read it.
+        """
+        if self.source is MaterialSource.SAMPLE or self.owner_id == person_id:
+            return True
+        return (
+            self.kind is MaterialKind.CLASS_CONTENT
+            and self.class_id is not None
+            and self.class_id == active_class_id
+        )
 
     def preview(self, length: int = 160) -> str:
         flat = " ".join(self.text.split())

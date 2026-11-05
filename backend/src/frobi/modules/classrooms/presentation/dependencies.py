@@ -12,12 +12,15 @@ from frobi.modules.classrooms.application import (
     InviteStudentsHandler,
     JoinClassHandler,
     JoinWithCodeHandler,
+    ListClassContentHandler,
     ListMembersHandler,
     StudentDetailHandler,
+    UploadClassContentHandler,
 )
 from frobi.modules.classrooms.domain import new_invite_code
 from frobi.modules.classrooms.infrastructure import (
     ClassActivityReaderAdapter,
+    ClassMaterialsAdapter,
     PersonDirectoryAdapter,
     SqlAlchemyClassRepository,
     SqlAlchemyMembershipRepository,
@@ -83,3 +86,11 @@ def get_join_class(db: DbSession, clock: AppClock) -> JoinWithCodeHandler:
         clock,
     )
     return JoinWithCodeHandler(join, PersonDirectoryAdapter(db))
+
+
+def get_upload_class_content(db: DbSession) -> UploadClassContentHandler:
+    return UploadClassContentHandler(SqlAlchemyClassRepository(db), ClassMaterialsAdapter(db))
+
+
+def get_list_class_content(db: DbSession) -> ListClassContentHandler:
+    return ListClassContentHandler(get_get_class(db), ClassMaterialsAdapter(db))

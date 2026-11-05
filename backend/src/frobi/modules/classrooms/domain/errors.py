@@ -31,3 +31,9 @@ class NotInAClass(DomainError):
     code = "Classrooms.NotInAClass"
     kind = ErrorKind.CONFLICT
     default_message = "No estás en ninguna clase."
+
+
+class MissingClassContent(DomainError):
+    code = "Classrooms.MissingContent"
+    kind = ErrorKind.VALIDATION
+    default_message = "Pega el texto o sube un PDF para la clase (solo uno de los dos)."
