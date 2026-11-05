@@ -12,6 +12,8 @@ class PersonRepository(Protocol):
 
     async def get(self, person_id: UUID) -> Person | None: ...
 
+    async def save(self, person: Person) -> None: ...
+
 
 class SessionStore(Protocol):
     """Opaque tokens that expire (30 days). Implemented on Redis."""

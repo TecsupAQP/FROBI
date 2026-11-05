@@ -2,7 +2,6 @@
   "components": {
     "schemas": {
       "AccessibilityProfile": {
-        "description": "Profiles offered by the wizard. Pending confirmation against the requirements (RF35).",
         "enum": [
           "low_vision",
           "reading",
@@ -61,6 +60,7 @@
         "type": "object"
       },
       "AccessibilitySetting": {
+        "description": "Same names as the switches stored by settings.",
         "enum": [
           "voice",
           "high_contrast",

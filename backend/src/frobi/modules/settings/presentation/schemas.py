@@ -1,16 +1,11 @@
 """M13 · Ajustes y privacidad: contract with the front."""
 
-from enum import StrEnum
 from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
-class Language(StrEnum):
-    ES = "es"
-    QU = "qu"
-    AY = "ay"
+from frobi.modules.settings.domain import Language, PersonSettings
 
 
 class SettingsOut(BaseModel):
@@ -23,6 +18,20 @@ class SettingsOut(BaseModel):
     large_buttons: bool
     keyboard_mode: bool
     language: Language
+
+    @classmethod
+    def from_domain(cls, settings: PersonSettings) -> "SettingsOut":
+        return cls(
+            profiles=list(settings.profiles),
+            voice=settings.is_on("voice"),
+            high_contrast=settings.is_on("high_contrast"),
+            large_text=settings.is_on("large_text"),
+            short_texts=settings.is_on("short_texts"),
+            captions=settings.is_on("captions"),
+            large_buttons=settings.is_on("large_buttons"),
+            keyboard_mode=settings.is_on("keyboard_mode"),
+            language=settings.language,
+        )
 
 
 class SettingsPatch(BaseModel):

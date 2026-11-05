@@ -1,6 +1,6 @@
 """A person who uses FROBI. No email, no password, no personal data beyond an alias (RNF08)."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 from enum import StrEnum
 from uuid import UUID, uuid4
@@ -59,3 +59,7 @@ class Person:
             configured_by=ConfiguredBy.SELF,
             created_at=now,
         )
+
+    def configured(self, by: ConfiguredBy) -> "Person":
+        """The wizard says who set FROBI up: the person or a companion (RF36)."""
+        return replace(self, configured_by=by)

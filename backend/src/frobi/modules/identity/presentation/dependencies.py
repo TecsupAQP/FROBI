@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from frobi.modules.identity.application import EndSessionHandler, GetMeHandler, StartSessionHandler
 from frobi.modules.identity.infrastructure import (
     ExampleClassMembership,
-    PendingOnboardingStatus,
     RedisSessionStore,
+    SettingsOnboardingStatus,
     SqlAlchemyPersonRepository,
 )
 from frobi.shared.domain import Clock
@@ -41,5 +41,5 @@ def get_get_me(db: DbSession, redis: RedisClient) -> GetMeHandler:
     return GetMeHandler(
         persons=SqlAlchemyPersonRepository(db),
         memberships=ExampleClassMembership(redis),
-        onboarding=PendingOnboardingStatus(),
+        onboarding=SettingsOnboardingStatus(db),
     )
