@@ -45,6 +45,17 @@
       />
     </div>
 
+    <cmp-mis-guias
+      v-if="guiasClase.length"
+      data-recorrido="material-clase"
+      prefijo-id="material-clase"
+      :titulo="nombreClase ? `Material de tu clase · ${nombreClase}` : 'Material de tu clase'"
+      descripcion="Lo sube tu docente. Elige con cuál estudiar; lo verás en el formato que prefieras."
+      :guias="guiasClase"
+      :eligiendo="eligiendo"
+      @elegir="estudiar"
+    />
+
     <cmp-mis-guias v-if="propias.length > 1" :guias="propias" :eligiendo="eligiendo" @elegir="estudiar" />
 
     <cmp-subir-pdf

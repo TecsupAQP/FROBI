@@ -6,7 +6,11 @@ import type {
   MaterialDto,
   MaterialResumenDto,
 } from "@/core/shared/infraestructure/http/api.dto";
-import { elegirMaterial, materialActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
+import {
+  elegirMaterial,
+  materialActualId,
+  olvidarMaterial,
+} from "@/core/shared/infraestructure/http/contexto-estudio";
 import { CARRERAS } from "@/constants/carreras.constant";
 import { temasDesdeTexto, tituloDeGuia, tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
 
@@ -43,8 +47,16 @@ const carreraDeLaSesion = (): string => {
 // GET /materials/{id}, POST /materials/upload (PDF) y POST /materials (texto pegado).
 export class MaterialUseCase implements MaterialPort {
   async obtenerGuia(): Promise<Material> {
-    const dto = await api.get<MaterialDto>(`/materials/${await materialActualId()}`);
-    return materialDesdeApi(dto, carreraDeLaSesion());
+    try {
+      const dto = await api.get<MaterialDto>(`/materials/${await materialActualId()}`);
+      return materialDesdeApi(dto, carreraDeLaSesion());
+    } catch (error) {
+      // El material guardado ya no es visible (por ejemplo, salió de la clase): se busca otro.
+      if (!esErrorApi(error) || error.status !== 404) throw error;
+      olvidarMaterial();
+      const dto = await api.get<MaterialDto>(`/materials/${await materialActualId()}`);
+      return materialDesdeApi(dto, carreraDeLaSesion());
+    }
   }
 
   // GET /materials/guides: las propias (más recientes primero) y las de ejemplo.

@@ -9,6 +9,9 @@ import type {
 import { tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
 import { SinGuiaError } from "@/core/shared/application/util/errores.util";
 import { useCmpEscaleraStore } from "@/store/business/cmp-escalera/cmp-escalera.store";
+import { useCmpSesionStore } from "@/store/common/cmp-sesion/cmp-sesion.store";
+import { listarMaterialesClaseService } from "@/core/clase/infraestructure/adapters/in/service/clase.service";
+import type { MaterialClase } from "@/core/shared/domain/view/clase.view";
 import { useCmpResultadoStore } from "@/store/business/cmp-resultado/cmp-resultado.store";
 import { PdfIlegibleError } from "@/core/material/infraestructure/ports/in/material.port";
 import {
@@ -42,8 +45,30 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
   const propias = computed(() => guias.value.filter((item) => item.origen !== "ejemplo" || item.actual));
   const guiaEjemplo = computed(() => guias.value.find((item) => item.origen === "ejemplo") ?? null);
 
+  // Lo que el docente subió a la clase del estudiante (vacío si no está en una clase).
+  const materialesClase = ref<MaterialClase[]>([]);
+  const nombreClase = computed(() => useCmpSesionStore().clase?.nombre ?? "");
+  const guiasClase = computed<GuiaResumen[]>(() =>
+    materialesClase.value.map((material) => ({
+      id: material.id,
+      titulo: material.titulo,
+      origen: "clase",
+      vistaPrevia: material.vistaPrevia,
+      actual: material.id === guia.value?.id,
+    })),
+  );
+
+  const cargarMaterialesClase = async () => {
+    const sesion = useCmpSesionStore();
+    if (sesion.estudiante?.rol !== "estudiante") {
+      materialesClase.value = [];
+      return;
+    }
+    materialesClase.value = await listarMaterialesClaseService().catch(() => []);
+  };
+
   const cargarGuia = async () => {
-    guias.value = await listarGuiasService();
+    [guias.value] = await Promise.all([listarGuiasService(), cargarMaterialesClase()]);
     try {
       guia.value = await obtenerGuiaService();
       sinGuia.value = false;
@@ -117,6 +142,8 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
 
   return {
     guias,
+    guiasClase,
+    nombreClase,
     guiaEjemplo,
     propias,
     sinGuia,
