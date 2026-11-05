@@ -1,8 +1,17 @@
 <template>
   <div :class="PREFIX">
-    <div v-if="!panel" :class="`${PREFIX}__cargando`">
+    <div v-if="!cargado" :class="`${PREFIX}__cargando`">
       <v-cargando>Cargando el panel…</v-cargando>
     </div>
+
+    <v-estado-vacio
+      v-else-if="!panel"
+      icono="users"
+      titulo="Todavía no tienes una clase"
+      texto="Crea tu clase e invita a tus alumnos. Aquí verás su avance dentro de la clase."
+    >
+      <v-button :destino="{ name: RutaEnum.CLASE_NUEVA }">Crear mi clase</v-button>
+    </v-estado-vacio>
 
     <template v-else>
       <v-chip tono="marino" :class="`${PREFIX}__paso`">Paso 8 · Docente ve avances</v-chip>
@@ -25,7 +34,7 @@
       <cmp-mi-clase v-if="clase" :clase="clase" />
 
       <v-aviso v-if="panel.esEjemplo" :class="`${PREFIX}__ejemplo`" tipo="aviso" icono="info">
-        Maqueta con datos de ejemplo. Visible solo para el rol Docente.
+        Datos de ejemplo mientras tu clase no tenga actividad. Visible solo para el rol Docente.
       </v-aviso>
 
       <div :class="`${PREFIX}__tarjetas`">
@@ -58,7 +67,11 @@
           />
         </section>
 
-        <section :class="`${PREFIX}__tarjeta`" aria-labelledby="docente-temas">
+        <section
+          v-if="panel.temasDificiles.length"
+          :class="`${PREFIX}__tarjeta`"
+          aria-labelledby="docente-temas"
+        >
           <div>
             <h2 id="docente-temas" :class="`${PREFIX}__titulo`">Temas donde más se traban</h2>
             <p :class="`${PREFIX}__secundario`">Porcentaje que repite el tema o pide ayuda</p>
@@ -104,7 +117,7 @@
               :valor-texto="`${dato.valor} de ${dato.total}`"
             />
           </div>
-          <div :class="`${PREFIX}__bloque`">
+          <div v-if="panel.competencias.length" :class="`${PREFIX}__bloque`">
             <h3 :class="`${PREFIX}__bloque-titulo`">Competencias en IA</h3>
             <v-barra-dato
               v-for="dato in panel.competencias"

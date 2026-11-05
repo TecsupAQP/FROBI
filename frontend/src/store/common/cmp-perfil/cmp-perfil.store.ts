@@ -12,7 +12,8 @@ import {
   obtenerPerfilService,
   validarCodigoClaseService,
 } from "@/core/perfil/infraestructure/adapters/in/service/perfil.service";
-import { PERFIL_INICIAL } from "@/mocks/perfil.mock";
+import { PERFIL_INICIAL } from "@/constants/perfil.constant";
+import { useCmpAjustesStore } from "@/store/common/cmp-ajustes/cmp-ajustes.store";
 
 // Rol, perfiles de accesibilidad (varios a la vez), quién configuró y qué pasos ya vio.
 export const useCmpPerfilStore = defineStore("CmpPerfilStore", () => {
@@ -29,7 +30,7 @@ export const useCmpPerfilStore = defineStore("CmpPerfilStore", () => {
   const guardar = async () => {
     guardando.value = true;
     try {
-      perfil.value = await guardarPerfilService(perfil.value);
+      perfil.value = await guardarPerfilService(JSON.parse(JSON.stringify(perfil.value)) as Perfil);
     } finally {
       guardando.value = false;
     }
@@ -62,14 +63,22 @@ export const useCmpPerfilStore = defineStore("CmpPerfilStore", () => {
     return guardar();
   };
 
-  const marcarAsistenteVisto = () => {
+  // Al terminar o reiniciar el asistente la API cambia los ajustes: se vuelven a leer.
+  const marcarAsistenteVisto = async () => {
     perfil.value.vioAsistente = true;
-    return guardar();
+    await guardar();
+    await useCmpAjustesStore().recargar();
   };
 
-  const reiniciarAsistente = () => {
+  const reiniciarAsistente = async () => {
     perfil.value.vioAsistente = false;
-    return guardar();
+    await guardar();
+    await useCmpAjustesStore().recargar();
+  };
+
+  const reiniciar = () => {
+    perfil.value = structuredClone(PERFIL_INICIAL);
+    cargado.value = false;
   };
 
   return {
@@ -84,6 +93,7 @@ export const useCmpPerfilStore = defineStore("CmpPerfilStore", () => {
     guardar,
     marcarAsistenteVisto,
     marcarIntroVista,
+    reiniciar,
     reiniciarAsistente,
     validarCodigo,
   };

@@ -31,9 +31,11 @@ export default defineComponent({
       cargarGuia,
       cerrarModal,
       elegirArchivo,
+      usarGuia: usarMaterial,
     } = useCmpInicio();
 
-    const usarGuia = () => {
+    const usarGuia = async (textoPegado?: string) => {
+      await usarMaterial(textoPegado);
       cerrarModal();
       router.push({ name: RutaEnum.GUIA });
     };

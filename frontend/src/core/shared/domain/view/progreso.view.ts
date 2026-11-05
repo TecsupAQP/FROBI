@@ -15,4 +15,6 @@ export interface Progreso {
   aciertos: AciertoFormato[];
   // Piezas completas (de 4) en cada intento de "Pídelo tú".
   intentos: number[];
+  // Ejercicios resueltos sin IA: cuentan como logro.
+  resueltosSinIa: number;
 }

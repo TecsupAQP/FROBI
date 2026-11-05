@@ -31,7 +31,7 @@ export default defineComponent({
 
     const { reiniciarAsistente } = useCmpPerfil();
 
-    const { estudiante, iniciarSesion } = useCmpSesion();
+    const { estudiante, cambiarAlias, actualizarClase } = useCmpSesion();
 
     const { mostrarAviso } = useCmpAvisos();
 
@@ -46,13 +46,21 @@ export default defineComponent({
       if (id === "voz" && ajustes.value.activos.voz) leer("La voz leerá cada paso.");
     };
 
-    const guardarAlias = () => {
+    const guardarAlias = async () => {
       const limpio = alias.value.trim();
-      if (estudiante.value && limpio.length >= 3) iniciarSesion({ ...estudiante.value, alias: limpio });
+      if (!estudiante.value || limpio.length < 3 || limpio === estudiante.value.alias) return;
+      try {
+        await cambiarAlias(limpio);
+        mostrarAviso("Alias guardado", `Ahora eres ${limpio}.`);
+      } catch {
+        alias.value = estudiante.value.alias;
+        mostrarAviso("No pudimos cambiar tu alias", "Inténtalo de nuevo en un momento.");
+      }
     };
 
     const salirDeClase = async () => {
       await salir();
+      actualizarClase(null);
       mostrarAviso("Saliste de la clase", "Tu docente ya no verá tu actividad.");
     };
 

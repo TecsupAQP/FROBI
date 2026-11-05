@@ -2,7 +2,7 @@
   <div :class="PREFIX">
     <cmp-encabezado-pagina
       titulo="Pídelo tú"
-      :descripcion="`Escribe cómo quieres que la IA te explique el tema «${tema}».`"
+      :descripcion="descripcion"
       :volver="{
         texto: 'Volver al resultado',
         destino: { name: RutaEnum.RESULTADO, params: { formato: 'mapa-visual' } },

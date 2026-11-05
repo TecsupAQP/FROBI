@@ -1,9 +1,11 @@
-import { onMounted, watch } from "vue";
+import { watch } from "vue";
 import useCmpAjustes from "@/composables/common/cmp-ajustes/cmp-ajustes.composable";
+import useCmpSesion from "@/composables/common/cmp-sesion/cmp-sesion.composable";
 
 // Lleva los interruptores de Ajustes a atributos de <html>; los estilos de cada modo viven en _tokens.scss.
 function useAplicarAjustes() {
   const { ajustes, cargar } = useCmpAjustes();
+  const { estudiante } = useCmpSesion();
 
   const aplicar = () => {
     const raiz = document.documentElement;
@@ -17,10 +19,21 @@ function useAplicarAjustes() {
   };
 
   watch(ajustes, aplicar, { deep: true });
-  onMounted(async () => {
-    await cargar();
-    aplicar();
-  });
+
+  // Los ajustes son de la persona: se leen de la API apenas hay sesión (y al cambiar de persona).
+  watch(
+    estudiante,
+    async (persona) => {
+      if (!persona) return aplicar();
+      try {
+        await cargar();
+      } catch {
+        // Sin conexión: se mantienen los valores por defecto hasta la próxima carga.
+      }
+      aplicar();
+    },
+    { immediate: true },
+  );
 }
 
 export default useAplicarAjustes;

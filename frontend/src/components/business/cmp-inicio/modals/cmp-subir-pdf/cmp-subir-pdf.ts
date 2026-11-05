@@ -19,12 +19,12 @@ export default defineComponent({
     modelValue: { type: Boolean, default: false },
   },
   emits: {
-    elegir: () => true,
+    elegir: (_archivo: File) => true,
     cancelar: () => true,
-    usar: () => true,
+    usar: (_textoPegado?: string) => true,
     "update:modelValue": (_valor: boolean) => true,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const abierto = useModel(props, "modelValue");
 
     const PREFIX = "cmp-subir-pdf";
@@ -32,6 +32,28 @@ export default defineComponent({
     const pegando = ref(false);
 
     const textoPegado = ref("");
+
+    const selector = ref<HTMLInputElement | null>(null);
+
+    const arrastrando = ref(false);
+
+    const abrirSelector = () => {
+      pegando.value = false;
+      selector.value?.click();
+    };
+
+    const alElegir = (evento: Event) => {
+      const entrada = evento.target as HTMLInputElement;
+      const elegido = entrada.files?.[0];
+      if (elegido) emit("elegir", elegido);
+      entrada.value = "";
+    };
+
+    const soltar = (evento: DragEvent) => {
+      arrastrando.value = false;
+      const elegido = evento.dataTransfer?.files[0];
+      if (elegido) emit("elegir", elegido);
+    };
 
     const cancelar = () => {
       abierto.value = false;
@@ -44,6 +66,17 @@ export default defineComponent({
       }
     });
 
-    return { PREFIX, pegando, textoPegado, cancelar, abierto };
+    return {
+      PREFIX,
+      pegando,
+      textoPegado,
+      selector,
+      arrastrando,
+      abrirSelector,
+      alElegir,
+      soltar,
+      cancelar,
+      abierto,
+    };
   },
 });

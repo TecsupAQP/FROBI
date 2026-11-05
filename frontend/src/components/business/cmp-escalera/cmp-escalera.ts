@@ -2,6 +2,7 @@ import { computed, defineComponent, onMounted, watch } from "vue";
 import VButton from "@/components/base/v-button/v-button.vue";
 import VCargando from "@/components/base/v-cargando/v-cargando.vue";
 import VChip from "@/components/base/v-chip/v-chip.vue";
+import VEstadoVacio from "@/components/base/v-estado-vacio/v-estado-vacio.vue";
 import VField from "@/components/base/v-field/v-field.vue";
 import VIcon from "@/components/base/v-icon/v-icon.vue";
 import CmpEncabezadoPagina from "@/components/common/cmp-encabezado-pagina/cmp-encabezado-pagina.vue";
@@ -14,7 +15,7 @@ import { RutaEnum } from "@/enums/ruta.enum";
 
 export default defineComponent({
   name: "CmpEscalera",
-  components: { VButton, VCargando, VChip, VField, VIcon, CmpEncabezadoPagina, CmpEscalon },
+  components: { VButton, VCargando, VChip, VEstadoVacio, VField, VIcon, CmpEncabezadoPagina, CmpEscalon },
   props: {
     tareaId: { type: String, required: true },
   },
@@ -29,11 +30,14 @@ export default defineComponent({
     };
 
     const {
+      error,
+      nivelAyuda,
       probando,
       progreso,
       respuestaDesbloqueada,
       tarea,
       abrirPasoAPaso,
+      abrirPistas,
       cargar,
       escribirIntento,
       probarIntento,
@@ -81,12 +85,17 @@ export default defineComponent({
       if (vozActiva.value && texto) leer(texto);
     });
 
-    onMounted(() => cargar(props.tareaId));
+    onMounted(async () => {
+      await cargar(props.tareaId);
+      await abrirPistas();
+    });
 
     return {
       RutaEnum,
       PREFIX,
       BLOQUEOS,
+      error,
+      nivelAyuda,
       probando,
       progreso,
       tarea,

@@ -1,6 +1,6 @@
 <template>
   <div :class="PREFIX">
-    <figure :class="`${PREFIX}__ilustracion`">
+    <figure v-if="contenido.conIlustracion" :class="`${PREFIX}__ilustracion`">
       <figcaption class="solo-lector">
         Ilustración: tres botellas con tapa metálica avanzan por una faja; el sensor inductivo, encima de la
         botella del centro, detecta su tapa y enciende su luz verde.
@@ -53,7 +53,7 @@
       </li>
     </ol>
 
-    <v-aviso tipo="aviso">{{ contenido.advertencia }}</v-aviso>
+    <v-aviso v-if="contenido.advertencia" tipo="aviso">{{ contenido.advertencia }}</v-aviso>
   </div>
 </template>
 

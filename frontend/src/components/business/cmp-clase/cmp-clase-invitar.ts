@@ -30,21 +30,26 @@ export default defineComponent({
       try {
         await navigator.clipboard.writeText(texto);
       } catch {
-        // Portapapeles no disponible: en la maqueta el aviso se muestra igual.
+        // Portapapeles no disponible: el código sigue a la vista para copiarlo a mano.
       }
       mostrarAviso(titulo, "Compártelo con tus alumnos.");
     };
 
-    // Maqueta: no se envía ningún correo; el alumno aparece como invitación pendiente.
+    // Se invita por alias (FROBI no pide correos). El alumno aparece como invitación pendiente.
     const enviar = async () => {
-      if (!/^\S+@\S+\.\S+$/.test(correo.value.trim())) {
-        errorCorreo.value = "Escribe un correo válido.";
+      if (correo.value.trim().length < 3) {
+        errorCorreo.value = "Escribe el alias de tu alumno (3 letras o más).";
         document.getElementById("invitar-correo")?.focus();
         return;
       }
       errorCorreo.value = undefined;
-      await invitar(correo.value.trim());
-      mostrarAviso("Invitación enviada", `${correo.value.trim()} aparece como pendiente.`);
+      try {
+        await invitar(correo.value.trim());
+        mostrarAviso("Invitación enviada", `${correo.value.trim()} aparece como pendiente.`);
+      } catch {
+        errorCorreo.value = "No pudimos enviar la invitación. Inténtalo de nuevo.";
+        return;
+      }
       correo.value = "";
     };
 

@@ -1,11 +1,11 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { Carrera, Rol, Student } from "@/core/shared/domain/view/student.view";
+import type { Carrera, Rol, SesionIniciada } from "@/core/shared/domain/view/student.view";
 import {
   entrarService,
   obtenerCarrerasService,
 } from "@/core/autenticacion/infraestructure/adapters/in/service/autenticacion.service";
-import { validarCodigoClaseService } from "@/core/perfil/infraestructure/adapters/in/service/perfil.service";
+import { CodigoClaseInvalidoError } from "@/core/autenticacion/infraestructure/ports/in/autenticacion.port";
 
 export interface ErroresLogin {
   alias?: string;
@@ -21,7 +21,7 @@ export const useCmpLoginStore = defineStore("CmpLoginStore", () => {
   const alias = ref("");
   const carrera = ref("mecatronica");
   const rol = ref<Rol | "">("estudiante");
-  // Opcional: si se escribe, se valida (en el mock, contra SENS-4821).
+  // Opcional: si se escribe, la API lo valida al entrar.
   const codigoClase = ref("");
   const nombreClase = ref<string | null>(null);
   const errores = ref<ErroresLogin>({});
@@ -42,21 +42,27 @@ export const useCmpLoginStore = defineStore("CmpLoginStore", () => {
     return Object.keys(nuevos).length === 0;
   };
 
-  // Devuelve el estudiante si los datos son válidos; la sesión la guarda el store de sesión.
-  const entrar = async (): Promise<Student | null> => {
+  // Abre la sesión en la API. Un código de clase inválido no deja entrar: se avisa en su campo.
+  const entrar = async (): Promise<SesionIniciada | null> => {
     if (!validar() || !rol.value) return null;
     enviando.value = true;
     try {
-      nombreClase.value = null;
-      if (codigoClase.value.trim()) {
-        const resultado = await validarCodigoClaseService(codigoClase.value);
-        if (!resultado.valido) {
-          errores.value = { ...errores.value, codigo: resultado.mensaje };
-          return null;
-        }
-        nombreClase.value = resultado.nombreClase ?? null;
+      const sesion = await entrarService(
+        { alias: alias.value, carrera: carrera.value, rol: rol.value },
+        codigoClase.value,
+      );
+      nombreClase.value = sesion.clase?.nombre ?? null;
+      return sesion;
+    } catch (error) {
+      if (error instanceof CodigoClaseInvalidoError) {
+        errores.value = { ...errores.value, codigo: error.message };
+        return null;
       }
-      return await entrarService({ alias: alias.value, carrera: carrera.value, rol: rol.value });
+      errores.value = {
+        ...errores.value,
+        alias: "No pudimos entrar. Revisa tu conexión e inténtalo de nuevo.",
+      };
+      return null;
     } finally {
       enviando.value = false;
     }

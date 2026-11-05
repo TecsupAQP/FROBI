@@ -43,7 +43,7 @@
       :nombre-archivo="nombreArchivo"
       :tamano-archivo-mb="tamanoArchivoMb"
       :archivo="archivo"
-      @elegir="elegirArchivo()"
+      @elegir="elegirArchivo"
       @cancelar="cancelarSubida"
       @usar="usarPdf"
     />

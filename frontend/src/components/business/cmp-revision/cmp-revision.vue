@@ -26,7 +26,7 @@
         <aside :class="`${PREFIX}__siguiente`" :aria-labelledby="`${PREFIX}-siguiente`">
           <h2 :id="`${PREFIX}-siguiente`" :class="`${PREFIX}__siguiente-titulo`">Siguiente paso</h2>
           <p>
-            Verifica la afirmación que contradice tu material. Te recomendamos una herramienta y cómo pedirla.
+            Verifica lo que no tiene respaldo en tu material. Te recomendamos una herramienta y cómo pedirla.
           </p>
           <v-button bloque :destino="{ name: RutaEnum.HERRAMIENTAS }">Ver cómo verificarla</v-button>
           <v-button bloque variante="secundario" :destino="{ name: RutaEnum.TRAE_TU_TRABAJO }">

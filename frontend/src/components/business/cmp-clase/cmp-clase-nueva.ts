@@ -1,4 +1,4 @@
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import VButton from "@/components/base/v-button/v-button.vue";
 import VChip from "@/components/base/v-chip/v-chip.vue";
@@ -8,6 +8,7 @@ import CmpEncabezadoPagina from "@/components/common/cmp-encabezado-pagina/cmp-e
 import CmpSubirPdf from "@/components/business/cmp-inicio/modals/cmp-subir-pdf/cmp-subir-pdf.vue";
 import useCmpClase from "@/composables/common/cmp-clase/cmp-clase.composable";
 import useCmpInicio from "@/composables/business/cmp-inicio/cmp-inicio.composable";
+import useCmpSesion from "@/composables/common/cmp-sesion/cmp-sesion.composable";
 import { RutaEnum } from "@/enums/ruta.enum";
 
 export default defineComponent({
@@ -24,11 +25,14 @@ export default defineComponent({
 
     const router = useRouter();
 
-    const { materiales, ocupado, cargarMateriales, crear } = useCmpClase();
+    const { estudiante } = useCmpSesion();
 
-    // La subida usa el mismo modal (simulado) de Inicio.
+    const { materiales, ocupado, agregarMaterial: agregarPendiente, crear } = useCmpClase();
+
+    // La subida usa el mismo modal de Inicio: muestra el texto leído antes de agregarlo.
     const {
       archivo,
+      archivoElegido,
       fase,
       modalAbierto,
       nombreArchivo,
@@ -49,10 +53,9 @@ export default defineComponent({
     // El título muestra solo el nombre, sin la carrera que va después del "·".
     const nombreCorto = computed(() => nombre.value.split("·")[0]?.trim() ?? "");
 
+    // El PDF se sube a la clase al crearla (antes no existe la clase).
     const agregarMaterial = () => {
-      if (archivo.value && !materiales.value.includes(archivo.value.nombre)) {
-        materiales.value = [...materiales.value, archivo.value.nombre];
-      }
+      if (archivoElegido.value) agregarPendiente(archivoElegido.value);
       cerrarModal();
     };
 
@@ -63,14 +66,18 @@ export default defineComponent({
         return;
       }
       errorNombre.value = undefined;
-      await crear({ nombre: nombreCorto.value || nombre.value, carrera: "Mecatrónica", ciclo: "ciclo 1" });
+      await crear({
+        nombre: nombreCorto.value || nombre.value,
+        carrera: "Mecatrónica",
+        ciclo: "ciclo 1",
+        tareas: [primeraTarea.value],
+      });
       router.push({ name: RutaEnum.CLASE_INVITAR });
     };
 
-    onMounted(cargarMateriales);
-
     return {
       PREFIX,
+      estudiante,
       REGLAS,
       materiales,
       ocupado,

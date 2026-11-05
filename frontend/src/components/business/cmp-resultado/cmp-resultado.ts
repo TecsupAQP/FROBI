@@ -69,11 +69,14 @@ export default defineComponent({
     );
 
     const copiarReceta = async () => {
-      const texto = receta.value.map((pieza) => `${nombrePieza(pieza.pieza)}: ${pieza.texto}`).join("\n");
+      // Se copia la misma instrucción que FROBI le envió a la IA.
+      const texto =
+        adaptacion.value?.instruccion ||
+        receta.value.map((pieza) => `${nombrePieza(pieza.pieza)}: ${pieza.texto}`).join("\n");
       try {
         await navigator.clipboard.writeText(texto);
       } catch {
-        // El portapapeles puede no estar disponible (http, permisos); el aviso se muestra igual en la maqueta.
+        // El portapapeles puede no estar disponible (http, permisos); el aviso se muestra igual.
       }
       mostrarAviso("Receta copiada", "Pégala donde quieras. Se oculta en 4 s.");
     };

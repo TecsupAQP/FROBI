@@ -22,6 +22,8 @@ export interface SeccionRevisada {
 }
 
 export interface WorkReview {
+  // Trabajo revisado en la API (work_id).
+  id: string;
   consigna: string;
   secciones: SeccionRevisada[];
   resumen: Record<EstadoAfirmacion, number>;

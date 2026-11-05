@@ -17,10 +17,14 @@ export interface Material {
 
 // Resultado de leer un PDF subido: se muestra para que la persona lo revise.
 export interface ArchivoLeido {
+  // Material creado en la API con el texto extraído.
+  materialId: string;
   nombre: string;
-  paginas: number;
+  paginas?: number;
   tamanoMb: number;
   vistaPrevia: { titulo: string; texto: string };
+  // Todo el texto extraído (por ejemplo, para usarlo como borrador).
+  texto: string;
 }
 
 // Estados del modal de subida (Figma · 4 y 13): elegir → subiendo → listo | error.

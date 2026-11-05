@@ -17,6 +17,7 @@
           </div>
         </div>
         <v-barra-dato
+          v-if="alumno.avance !== null"
           etiqueta="Avance de la tarea"
           :valor="alumno.avance"
           :valor-texto="`${alumno.avance} %`"
@@ -30,8 +31,9 @@
         >
           {{ alumno.alerta.texto }}
         </v-chip>
-        <p :class="`${PREFIX}__nota`">{{ alumno.nota }}</p>
+        <p v-if="alumno.nota" :class="`${PREFIX}__nota`">{{ alumno.nota }}</p>
         <v-button
+          v-if="alumno.personaId"
           variante="secundario"
           bloque
           :destino="{ name: RutaEnum.ALUMNO, params: { alias: alumno.alias } }"

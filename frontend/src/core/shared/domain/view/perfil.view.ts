@@ -17,6 +17,7 @@ export interface Perfil {
 
 export interface ResultadoCodigoClase {
   valido: boolean;
+  claseId?: string;
   nombreClase?: string;
   mensaje?: string;
 }

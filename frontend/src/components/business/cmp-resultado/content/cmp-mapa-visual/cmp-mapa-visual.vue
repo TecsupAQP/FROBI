@@ -12,7 +12,7 @@
         </li>
       </ul>
     </figure>
-    <v-aviso tipo="info">{{ contenido.usos }}</v-aviso>
+    <v-aviso v-if="contenido.usos" tipo="info">{{ contenido.usos }}</v-aviso>
   </div>
 </template>
 

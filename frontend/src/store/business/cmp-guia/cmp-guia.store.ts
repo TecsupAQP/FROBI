@@ -15,7 +15,7 @@ export const useCmpGuiaStore = defineStore("CmpGuiaStore", () => {
   const tardaMucho = ref(false);
 
   const cargarGuia = async () => {
-    guia.value = await obtenerGuiaService("guia-sensores");
+    guia.value = await obtenerGuiaService();
   };
 
   const alternarTema = (temaId: string) => {

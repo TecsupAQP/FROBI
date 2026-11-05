@@ -24,7 +24,7 @@ export interface DetalleEstudiante {
   preguntaMasFallada: string;
 }
 
-// Panel docente: siempre datos de ejemplo en la maqueta.
+// Panel docente de una clase. esEjemplo: la API todavía muestra datos de ejemplo.
 export interface PanelDocente {
   grupo: GrupoDocente;
   grupos: GrupoDocente[];
@@ -36,5 +36,5 @@ export interface PanelDocente {
   usoIa: DatoConteo[];
   competencias: DatoPorcentaje[];
   estudiantes: DetalleEstudiante[];
-  esEjemplo: true;
+  esEjemplo: boolean;
 }

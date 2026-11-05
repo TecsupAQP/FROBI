@@ -1,6 +1,15 @@
 <template>
   <div :class="PREFIX">
-    <div v-if="!tarea" :class="`${PREFIX}__cargando`">
+    <v-estado-vacio
+      v-if="error && !tarea"
+      icono="alert"
+      titulo="No pudimos preparar las pistas"
+      :texto="error"
+    >
+      <v-button :destino="{ name: RutaEnum.GUIA }">Volver a la guía</v-button>
+    </v-estado-vacio>
+
+    <div v-else-if="!tarea" :class="`${PREFIX}__cargando`">
       <v-cargando>Preparando las pistas…</v-cargando>
     </div>
 
@@ -60,7 +69,11 @@
 
         <aside :class="`${PREFIX}__lateral`" aria-labelledby="escalera-decides">
           <h2 id="escalera-decides" :class="`${PREFIX}__titulo`">Tú decides cuánta ayuda usar</h2>
-          <v-chip icono="info">Nivel 2 · con pistas</v-chip>
+          <v-chip icono="info">{{ nivelAyuda }}</v-chip>
+          <p v-if="error" :class="`${PREFIX}__error`" role="alert">
+            <v-icon nombre="alert" :tamano="20" />
+            {{ error }}
+          </p>
           <p :class="`${PREFIX}__texto`">
             FROBI no te da la respuesta de golpe: te guía por pasos y la respuesta llega al final.
           </p>

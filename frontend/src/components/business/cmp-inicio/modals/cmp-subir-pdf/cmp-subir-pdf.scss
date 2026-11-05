@@ -23,6 +23,11 @@ $prefix: cmp-subir-pdf;
       flex-direction: row;
       gap: $esp-16;
     }
+
+    &--encima {
+      border-color: $marca-azul;
+      background-color: $marca-azul-claro;
+    }
   }
 
   &__zona-icono {

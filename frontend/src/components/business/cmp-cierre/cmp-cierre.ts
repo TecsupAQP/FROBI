@@ -31,7 +31,7 @@ export default defineComponent({
       try {
         await navigator.clipboard.writeText(texto);
       } catch {
-        // Portapapeles no disponible: en la maqueta el aviso se muestra igual.
+        // Portapapeles no disponible (http, permisos): el aviso se muestra igual.
       }
       mostrarAviso("Receta copiada", "Pégala donde quieras. Se oculta en 4 s.");
     };

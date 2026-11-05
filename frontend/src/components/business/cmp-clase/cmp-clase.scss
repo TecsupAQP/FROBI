@@ -91,6 +91,10 @@
   $prefix: cmp-clase-nueva;
   @include pantalla-clase($prefix);
 
+  &__vacio {
+    color: $texto-secundario;
+  }
+
   &__materiales {
     display: flex;
     flex-direction: column;

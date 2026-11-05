@@ -18,6 +18,17 @@ export interface TareaAyuda {
 export interface ResultadoIntento {
   correcto: boolean;
   comentario: string;
+  // Fragmentos de la guía que coinciden con lo que escribió la persona.
+  pasajes: string[];
+}
+
+// Estado del intento en la API: hasta qué escalón llegó y si ya puede ver la respuesta.
+export interface EstadoAyuda {
+  alcanzado: EscalonId | null;
+  respuestaDesbloqueada: boolean;
+  // "Nivel 2, con pistas"
+  nivel: string;
+  resueltoSinIa: boolean;
 }
 
 // Cómo se muestra cada escalón en la escalera.

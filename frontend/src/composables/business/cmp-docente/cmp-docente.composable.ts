@@ -3,9 +3,10 @@ import { useCmpDocenteStore } from "@/store/business/cmp-docente/cmp-docente.sto
 
 function useCmpDocente() {
   const store = useCmpDocenteStore();
-  const { grupoId, panel } = storeToRefs(store);
+  const { cargado, grupoId, panel } = storeToRefs(store);
 
   return {
+    cargado,
     grupoId,
     panel,
 

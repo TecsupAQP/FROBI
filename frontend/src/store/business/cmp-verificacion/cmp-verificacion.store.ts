@@ -20,7 +20,7 @@ export const useCmpVerificacionStore = defineStore("CmpVerificacionStore", () =>
   const esUltima = computed(() => indice.value >= total.value - 1);
 
   const cargar = async () => {
-    verificacion.value = await obtenerVerificacionService("tema-1");
+    verificacion.value = await obtenerVerificacionService();
     indice.value = 0;
     elegida.value = null;
   };
@@ -28,9 +28,18 @@ export const useCmpVerificacionStore = defineStore("CmpVerificacionStore", () =>
   const responder = async (opcionId: string) => {
     if (elegida.value !== null || revisando.value !== null || !pregunta.value) return;
     revisando.value = opcionId;
-    correcta.value = await comprobarRespuestaService(pregunta.value.id, opcionId);
-    elegida.value = opcionId;
-    revisando.value = null;
+    try {
+      const revision = await comprobarRespuestaService(pregunta.value.id, opcionId);
+      // La API devuelve la explicación y, si falla, qué formato probar.
+      pregunta.value.correcta = revision.opcionCorrecta;
+      if (revision.correcta) pregunta.value.explicacionAcierto = revision.explicacion;
+      else pregunta.value.explicacionError = revision.explicacion;
+      if (revision.formatoSugerido) pregunta.value.formatoSugerido = revision.formatoSugerido;
+      correcta.value = revision.correcta;
+      elegida.value = opcionId;
+    } finally {
+      revisando.value = null;
+    }
   };
 
   const reintentar = () => {

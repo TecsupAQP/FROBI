@@ -11,6 +11,7 @@ export interface ContenidoMapaVisual {
   formato: "mapa-visual";
   conceptoCentral: string;
   nodos: NodoConcepto[];
+  // Vacío si el material no dice para qué se usa.
   usos: string;
 }
 
@@ -18,6 +19,8 @@ export interface ContenidoEjemploReal {
   formato: "ejemplo-real";
   pasos: string[];
   advertencia: string;
+  // La ilustración de la faja con botellas solo acompaña ejemplos de envasado.
+  conIlustracion: boolean;
 }
 
 export interface TerminoGlosario {
@@ -54,6 +57,10 @@ export interface Adaptation {
   titulo: string;
   receta: PiezaInstruccion[];
   contenido: ContenidoAdaptado;
-  // true cuando la IA no respondió y se muestra una respuesta de ejemplo (RNF06)
+  // true cuando la IA no respondió y se muestra una versión preparada sin IA (RNF06)
   esRespaldo: boolean;
+  // Aviso de la API sobre el uso de la IA (o sobre la versión sin IA).
+  aviso: string;
+  // La instrucción completa enviada a la IA, para "Copiar receta".
+  instruccion: string;
 }

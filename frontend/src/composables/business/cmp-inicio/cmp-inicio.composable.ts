@@ -3,10 +3,12 @@ import { useCmpInicioStore } from "@/store/business/cmp-inicio/cmp-inicio.store"
 
 function useCmpInicio() {
   const store = useCmpInicioStore();
-  const { archivo, fase, guia, modalAbierto, nombreArchivo, progreso, tamanoArchivoMb } = storeToRefs(store);
+  const { archivo, archivoElegido, fase, guia, modalAbierto, nombreArchivo, progreso, tamanoArchivoMb } =
+    storeToRefs(store);
 
   return {
     archivo,
+    archivoElegido,
     fase,
     guia,
     modalAbierto,
@@ -19,6 +21,7 @@ function useCmpInicio() {
     cargarGuia: store.cargarGuia,
     cerrarModal: store.cerrarModal,
     elegirArchivo: store.elegirArchivo,
+    usarGuia: store.usarGuia,
   };
 }
 

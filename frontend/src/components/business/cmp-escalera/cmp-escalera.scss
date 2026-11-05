@@ -120,4 +120,11 @@ $prefix: cmp-escalera;
     gap: $esp-8;
     color: $texto-secundario;
   }
+
+  &__error {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-8;
+    color: $estado-error;
+  }
 }
