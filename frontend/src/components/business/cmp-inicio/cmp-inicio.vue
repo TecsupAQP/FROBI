@@ -14,9 +14,10 @@
     </v-aviso>
 
     <div :class="`${PREFIX}__columnas`">
-      <cmp-tarjeta-guia v-if="guia" :class="`${PREFIX}__guia`" :guia="guia" />
+      <cmp-tarjeta-guia v-if="guia" data-recorrido="guia-actual" :class="`${PREFIX}__guia`" :guia="guia" />
       <v-estado-vacio
         v-else-if="sinGuia"
+        data-recorrido="guia-actual"
         :class="`${PREFIX}__guia`"
         icono="upload"
         titulo="Empieza con tu guía"
@@ -36,7 +37,12 @@
         <v-cargando>Cargando tus guías…</v-cargando>
       </div>
       <!-- Sin guía, el estado vacío ya invita a subirla: no se repite la tarjeta. -->
-      <cmp-tarjeta-subir v-if="!sinGuia" :class="`${PREFIX}__subir`" @subir="abrirModal" />
+      <cmp-tarjeta-subir
+        v-if="!sinGuia"
+        data-recorrido="subir-guia"
+        :class="`${PREFIX}__subir`"
+        @subir="abrirModal"
+      />
     </div>
 
     <cmp-mis-guias v-if="propias.length > 1" :guias="propias" :eligiendo="eligiendo" @elegir="estudiar" />

@@ -11,7 +11,11 @@
     </div>
 
     <div v-else :class="`${PREFIX}__columnas`">
-      <section :class="[`${PREFIX}__tarjeta`, `${PREFIX}__principal`]" aria-labelledby="invitar-codigo">
+      <section
+        data-recorrido="codigo"
+        :class="[`${PREFIX}__tarjeta`, `${PREFIX}__principal`]"
+        aria-labelledby="invitar-codigo"
+      >
         <h2 id="invitar-codigo" :class="`${PREFIX}__titulo`">Código de la clase</h2>
         <p :class="`${PREFIX}__codigo`" aria-label="Código de la clase">{{ clase.codigo }}</p>
         <div :class="`${PREFIX}__acciones`">

@@ -37,6 +37,11 @@
           </ul>
         </section>
 
+        <button type="button" :class="`${PREFIX}__enlace`" @click="verRecorrido">
+          <v-icon nombre="map" :tamano="22" />
+          Recorrido guiado
+        </button>
+
         <button type="button" :class="`${PREFIX}__salir`" @click="salir">
           <v-icon nombre="back" :tamano="22" />
           Cerrar sesión

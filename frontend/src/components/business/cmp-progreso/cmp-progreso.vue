@@ -9,6 +9,7 @@
 
     <v-estado-vacio
       v-else-if="!progreso"
+      data-recorrido="progreso"
       icono="chart"
       titulo="Aún no tienes progreso"
       texto="Responde una pregunta de verificación y verás aquí tus aciertos por formato."
@@ -22,7 +23,7 @@
         :descripcion="`Alias: ${progreso.alias} · Guía: ${progreso.guia}`"
       />
 
-      <section :class="`${PREFIX}__mensaje`" :aria-labelledby="`${PREFIX}-mensaje`">
+      <section data-recorrido="progreso" :class="`${PREFIX}__mensaje`" :aria-labelledby="`${PREFIX}-mensaje`">
         <span :class="`${PREFIX}__mensaje-icono`" aria-hidden="true">
           <v-icon nombre="bulb" :tamano="30" />
         </span>

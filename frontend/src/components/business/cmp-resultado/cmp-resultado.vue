@@ -54,6 +54,7 @@
 
       <aside v-if="receta.length" :class="`${PREFIX}__lateral`" aria-label="Cómo se pidió este resultado">
         <cmp-receta-ia
+          data-recorrido="receta"
           :receta="receta"
           :desplegada="recetaDesplegada"
           @alternar="alternarReceta"

@@ -1,6 +1,7 @@
 import { computed, defineComponent, nextTick, onBeforeUnmount, ref, useModel, watch } from "vue";
 import { useRoute, useRouter, type RouteLocationRaw } from "vue-router";
 import VIcon from "@/components/base/v-icon/v-icon.vue";
+import useCmpRecorrido from "@/composables/common/cmp-recorrido/cmp-recorrido.composable";
 import useCmpSesion from "@/composables/common/cmp-sesion/cmp-sesion.composable";
 import type { NombreIcono } from "@/constants/iconos.constant";
 import { RutaEnum, TAREA_EJEMPLO } from "@/enums/ruta.enum";
@@ -106,6 +107,14 @@ export default defineComponent({
       abierto.value = false;
     };
 
+    const { iniciar: iniciarRecorrido } = useCmpRecorrido();
+
+    // Repite el recorrido guiado de su rol.
+    const verRecorrido = () => {
+      cerrar();
+      iniciarRecorrido();
+    };
+
     const salir = async () => {
       cerrar();
       try {
@@ -163,6 +172,18 @@ export default defineComponent({
       document.body.style.overflow = "";
     });
 
-    return { RutaEnum, PREFIX, abierto, panel, estudiante, grupos, route, cerrar, salir, alPresionar };
+    return {
+      RutaEnum,
+      PREFIX,
+      abierto,
+      panel,
+      estudiante,
+      grupos,
+      route,
+      cerrar,
+      salir,
+      verRecorrido,
+      alPresionar,
+    };
   },
 });

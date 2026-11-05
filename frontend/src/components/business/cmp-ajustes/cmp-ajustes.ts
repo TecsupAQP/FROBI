@@ -9,6 +9,7 @@ import VSwitch from "@/components/base/v-switch/v-switch.vue";
 import CmpEncabezadoPagina from "@/components/common/cmp-encabezado-pagina/cmp-encabezado-pagina.vue";
 import useCmpAjustes from "@/composables/common/cmp-ajustes/cmp-ajustes.composable";
 import useCmpAvisos from "@/composables/common/cmp-avisos/cmp-avisos.composable";
+import useCmpRecorrido from "@/composables/common/cmp-recorrido/cmp-recorrido.composable";
 import useCmpClase from "@/composables/common/cmp-clase/cmp-clase.composable";
 import useCmpPerfil from "@/composables/common/cmp-perfil/cmp-perfil.composable";
 import useCmpSesion from "@/composables/common/cmp-sesion/cmp-sesion.composable";
@@ -73,6 +74,8 @@ export default defineComponent({
       mostrarAviso("Saliste de la clase", "Tu docente ya no verá tu actividad.");
     };
 
+    const { iniciar: verRecorrido } = useCmpRecorrido();
+
     const rehacerAsistente = async () => {
       await reiniciarAsistente();
       router.push({ name: RutaEnum.ASISTENTE, params: { paso: 1 } });
@@ -99,6 +102,7 @@ export default defineComponent({
       salirDeClase,
       salirDeFrobi,
       rehacerAsistente,
+      verRecorrido,
     };
   },
 });
