@@ -1,0 +1,125 @@
+$prefix: cmp-mapa-visual;
+$alto-conector: 22px;
+$alto-tronco: 24px;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-16;
+
+  &__diagrama {
+    display: flex;
+    flex-direction: column;
+    padding: $esp-8 0;
+
+    @include tablet {
+      align-items: center;
+    }
+  }
+
+  &__central {
+    align-self: flex-start;
+    padding: $esp-14 $esp-24;
+    border-radius: $radio-16;
+    background-color: $marca-azul;
+    @include texto-subtitulo;
+    color: $texto-inverso;
+
+    @include tablet {
+      align-self: center;
+    }
+  }
+
+  // Móvil: árbol vertical con una línea a la izquierda.
+  &__ramas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    margin-left: $esp-28;
+    padding: $esp-16 0 0 $esp-12;
+    border-left: $linea-2 solid $marca-azul;
+
+    // Tablet y escritorio: árbol horizontal con conectores.
+    @include tablet {
+      position: relative;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 0;
+      width: 100%;
+      margin: $alto-tronco 0 0;
+      padding: 0;
+      border-left: 0;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: -$alto-tronco;
+        left: 50%;
+        width: $linea-2;
+        height: $alto-tronco;
+        background-color: $marca-azul;
+        transform: translateX(-50%);
+      }
+    }
+  }
+
+  &__rama {
+    @include tablet {
+      position: relative;
+      flex: 1 1 0;
+      min-width: 0;
+      padding: $alto-conector $esp-8 0;
+
+      // Tramo horizontal: de borde a borde, recortado a la mitad en la primera y la última rama.
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: $linea-2;
+        background-color: $marca-azul;
+      }
+
+      &:first-child::before {
+        left: 50%;
+      }
+
+      &:last-child::before {
+        right: 50%;
+      }
+
+      // Tramo vertical hacia el nodo.
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: $linea-2;
+        height: $alto-conector;
+        background-color: $marca-azul;
+        transform: translateX(-50%);
+      }
+    }
+  }
+
+  &__nodo {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+    padding: $esp-12;
+    border: $linea-15 solid $marca-azul;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+    overflow-wrap: anywhere;
+  }
+
+  &__nodo-titulo {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__nodo-detalle {
+    color: $texto-cuerpo;
+  }
+}

@@ -1,0 +1,163 @@
+$prefix: cmp-herramientas;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  &__cargando {
+    display: flex;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__recomendada {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-14;
+    padding: $esp-16;
+    border: $linea-15 solid $marca-azul;
+    border-radius: $radio-16;
+    background-color: $fondo-superficie;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__etiqueta {
+    padding: $esp-4 $esp-12;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul;
+    @include texto-etiqueta;
+    color: $texto-inverso;
+  }
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: $radio-14;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__nombre {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__motivos {
+    display: grid;
+    gap: $esp-12;
+    width: 100%;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__motivo {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+    padding: $esp-12 $esp-14;
+    border-radius: $radio-12;
+    color: $texto-principal;
+
+    &--si {
+      background-color: $estado-exito-fondo;
+
+      .#{$prefix}__motivo-titulo {
+        color: $estado-exito;
+      }
+    }
+
+    &--no {
+      background-color: $estado-aviso-fondo;
+
+      .#{$prefix}__motivo-titulo {
+        color: $estado-aviso-texto;
+      }
+    }
+  }
+
+  &__motivo-titulo {
+    @include texto-etiqueta;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    width: 100%;
+
+    @include tablet {
+      flex-direction: row;
+      width: auto;
+    }
+  }
+
+  &__filtro {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+  }
+
+  &__filtro-titulo {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $esp-8;
+  }
+
+  &__chip {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    min-height: $alto-tactil;
+    padding: $esp-10 $esp-16;
+    border: $linea-15 solid $borde-campo;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+    @include texto-etiqueta;
+    color: $texto-principal;
+
+    &:hover:not(.#{$prefix}__chip--activa) {
+      border-color: $marca-azul;
+    }
+
+    &--activa {
+      border-color: $marca-azul;
+      background-color: $marca-azul;
+      color: $texto-inverso;
+    }
+  }
+
+  &__catalogo {
+    display: grid;
+    gap: $esp-12;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}

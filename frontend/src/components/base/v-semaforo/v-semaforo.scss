@@ -1,0 +1,30 @@
+$prefix: v-semaforo;
+
+.#{$prefix} {
+  display: inline-flex;
+  align-items: center;
+  gap: $esp-8;
+  padding: $esp-6 $esp-12 $esp-6 $esp-10;
+  border: $linea-15 solid;
+  border-radius: $radio-pildora;
+  @include texto-etiqueta;
+  white-space: nowrap;
+
+  &--con-respaldo {
+    border-color: $estado-exito;
+    background-color: $estado-exito-fondo;
+    color: $estado-exito;
+  }
+
+  &--no-comprobable {
+    border-color: $estado-aviso-texto;
+    background-color: $estado-aviso-fondo;
+    color: $estado-aviso-texto;
+  }
+
+  &--contradice {
+    border-color: $estado-error;
+    background-color: $estado-error-fondo;
+    color: $estado-error;
+  }
+}

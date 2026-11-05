@@ -1,0 +1,119 @@
+$prefix: cmp-barra-superior;
+
+.#{$prefix} {
+  position: sticky;
+  top: 0;
+  z-index: $capa-barra;
+  background-color: $fondo-superficie;
+  border-bottom: $linea-1 solid $borde-suave;
+
+  &__contenido {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    height: $alto-barra-movil;
+    padding: 0 $esp-12;
+
+    @include escritorio {
+      height: $alto-barra-escritorio;
+      padding: 0 $esp-64;
+    }
+  }
+
+  &__logo {
+    display: flex;
+    margin-right: $esp-4;
+    border-radius: $radio-10;
+
+    @include escritorio {
+      margin-right: $esp-32;
+    }
+  }
+
+  &__logo-escritorio {
+    display: none;
+
+    @include escritorio {
+      display: inline-flex;
+    }
+  }
+
+  &__logo-movil {
+    @include escritorio {
+      display: none;
+    }
+  }
+
+  &__nav {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &__pestanas {
+    display: flex;
+    gap: $esp-8;
+  }
+
+  &__pestana {
+    display: flex;
+    align-items: center;
+    height: $alto-tactil;
+    padding: 0 $esp-10;
+    border-radius: $radio-10;
+    @include texto-etiqueta;
+    color: $texto-secundario;
+    white-space: nowrap;
+
+    &:hover {
+      color: $marca-azul;
+    }
+
+    &--activa {
+      background-color: $marca-azul-claro;
+      color: $marca-azul;
+    }
+
+    @include escritorio {
+      padding: 0 $esp-16;
+    }
+  }
+
+  // El alias solo cabe en escritorio (Figma: la barra móvil y tablet no lo muestran).
+  // En móvil y tablet solo se ve la inicial; en escritorio, también el alias. Lleva a Ajustes.
+  &__alias {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: $esp-10;
+    min-width: $alto-tactil;
+    min-height: $alto-tactil;
+    border-radius: $radio-pildora;
+    @include texto-etiqueta;
+    color: $texto-principal;
+
+    @include escritorio {
+      padding: $esp-6 $esp-16 $esp-6 $esp-6;
+      background-color: $fondo-app;
+    }
+  }
+
+  &__alias-texto {
+    display: none;
+
+    @include escritorio {
+      display: inline;
+    }
+  }
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul;
+    color: $texto-inverso;
+  }
+}

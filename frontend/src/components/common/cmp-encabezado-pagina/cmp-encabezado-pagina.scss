@@ -1,0 +1,59 @@
+$prefix: cmp-encabezado-pagina;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-16;
+
+  @include escritorio {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__textos {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-4;
+    min-width: 0;
+  }
+
+  &__volver {
+    display: inline-flex;
+    align-items: center;
+    gap: $esp-4;
+    min-height: $alto-tactil;
+    margin: (-$esp-10) 0 (-$esp-6);
+    @include texto-etiqueta;
+    color: $marca-azul;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__antetitulo {
+    color: $texto-secundario;
+  }
+
+  &__titulo {
+    @include texto-titulo;
+    color: $texto-principal;
+
+    @include tablet {
+      @include texto-titulo-xl;
+    }
+  }
+
+  &__descripcion {
+    @include texto-cuerpo-grande;
+    color: $texto-secundario;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $esp-12;
+  }
+}

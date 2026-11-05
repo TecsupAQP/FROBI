@@ -1,0 +1,48 @@
+$prefix: v-chip;
+
+.#{$prefix} {
+  display: inline-flex;
+  align-items: center;
+  gap: $esp-6;
+  padding: $esp-4 $esp-12;
+  border-radius: $radio-pildora;
+  @include texto-etiqueta;
+  white-space: nowrap;
+
+  // Paso del recorrido para estudiantes (Figma: "Paso 5 · Estudiante").
+  &--marca {
+    background-color: $marca-azul;
+    color: $texto-inverso;
+  }
+
+  // Paso del recorrido docente.
+  &--marino {
+    background-color: $marca-marino;
+    color: $texto-inverso;
+  }
+
+  &--suave {
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &--neutro {
+    background-color: $borde-suave;
+    color: $texto-secundario;
+  }
+
+  &--exito {
+    background-color: $estado-exito-fondo;
+    color: $estado-exito;
+  }
+
+  &--aviso {
+    background-color: $estado-aviso-fondo;
+    color: $estado-aviso-texto;
+  }
+
+  &--error {
+    background-color: $estado-error-fondo;
+    color: $estado-error;
+  }
+}

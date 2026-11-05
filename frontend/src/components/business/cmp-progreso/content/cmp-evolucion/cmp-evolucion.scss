@@ -1,0 +1,84 @@
+$prefix: cmp-evolucion;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__subtitulo {
+    color: $texto-secundario;
+  }
+
+  &__grafico {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__lienzo {
+    position: relative;
+    height: 170px;
+  }
+
+  &__guia {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: $linea-1;
+    background-color: $borde-suave;
+  }
+
+  &__linea {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: $marca-azul;
+  }
+
+  &__punto {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: $linea-2 solid $fondo-superficie;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul;
+    transform: translate(-50%, -50%);
+  }
+
+  &__intentos {
+    display: flex;
+  }
+
+  &__intento {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    text-align: center;
+  }
+
+  &__intento-nombre {
+    color: $texto-secundario;
+  }
+
+  &__intento-valor {
+    @include texto-etiqueta;
+    color: $texto-principal;
+
+    &--completo {
+      color: $estado-exito;
+    }
+  }
+}

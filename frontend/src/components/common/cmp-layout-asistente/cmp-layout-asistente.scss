@@ -1,0 +1,74 @@
+$prefix: cmp-layout-asistente;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: $fondo-app;
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-12;
+    padding: $esp-14 $esp-16;
+    background-color: $fondo-superficie;
+
+    @include tablet {
+      padding: $esp-14 $esp-32;
+    }
+
+    @include escritorio {
+      padding: $esp-14 $esp-64;
+    }
+  }
+
+  &__logo-escritorio {
+    display: none;
+
+    @include escritorio {
+      display: inline-flex;
+    }
+  }
+
+  &__logo-movil {
+    @include escritorio {
+      display: none;
+    }
+  }
+
+  &__omitir {
+    min-height: $alto-tactil;
+    padding: 0 $esp-4;
+    @include texto-etiqueta;
+    color: $marca-azul;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__principal {
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: center;
+    padding: $esp-24 $esp-16 $esp-40;
+
+    &:focus {
+      outline: none;
+    }
+
+    @include tablet {
+      padding: $esp-40 $esp-32 $esp-56;
+    }
+  }
+
+  // Columna de 720 px como máximo (Figma · 22).
+  &__columna {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-24;
+    width: 100%;
+    max-width: 720px;
+  }
+}

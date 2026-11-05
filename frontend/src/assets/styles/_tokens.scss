@@ -1,0 +1,49 @@
+:root {
+  --marca-azul: #1d4ed8;
+  --marca-azul-claro: #e8eeff;
+  --marca-marino: #0b1b3a;
+  --marca-degradado: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 71.429%);
+
+  --fondo-app: #f4f6fb;
+  --fondo-superficie: #ffffff;
+  --fondo-oscuro: rgba(11, 27, 58, 0.6);
+
+  --texto-principal: #0b1b3a;
+  --texto-cuerpo: #1f2937;
+  --texto-secundario: #475467;
+  --texto-inverso: #ffffff;
+
+  --borde-suave: #e3e8f2;
+  --borde-campo: #667085;
+
+  --estado-exito: #067647;
+  --estado-exito-fondo: #e6f8ee;
+  --estado-error: #b42318;
+  --estado-error-fondo: #fff1f0;
+  --estado-aviso-texto: #5b4300;
+  --estado-aviso-fondo: #fff7e0;
+
+  --pieza-contexto-fondo: #fde68a;
+  --pieza-contexto-borde: #b7791f;
+  --pieza-objetivo-fondo: #a7f3d0;
+  --pieza-objetivo-borde: #2f855a;
+  --pieza-nivel-fondo: #bfdbfe;
+  --pieza-nivel-borde: #2b6cb0;
+  --pieza-formato-fondo: #fbcfe8;
+  --pieza-formato-borde: #b83280;
+
+  --sombra-modal: 0 24px 60px rgba(10, 26, 59, 0.28);
+  --fondo-hover-inverso: rgba(255, 255, 255, 0.08);
+  --sombra-flotante: 0 12px 32px rgba(11, 27, 58, 0.16);
+
+  --fuente: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+// Ajustes · "Letra grande y alto contraste": texto y bordes más oscuros, fondo sin gris.
+:root[data-contrast] {
+  --texto-secundario: #1f2937;
+  --texto-cuerpo: #0b1b3a;
+  --borde-campo: #344054;
+  --borde-suave: #98a2b3;
+  --fondo-app: #ffffff;
+}

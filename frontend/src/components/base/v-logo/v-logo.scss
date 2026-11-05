@@ -1,0 +1,20 @@
+$prefix: v-logo;
+
+.#{$prefix} {
+  display: inline-flex;
+  align-items: center;
+  gap: $esp-12;
+
+  &__imagen {
+    display: block;
+    height: var(--alto);
+    width: auto;
+  }
+
+  &__nombre {
+    font-size: calc(var(--alto) * 0.5);
+    font-weight: $peso-bold;
+    line-height: 1;
+    color: $texto-inverso;
+  }
+}

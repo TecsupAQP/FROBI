@@ -1,0 +1,84 @@
+$prefix: cmp-intro;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-24;
+  }
+
+  > :deep(.cmp-encabezado-pagina) {
+    align-self: stretch;
+  }
+
+  // Móvil apiladas; escritorio: 3 tarjetas en fila.
+  &__ideas {
+    display: grid;
+    gap: $esp-12;
+    width: 100%;
+
+    @include escritorio {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+      gap: $esp-14;
+    }
+  }
+
+  &__idea {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    padding: $esp-20 $esp-20;
+  }
+
+  &__idea-titulo {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul;
+    @include texto-etiqueta;
+    color: $texto-inverso;
+  }
+
+  &__idea-texto {
+    color: $texto-cuerpo;
+  }
+
+  &__piezas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $esp-6;
+
+    :deep(.v-chip-pieza) {
+      border-radius: $radio-pildora;
+    }
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    width: 100%;
+
+    @include tablet {
+      flex-direction: row;
+      width: auto;
+    }
+  }
+}

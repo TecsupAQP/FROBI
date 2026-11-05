@@ -1,0 +1,58 @@
+$prefix: cmp-receta-ia;
+
+.#{$prefix} {
+  @include tarjeta;
+  overflow: hidden;
+
+  &__encabezado {
+    @include texto-subtitulo;
+  }
+
+  &__alternar {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    width: 100%;
+    min-height: 60px;
+    padding: 0 $esp-16;
+    background-color: $marca-azul-claro;
+    text-align: left;
+    color: $marca-marino;
+
+    span {
+      flex: 1 1 0;
+    }
+
+    .v-icon {
+      color: $marca-azul;
+    }
+
+    &:focus-visible {
+      outline-offset: -3px;
+    }
+  }
+
+  &__cuerpo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-10;
+    padding: $esp-16;
+  }
+
+  &__piezas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-10;
+    width: 100%;
+  }
+
+  // En móvil "Copiar receta" ocupa todo el ancho (Figma).
+  .v-button {
+    width: 100%;
+
+    @include tablet {
+      width: auto;
+    }
+  }
+}

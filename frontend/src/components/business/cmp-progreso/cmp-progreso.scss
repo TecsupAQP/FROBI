@@ -1,0 +1,162 @@
+$prefix: cmp-progreso;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  &__cargando {
+    display: flex;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__mensaje {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-14;
+    padding: $esp-20;
+    border-radius: $radio-16;
+    background-color: $marca-azul;
+    color: $texto-inverso;
+
+    @include tablet {
+      align-items: center;
+      padding: $esp-28;
+    }
+  }
+
+  &__mensaje-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: $radio-14;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__mensaje-titulo {
+    @include texto-subtitulo;
+  }
+
+  &__datos {
+    display: grid;
+    gap: $esp-12;
+    margin: 0;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include escritorio {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  &__dato {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-2;
+    padding: $esp-14 $esp-16;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-14;
+    background-color: $fondo-superficie;
+
+    dt {
+      color: $texto-secundario;
+    }
+
+    dd {
+      margin: 0;
+      @include texto-subtitulo;
+      color: $texto-principal;
+    }
+  }
+
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: stretch;
+      gap: $esp-24;
+    }
+  }
+
+  &__aciertos,
+  &__evolucion {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &__aciertos {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__subtitulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__secundario {
+    color: $texto-secundario;
+  }
+
+  &__barras {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+  }
+
+  &__barra-item {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-6;
+  }
+
+  &__barra-fila {
+    display: flex;
+    justify-content: space-between;
+    gap: $esp-10;
+    color: $texto-principal;
+  }
+
+  &__barra-valor {
+    @include texto-etiqueta;
+  }
+
+  &__barra {
+    display: flex;
+    height: 14px;
+    overflow: hidden;
+    border-radius: $radio-pildora;
+    background-color: $borde-suave;
+
+    &--mejor .#{$prefix}__barra-relleno {
+      background-color: $estado-exito;
+    }
+  }
+
+  &__barra-relleno {
+    display: block;
+    height: 100%;
+    background-color: $marca-azul;
+  }
+}

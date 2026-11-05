@@ -1,0 +1,206 @@
+$prefix: cmp-ejemplo-real;
+
+// Medidas de la ilustración tomadas de Figma (faja transportadora, 256 px de alto).
+$alto-ilustracion: 256px;
+$faja-top: 195px;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-16;
+
+  &__ilustracion {
+    // Posición horizontal del sensor y de la botella detectada.
+    --x-sensor: 62%;
+    --x-antes: 16%;
+    --x-despues: 87%;
+    position: relative;
+    height: $alto-ilustracion;
+    overflow: hidden;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+
+    @include tablet {
+      --x-sensor: 50%;
+      --x-antes: 20%;
+      --x-despues: 80%;
+    }
+  }
+
+  &__etiqueta {
+    position: absolute;
+    left: 11px;
+    @include texto-etiqueta;
+    color: $texto-principal;
+    white-space: nowrap;
+
+    &--sensor {
+      top: 11px;
+    }
+
+    &--tapa {
+      top: 53px;
+    }
+
+    &--faja {
+      top: 221px;
+      left: 15px;
+      color: $texto-secundario;
+    }
+  }
+
+  &__sensor {
+    position: absolute;
+    top: 11px;
+    left: var(--x-sensor);
+    width: 96px;
+    height: 92px;
+    transform: translateX(-50%);
+  }
+
+  &__sensor-cuerpo {
+    position: absolute;
+    top: 0;
+    left: 16px;
+    width: 64px;
+    height: 36px;
+    border-radius: $radio-8;
+    background-color: $marca-marino;
+  }
+
+  &__sensor-cabeza {
+    position: absolute;
+    top: 36px;
+    left: 28px;
+    width: 40px;
+    height: 10px;
+    border-radius: 3px;
+    background-color: $marca-azul;
+  }
+
+  &__campo {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    width: 96px;
+    height: 44px;
+  }
+
+  &__luz {
+    position: absolute;
+    top: 6px;
+    left: 88px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &__botella {
+    position: absolute;
+    top: 95px;
+    width: 40px;
+    height: 100px;
+    transform: translateX(-50%);
+
+    &--antes {
+      left: var(--x-antes);
+    }
+
+    &--detectada {
+      left: var(--x-sensor);
+    }
+
+    &--despues {
+      left: var(--x-despues);
+    }
+  }
+
+  &__tapa {
+    position: absolute;
+    top: 0;
+    left: 9px;
+    width: 22px;
+    height: 9px;
+    border-radius: 3px;
+    background-color: $texto-principal;
+  }
+
+  &__cuello {
+    position: absolute;
+    top: 8px;
+    left: 11px;
+    width: 18px;
+    height: 30px;
+    border: $linea-2 solid $borde-campo;
+    border-radius: 5px;
+    background-color: $fondo-superficie;
+  }
+
+  &__cuerpo {
+    position: absolute;
+    top: 34px;
+    left: 0;
+    width: 40px;
+    height: 66px;
+    border: $linea-2 solid $borde-campo;
+    border-radius: $radio-10;
+    background-color: $fondo-superficie;
+  }
+
+  &__faja {
+    position: absolute;
+    top: $faja-top;
+    left: 15px;
+    right: 15px;
+    height: 14px;
+    border-radius: 7px;
+    background-color: $texto-secundario;
+  }
+
+  &__rodillo {
+    position: absolute;
+    top: $faja-top - 4px;
+    width: 22px;
+    height: 22px;
+
+    &--inicio {
+      left: 7px;
+    }
+
+    &--fin {
+      right: 7px;
+    }
+  }
+
+  &__pasos {
+    display: grid;
+    gap: $esp-12;
+
+    @include tablet {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &__paso {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    padding: $esp-12;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+    color: $texto-cuerpo;
+  }
+
+  &__numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul;
+    @include texto-etiqueta;
+    color: $texto-inverso;
+  }
+}

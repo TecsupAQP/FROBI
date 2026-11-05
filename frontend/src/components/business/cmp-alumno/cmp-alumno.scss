@@ -1,0 +1,164 @@
+$prefix: cmp-alumno;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-24;
+  }
+
+  @include escritorio {
+    gap: $esp-28;
+  }
+
+  > :deep(.cmp-encabezado-pagina),
+  > .v-aviso {
+    align-self: stretch;
+  }
+
+  &__cargando {
+    display: flex;
+    align-self: stretch;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+    width: 100%;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-24;
+    }
+  }
+
+  &__principal,
+  &__lateral {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+
+    @include escritorio {
+      gap: $esp-24;
+    }
+  }
+
+  &__principal {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &__lateral {
+    @include escritorio {
+      width: $ancho-lateral;
+      flex-shrink: 0;
+    }
+  }
+
+  &__tarjeta {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__usos {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-10;
+  }
+
+  &__uso {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-8;
+    color: $texto-cuerpo;
+
+    .v-icon {
+      margin-top: $esp-2;
+    }
+  }
+
+  &__usado.v-icon {
+    color: $estado-exito;
+  }
+
+  &__sin-uso.v-icon {
+    color: $texto-principal;
+  }
+
+  &__mensajes {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+  }
+
+  &__mensaje {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+    padding: $esp-10 $esp-10;
+    border-radius: $radio-10;
+    color: $texto-principal;
+
+    &--alumno {
+      background-color: $marca-azul-claro;
+
+      .#{$prefix}__mensaje-autor {
+        color: $marca-azul;
+      }
+    }
+
+    &--frobi {
+      background-color: $fondo-app;
+
+      .#{$prefix}__mensaje-autor {
+        color: $texto-secundario;
+      }
+    }
+  }
+
+  &__mensaje-autor {
+    @include texto-etiqueta;
+  }
+
+  &__sugerencia {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-16;
+    background-color: $marca-azul-claro;
+    color: $texto-principal;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__sugerencia-titulo {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+}

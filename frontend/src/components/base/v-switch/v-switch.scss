@@ -1,0 +1,56 @@
+$prefix: v-switch;
+$ancho: 54px;
+$alto: 30px;
+$perilla: 24px;
+
+// Fila de ajuste (Figma · 24): texto a la izquierda e interruptor de 54 × 30 a la derecha.
+.#{$prefix} {
+  display: flex;
+  align-items: center;
+  gap: $esp-12;
+  padding: $esp-12;
+  border-radius: $radio-12;
+  background-color: $fondo-app;
+
+  &__etiqueta {
+    flex: 1 1 0;
+    @include texto-cuerpo;
+    color: $texto-principal;
+  }
+
+  // Zona táctil de 44 px alrededor del interruptor visible.
+  &__control {
+    position: relative;
+    width: $ancho;
+    height: $alto;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $borde-campo;
+    transition: background-color $duracion-rapida;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -7px -2px;
+    }
+
+    &--activo {
+      background-color: $marca-azul;
+
+      .#{$prefix}__perilla {
+        transform: translateX($ancho - $perilla - 6px);
+      }
+    }
+  }
+
+  &__perilla {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: $perilla;
+    height: $perilla;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+    transition: transform $duracion-rapida;
+  }
+}

@@ -1,0 +1,61 @@
+$prefix: cmp-trae-trabajo;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-24;
+    }
+  }
+
+  &__formulario {
+    @include tarjeta;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-14;
+    min-width: 0;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__conteo {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    color: $texto-secundario;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+
+    @include tablet {
+      flex-direction: row;
+    }
+  }
+
+  &__lateral {
+    @include escritorio {
+      width: 400px;
+      flex-shrink: 0;
+    }
+  }
+}

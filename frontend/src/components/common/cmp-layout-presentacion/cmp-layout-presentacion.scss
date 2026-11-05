@@ -1,0 +1,57 @@
+// Pantallas de presentación (Figma · 21 y 23): sin barra de navegación del producto.
+.cmp-layout-presentacion {
+  min-height: 100dvh;
+  background-color: $fondo-app;
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-12;
+    max-width: calc(#{$ancho-contenido} + #{$esp-64} * 2);
+    margin: 0 auto;
+    padding: $esp-16 $esp-16 0;
+
+    @include tablet {
+      padding: $esp-24 $esp-32 0;
+    }
+
+    @include escritorio {
+      padding: $esp-24 $esp-64 0;
+    }
+  }
+
+  &__volver {
+    display: inline-flex;
+    align-items: center;
+    min-height: $alto-tactil;
+    @include texto-etiqueta;
+    color: $marca-azul;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__principal {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-24;
+    max-width: calc(#{$ancho-contenido} + #{$esp-64} * 2);
+    margin: 0 auto;
+    padding: $esp-24 $esp-16 $esp-48;
+
+    &:focus {
+      outline: none;
+    }
+
+    @include tablet {
+      padding: $esp-32 $esp-32 $esp-56;
+    }
+
+    @include escritorio {
+      gap: $esp-28;
+      padding: $esp-32 $esp-64 $esp-64;
+    }
+  }
+}

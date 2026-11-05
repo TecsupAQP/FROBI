@@ -1,0 +1,68 @@
+$prefix: v-casilla;
+
+// Opción marcable (Figma · 17 perfil y 20 autoevaluación): casilla de 28 px, icono y textos.
+.#{$prefix} {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $esp-12;
+  min-height: $alto-tactil;
+  padding: $esp-12;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-12;
+  background-color: $fondo-app;
+  cursor: pointer;
+
+  &__control {
+    @include solo-lector;
+  }
+
+  &__caja {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border: $linea-2 solid $borde-campo;
+    border-radius: 6px;
+    background-color: $fondo-superficie;
+    color: $texto-inverso;
+  }
+
+  &__icono {
+    color: $marca-azul;
+  }
+
+  &__textos {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-2;
+    min-width: 0;
+  }
+
+  &__titulo {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__descripcion {
+    color: $texto-cuerpo;
+  }
+
+  &:has(:focus-visible) {
+    outline: 3px solid $marca-azul;
+    outline-offset: 2px;
+  }
+
+  &--marcada {
+    border: $linea-2 solid $marca-azul;
+    background-color: $marca-azul-claro;
+
+    .#{$prefix}__caja {
+      border-color: $marca-azul;
+      background-color: $marca-azul;
+    }
+  }
+}

@@ -1,0 +1,142 @@
+$prefix: cmp-login;
+
+.#{$prefix} {
+  min-height: 100dvh;
+  background-color: $fondo-app;
+
+  @include escritorio {
+    display: grid;
+    grid-template-columns: minmax(0, 760fr) minmax(0, 680fr);
+  }
+
+  &__marca {
+    display: none;
+
+    @include escritorio {
+      display: flex;
+    }
+  }
+
+  &__acceso {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-24;
+    width: 100%;
+    max-width: calc(#{$ancho-formulario} + #{$esp-32});
+    margin: 0 auto;
+    padding: $esp-32 $esp-16;
+
+    &:focus {
+      outline: none;
+    }
+
+    @include tablet {
+      padding: $esp-56 $esp-16;
+    }
+
+    @include escritorio {
+      justify-content: center;
+      max-width: none;
+      padding: $esp-40;
+    }
+  }
+
+  // En escritorio esta bienvenida vive en el panel de marca.
+  &__bienvenida {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+
+    .v-logo {
+      margin-bottom: $esp-16;
+    }
+
+    @include escritorio {
+      display: none;
+    }
+  }
+
+  &__lema {
+    @include texto-titulo;
+    color: $texto-principal;
+  }
+
+  &__descripcion {
+    @include texto-cuerpo-grande;
+    color: $texto-secundario;
+  }
+
+  &__tarjeta {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-24;
+    width: 100%;
+    padding: $esp-20;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-20;
+    background-color: $fondo-superficie;
+
+    @include tablet {
+      padding: $esp-32;
+    }
+
+    @include escritorio {
+      width: 440px;
+      margin: 0 auto;
+      padding: $esp-40;
+      box-shadow: $sombra-flotante;
+    }
+  }
+
+  &__titulos {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-6;
+  }
+
+  &__titulo {
+    @include texto-titulo;
+    color: $texto-principal;
+  }
+
+  &__subtitulo,
+  &__privacidad {
+    color: $texto-secundario;
+  }
+
+  &__rol {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  &__leyenda {
+    margin-bottom: $esp-8;
+    padding: 0;
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__roles {
+    display: grid;
+    gap: $esp-12;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__error {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-6;
+    color: $estado-error;
+
+    .v-icon {
+      margin-top: $esp-2;
+    }
+  }
+}

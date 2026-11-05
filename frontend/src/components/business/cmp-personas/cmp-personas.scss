@@ -1,0 +1,203 @@
+$prefix: cmp-personas;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-24;
+
+  &__encabezado {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-6;
+  }
+
+  &__titulo {
+    @include texto-titulo;
+    color: $texto-principal;
+
+    @include tablet {
+      @include texto-titulo-xl;
+    }
+  }
+
+  &__descripcion {
+    @include texto-cuerpo-grande;
+    color: $texto-secundario;
+  }
+
+  // Móvil 1 columna, tablet 2, escritorio 6 pistas: 3 tarjetas arriba y 2 anchas abajo.
+  &__lista {
+    display: grid;
+    gap: $esp-20;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include escritorio {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      align-items: start;
+    }
+  }
+
+  &__persona {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-24;
+
+    @include escritorio {
+      grid-column: span 2;
+    }
+
+    &--ancha {
+      @include escritorio {
+        grid-column: span 3;
+      }
+    }
+  }
+
+  &__perfil {
+    display: flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: $esp-8;
+    padding: $esp-6 $esp-12;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__nombre {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__situacion {
+    color: $texto-secundario;
+  }
+
+  &__pantalla {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-10;
+    padding: $esp-14;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+    color: $texto-principal;
+
+    &--voz {
+      border-color: $marca-marino;
+      background-color: $marca-marino;
+      color: $texto-inverso;
+    }
+  }
+
+  &__mini-etiqueta {
+    @include texto-etiqueta;
+    color: inherit;
+
+    &--marca {
+      color: $marca-azul;
+    }
+  }
+
+  &__pantalla--pasos &__mini-etiqueta {
+    color: $texto-secundario;
+  }
+
+  &__mini-titulo {
+    @include texto-subtitulo;
+  }
+
+  &__mini-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: $esp-8;
+    padding: $esp-6 $esp-12;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    @include texto-etiqueta;
+    color: $marca-azul;
+
+    &--voz {
+      background-color: $estado-aviso-fondo;
+      color: $marca-marino;
+    }
+
+    &--exito {
+      background-color: $estado-exito-fondo;
+      color: $estado-exito;
+    }
+  }
+
+  &__mini-boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: $alto-boton;
+    padding: 0 $esp-24;
+    border-radius: $radio-12;
+    background-color: $marca-azul;
+    @include texto-boton;
+    color: $texto-inverso;
+
+    &--grande {
+      align-self: stretch;
+      min-height: 68px;
+      @include texto-subtitulo;
+    }
+  }
+
+  &__mini-nota {
+    color: $texto-secundario;
+  }
+
+  &__cambios {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+  }
+
+  &__cambios-titulo {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__cambios-lista {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: $esp-8;
+      color: $texto-cuerpo;
+    }
+
+    .v-icon {
+      margin-top: $esp-2;
+      color: $estado-exito;
+    }
+  }
+
+  &__ayuda {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-8;
+    padding: $esp-10 $esp-12;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+    color: $texto-cuerpo;
+
+    .v-icon {
+      margin-top: $esp-2;
+      color: $texto-secundario;
+    }
+  }
+}

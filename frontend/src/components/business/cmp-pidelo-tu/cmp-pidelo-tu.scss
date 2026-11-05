@@ -1,0 +1,72 @@
+$prefix: cmp-pidelo-tu;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-24;
+  }
+
+  @include escritorio {
+    gap: $esp-28;
+  }
+
+  // Móvil y tablet apilado; escritorio en dos columnas (848 + 440 en Figma).
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-24;
+    }
+  }
+
+  &__principal {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-20;
+    min-width: 0;
+  }
+
+  &__lateral {
+    @include escritorio {
+      width: 440px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// "¿Prefieres practicar sin IA?" (Figma · 8): resolver sin IA también es un logro.
+.#{$prefix}__sin-ia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-14;
+  padding: $esp-16;
+  border-radius: $radio-16;
+  background-color: $marca-azul-claro;
+  color: $texto-cuerpo;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  .v-button {
+    align-self: stretch;
+
+    @include tablet {
+      align-self: flex-start;
+    }
+  }
+}
+
+.#{$prefix}__sin-ia-titulo {
+  @include texto-subtitulo;
+  color: $texto-principal;
+}

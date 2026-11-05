@@ -1,0 +1,156 @@
+$prefix: cmp-ajustes;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-24;
+  }
+
+  @include escritorio {
+    gap: $esp-28;
+  }
+
+  // Móvil y tablet apilado; escritorio: principal + lateral de 420 px.
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-24;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+
+  &__principal,
+  &__lateral {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+
+    @include tablet {
+      gap: $esp-24;
+    }
+
+    @include escritorio {
+      gap: $esp-28;
+    }
+  }
+
+  &__principal {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &__lateral {
+    @include escritorio {
+      width: $ancho-lateral;
+      flex-shrink: 0;
+    }
+  }
+
+  &__tarjeta {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__idiomas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+  }
+
+  &__idioma {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    padding: $esp-12;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+
+    &--elegido {
+      padding: $esp-14;
+      border: $linea-2 solid $marca-azul;
+      background-color: $marca-azul-claro;
+
+      .v-icon {
+        color: $marca-azul;
+      }
+
+      .#{$prefix}__idioma-nombre {
+        color: $texto-principal;
+      }
+    }
+
+    &--pronto {
+      color: $texto-secundario;
+    }
+  }
+
+  &__idioma-textos {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-2;
+    min-width: 0;
+  }
+
+  &__idioma-nombre {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  &__idioma-detalle {
+    color: $texto-secundario;
+  }
+
+  &__clase {
+    align-self: flex-start;
+    padding: $esp-6 $esp-12;
+  }
+
+  &__secundario {
+    color: $texto-secundario;
+  }
+
+  &__privacidad {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-8;
+    color: $texto-cuerpo;
+
+    .v-icon {
+      margin-top: $esp-2;
+      color: $texto-principal;
+    }
+  }
+
+  &__si.v-icon {
+    color: $estado-exito;
+  }
+}
+
+.#{$prefix}__enlace {
+  align-self: center;
+  min-height: $alto-tactil;
+  padding: $esp-10 0;
+  @include texto-etiqueta;
+  color: $marca-azul;
+  text-decoration: underline;
+}

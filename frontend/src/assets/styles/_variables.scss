@@ -1,0 +1,110 @@
+// Tokens de FROBI (colección de Figma "SkillAI · Tokens") (Figma · 0 Sistema visual).
+// Los valores reales viven como custom properties en :root (ver _tokens.scss);
+// aquí solo hay alias SCSS para escribir estilos sin colores ni tamaños en duro.
+
+// Marca
+$marca-azul: var(--marca-azul);
+$marca-azul-claro: var(--marca-azul-claro);
+$marca-marino: var(--marca-marino);
+$marca-degradado: var(--marca-degradado);
+
+// Fondos
+$fondo-app: var(--fondo-app);
+$fondo-superficie: var(--fondo-superficie);
+$fondo-oscuro: var(--fondo-oscuro);
+$sombra-flotante: var(--sombra-flotante);
+$sombra-modal: var(--sombra-modal);
+$fondo-hover-inverso: var(--fondo-hover-inverso);
+
+// Texto
+$texto-principal: var(--texto-principal);
+$texto-cuerpo: var(--texto-cuerpo);
+$texto-secundario: var(--texto-secundario);
+$texto-inverso: var(--texto-inverso);
+
+// Bordes
+$borde-suave: var(--borde-suave);
+$borde-campo: var(--borde-campo);
+
+// Estados
+$estado-exito: var(--estado-exito);
+$estado-exito-fondo: var(--estado-exito-fondo);
+$estado-error: var(--estado-error);
+$estado-error-fondo: var(--estado-error-fondo);
+$estado-aviso-texto: var(--estado-aviso-texto);
+$estado-aviso-fondo: var(--estado-aviso-fondo);
+
+// Piezas de la instrucción (colores fijos, no se reutilizan)
+$pieza-contexto-fondo: var(--pieza-contexto-fondo);
+$pieza-contexto-borde: var(--pieza-contexto-borde);
+$pieza-objetivo-fondo: var(--pieza-objetivo-fondo);
+$pieza-objetivo-borde: var(--pieza-objetivo-borde);
+$pieza-nivel-fondo: var(--pieza-nivel-fondo);
+$pieza-nivel-borde: var(--pieza-nivel-borde);
+$pieza-formato-fondo: var(--pieza-formato-fondo);
+$pieza-formato-borde: var(--pieza-formato-borde);
+
+// Tipografía (Inter; nada por debajo de 16 px)
+$fuente: var(--fuente);
+$peso-regular: 400;
+$peso-semibold: 600;
+$peso-bold: 700;
+
+// Espaciado (retícula de 4/8 px)
+$esp-2: 2px;
+$esp-4: 4px;
+$esp-6: 6px;
+$esp-8: 8px;
+$esp-10: 10px;
+$esp-12: 12px;
+$esp-14: 14px;
+$esp-16: 16px;
+$esp-20: 20px;
+$esp-24: 24px;
+$esp-28: 28px;
+$esp-32: 32px;
+$esp-40: 40px;
+$esp-48: 48px;
+$esp-56: 56px;
+$esp-64: 64px;
+
+// Radios
+$radio-8: 8px;
+$radio-10: 10px;
+$radio-12: 12px;
+$radio-14: 14px;
+$radio-16: 16px;
+$radio-20: 20px;
+$radio-24: 24px;
+$radio-pildora: 999px;
+
+// Bordes (grosor)
+$linea-1: 1px;
+$linea-15: 1.5px;
+$linea-2: 2px;
+$linea-6: 6px;
+
+// Alturas de control (objetivo táctil mínimo 44 px)
+$alto-tactil: 44px;
+$alto-boton: 52px;
+$alto-campo: 56px;
+$alto-barra-movil: 64px;
+$alto-barra-escritorio: 72px;
+
+// Anchos
+$ancho-contenido: 1312px;
+$ancho-lateral: 420px;
+$ancho-formulario: 544px;
+
+// Breakpoints (mobile-first, solo min-width)
+$tablet: 768px;
+$escritorio: 1280px;
+
+// Capas
+$capa-barra: 10;
+$capa-modal: 100;
+$capa-toast: 200;
+
+// Movimiento
+$duracion-rapida: 150ms;
+$duracion-carga: 600ms;

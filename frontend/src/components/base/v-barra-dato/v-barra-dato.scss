@@ -1,0 +1,45 @@
+$prefix: v-barra-dato;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-6;
+
+  &__fila {
+    display: flex;
+    justify-content: space-between;
+    gap: $esp-10;
+    color: $texto-principal;
+  }
+
+  &__valor {
+    @include texto-etiqueta;
+    white-space: nowrap;
+  }
+
+  // Barra de 14 px (Figma); el color de pista acompaña al tono.
+  // Anidado para ganar especificidad sobre el estilo propio de v-progress-bar.
+  .#{$prefix}__barra {
+    height: 14px;
+
+    :deep(.v-progress-bar__relleno) {
+      border-radius: 0;
+    }
+  }
+
+  &--error &__barra {
+    background-color: $estado-error-fondo;
+
+    :deep(.v-progress-bar__relleno) {
+      background-color: $estado-error;
+    }
+  }
+
+  &--aviso &__barra {
+    background-color: $estado-aviso-fondo;
+
+    :deep(.v-progress-bar__relleno) {
+      background-color: $estado-aviso-texto;
+    }
+  }
+}

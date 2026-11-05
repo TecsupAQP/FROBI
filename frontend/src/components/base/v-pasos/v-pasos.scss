@@ -1,0 +1,28 @@
+$prefix: v-pasos;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-8;
+
+  &__segmentos {
+    display: flex;
+    gap: $esp-8;
+  }
+
+  &__segmento {
+    flex: 1 1 0;
+    height: $esp-8;
+    border-radius: $radio-pildora;
+    background-color: $borde-suave;
+
+    &--hecho {
+      background-color: $marca-azul;
+    }
+  }
+
+  &__texto {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+}

@@ -1,0 +1,180 @@
+$prefix: cmp-cierre;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  &__cargando {
+    display: flex;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__encabezado {
+    display: flex;
+    align-items: center;
+    gap: $esp-16;
+  }
+
+  &__logro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $estado-exito;
+    color: $texto-inverso;
+
+    @include tablet {
+      width: 64px;
+      height: 64px;
+    }
+  }
+
+  &__titulo {
+    @include texto-titulo;
+    color: $texto-principal;
+
+    @include tablet {
+      @include texto-titulo-xl;
+    }
+  }
+
+  &__subtitulo {
+    @include texto-cuerpo-grande;
+    color: $texto-secundario;
+  }
+
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-24;
+    }
+  }
+
+  &__receta {
+    @include tarjeta;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-14;
+    min-width: 0;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__seccion-titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__secundario {
+    color: $texto-secundario;
+  }
+
+  &__piezas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    width: 100%;
+  }
+
+  &__lateral {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-16;
+
+    @include escritorio {
+      width: 440px;
+      flex-shrink: 0;
+    }
+  }
+
+  &__dato {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-20 $esp-20;
+  }
+
+  &__dato-cabecera {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__dato-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $alto-tactil;
+    height: $alto-tactil;
+    flex-shrink: 0;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__dato-etiqueta {
+    @include texto-cuerpo;
+    color: $texto-secundario;
+  }
+
+  &__dato-valor {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $esp-10;
+  }
+
+  &__chip {
+    gap: $esp-6;
+  }
+
+  &__niveles {
+    display: flex;
+    gap: $esp-6;
+  }
+
+  &__nivel {
+    flex: 1 1 0;
+    height: $esp-8;
+    border-radius: $radio-pildora;
+    background-color: $borde-suave;
+
+    &--logrado {
+      background-color: $marca-azul;
+    }
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+
+    @include tablet {
+      flex-direction: row;
+    }
+  }
+}

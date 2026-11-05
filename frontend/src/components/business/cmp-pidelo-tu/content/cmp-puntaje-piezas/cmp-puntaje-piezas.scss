@@ -1,0 +1,94 @@
+$prefix: cmp-puntaje-piezas;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__puntaje {
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+  }
+
+  &__pieza {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-6;
+  }
+
+  &__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-10;
+  }
+
+  &__estado {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    @include texto-etiqueta;
+
+    &--falta {
+      color: $estado-error;
+    }
+
+    &--presente {
+      color: $estado-exito;
+    }
+  }
+
+  // Barra con el color fijo de la pieza: fondo claro, relleno con el color del borde.
+  &__barra {
+    display: flex;
+    height: 10px;
+    overflow: hidden;
+    border: $linea-1 solid;
+    border-radius: $radio-pildora;
+
+    @include colores-pieza;
+  }
+
+  &__relleno {
+    display: block;
+    height: 100%;
+    background-color: currentColor;
+  }
+
+  &__barra--contexto {
+    color: $pieza-contexto-borde;
+  }
+
+  &__barra--objetivo {
+    color: $pieza-objetivo-borde;
+  }
+
+  &__barra--nivel {
+    color: $pieza-nivel-borde;
+  }
+
+  &__barra--formato {
+    color: $pieza-formato-borde;
+  }
+
+  &__comentario {
+    color: $texto-cuerpo;
+  }
+}

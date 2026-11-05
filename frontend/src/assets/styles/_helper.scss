@@ -1,0 +1,23 @@
+@use "variables" as *;
+@use "mixin" as *;
+
+.solo-lector {
+  @include solo-lector;
+}
+
+// Ajustes · letra grande: escala toda la interfaz un 12,5 %.
+:root[data-text-scale] body {
+  zoom: 1.125;
+}
+
+// Ajustes · "Botones grandes y teclado": objetivos de 60 px y foco más grueso.
+:root[data-buttons-large] {
+  .v-button {
+    min-height: 60px;
+    padding-inline: $esp-28;
+  }
+
+  :focus-visible {
+    outline-width: 4px;
+  }
+}
