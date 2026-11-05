@@ -1,8 +1,9 @@
 import type { ArchivoLeido, GuiaResumen, Material } from "@/core/shared/domain/view/material.view";
 
+// El motivo lo da la API (sin texto, con contraseña, escaneo muy largo…).
 export class PdfIlegibleError extends Error {
-  constructor() {
-    super("No pudimos leer este PDF");
+  constructor(motivo = "No pudimos leer este PDF. Prueba con otro archivo o pega el texto.") {
+    super(motivo);
     this.name = "PdfIlegibleError";
   }
 }

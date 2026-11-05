@@ -16,6 +16,7 @@ export default defineComponent({
     nombreArchivo: { type: String, required: true },
     tamanoArchivoMb: { type: Number, required: true },
     archivo: { type: Object as PropType<ArchivoLeido | null>, default: null },
+    motivoError: { type: String, default: "" },
     modelValue: { type: Boolean, default: false },
   },
   emits: {

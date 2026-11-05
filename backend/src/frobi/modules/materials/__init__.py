@@ -3,6 +3,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from frobi.shared.infrastructure import SqlAlchemyUnitOfWork, SystemClock
+from frobi.shared.infrastructure.llm import PdfTranscriber
 
 from .application import (
     ClassContentHandler,
@@ -50,7 +51,9 @@ def guides_handler(session: AsyncSession) -> GuidesHandler:
     )
 
 
-def class_content_handler(session: AsyncSession) -> ClassContentHandler:
+def class_content_handler(
+    session: AsyncSession, transcriber: PdfTranscriber | None = None
+) -> ClassContentHandler:
     """Stores and lists ``class_content``. Classrooms checks who may do it before calling."""
     from .infrastructure import PypdfTextExtractor, SqlAlchemyMaterialRepository
 
@@ -59,7 +62,7 @@ def class_content_handler(session: AsyncSession) -> ClassContentHandler:
     clock = SystemClock()
     return ClassContentHandler(
         CreateMaterialHandler(uow, repository, clock),
-        UploadMaterialHandler(uow, repository, PypdfTextExtractor(), clock),
+        UploadMaterialHandler(uow, repository, PypdfTextExtractor(transcriber), clock),
         repository,
     )
 

@@ -34,7 +34,7 @@ from frobi.shared.infrastructure import (
     create_session_factory,
     get_settings,
 )
-from frobi.shared.infrastructure.llm import build_llm_client
+from frobi.shared.infrastructure.llm import build_llm_client, build_pdf_transcriber
 from frobi.shared.presentation import PROBLEM_RESPONSES, health_router, register_problem_handlers
 
 API_PREFIX = "/api/v1"
@@ -117,6 +117,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         model=settings.llm_model,
         base_url=settings.llm_base_url,
         timeout_seconds=settings.llm_timeout_seconds,
+    )
+    # Scanned PDFs (only images) are read with Claude; without the key they stay unreadable.
+    app.state.pdf_transcriber = build_pdf_transcriber(
+        provider=settings.llm_provider,
+        api_key=None if settings.llm_api_key is None else settings.llm_api_key.get_secret_value(),
+        model=settings.llm_model,
+        base_url=settings.llm_base_url,
+        timeout_seconds=settings.llm_pdf_timeout_seconds,
     )
     # Chat with FROBI (M14): Claude with the same Anthropic key, or fixed help without it.
     app.state.assistant = build_assistant(settings)

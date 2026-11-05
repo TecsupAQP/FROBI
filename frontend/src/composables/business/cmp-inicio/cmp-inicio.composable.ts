@@ -15,12 +15,14 @@ function useCmpInicio() {
     propias,
     sinGuia,
     modalAbierto,
+    motivoError,
     nombreArchivo,
     progreso,
     tamanoArchivoMb,
   } = storeToRefs(store);
 
   return {
+    motivoError,
     archivo,
     archivoElegido,
     fase,
