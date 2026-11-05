@@ -1,0 +1,76 @@
+name: Deploy
+
+# Despliega en el VPS (combi) cada vez que el CI de main pasa. También se puede lanzar a mano.
+# Solo necesita un secreto: DEPLOY_SSH_KEY, una llave que en el servidor solo puede ejecutar
+# ~/bin/frobi-deploy. La clave de Claude y la contraseña de la base viven en deploy/.env del
+# servidor y nunca pasan por GitHub.
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  DEPLOY_HOST: 57.156.56.166
+  DEPLOY_USER: azureuser
+  # Llave pública del servidor (ssh-keyscan -t ed25519 57.156.56.166): evita conectarse a un impostor.
+  DEPLOY_HOST_KEY: "57.156.56.166 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ6vNC8BVETkjXxsbAgykH15LWdmwoG2M5VyLP5A1DD7"
+  PUBLIC_URL: https://h4edufrobi.duckdns.org
+
+jobs:
+  deploy:
+    # Desde el CI: solo si pasó y fue un push a main (no un pull request).
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Commit a desplegar
+        id: commit
+        run: echo "sha=${{ github.event.workflow_run.head_sha || github.sha }}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.commit.outputs.sha }}
+
+      - name: Construir las imágenes (el front también pasa vue-tsc)
+        env:
+          POSTGRES_PASSWORD: solo-para-construir
+        run: docker compose -f deploy/compose.yml build
+
+      - name: Preparar SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          test -n "$DEPLOY_SSH_KEY" || { echo "Falta el secreto DEPLOY_SSH_KEY"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
+
+      - name: Enviar imágenes y desplegar
+        run: |
+          docker save frobi-web:latest frobi-api:latest | gzip -1 | \
+            ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+              "$DEPLOY_USER@$DEPLOY_HOST" "${{ steps.commit.outputs.sha }}"
+
+      - name: Comprobar desde internet
+        run: |
+          for i in $(seq 1 20); do
+            curl -fsS "$PUBLIC_URL/api/v1/health" && exit 0
+            sleep 3
+          done
+          echo "La web no responde en $PUBLIC_URL"; exit 1
+
+      - name: Borrar la llave del runner
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

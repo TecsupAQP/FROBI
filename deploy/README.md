@@ -74,6 +74,31 @@ Esa contraseña solo sirve para que Compose acepte construir y no queda en las i
 contraseña y la clave reales se leen del `deploy/.env` del servidor al levantar. Cada contenedor tiene un tope de memoria
 (`mem_limit`); en total FROBI usa unos 150 MB.
 
+## Despliegue automático (GitHub Actions)
+
+[`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) despliega cada push a `main`
+cuando el CI pasa (y a mano desde la pestaña **Actions → Deploy → Run workflow**). Construye las
+imágenes en GitHub, las manda por SSH y el servidor las levanta. La clave de Claude y la
+contraseña de la base se quedan en `deploy/.env` del servidor: GitHub no las ve nunca.
+
+Se configura una sola vez:
+
+1. **Llave de despliegue.** En tu compu: `ssh-keygen -t ed25519 -N "" -C github-actions-frobi-deploy -f ~/.ssh/frobi_deploy`.
+2. **En el servidor**, instala el script y autoriza esa llave *solo* para ejecutarlo:
+
+   ```bash
+   cd ~/FROBI && git pull && install -D -m 700 deploy/frobi-deploy.sh ~/bin/frobi-deploy
+   echo 'command="/home/azureuser/bin/frobi-deploy",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,no-user-rc <contenido de frobi_deploy.pub>' >> ~/.ssh/authorized_keys
+   ```
+
+   Con `command=` esa llave no abre una terminal ni ejecuta otra cosa que el despliegue.
+3. **En GitHub:** *Settings → Secrets and variables → Actions → New repository secret*, nombre
+   `DEPLOY_SSH_KEY`, valor: el contenido completo de `~/.ssh/frobi_deploy` (la privada).
+
+Si cambias de servidor, actualiza `DEPLOY_HOST` y `DEPLOY_HOST_KEY` en el workflow
+(`ssh-keyscan -t ed25519 <ip>`). Si cambias `deploy/frobi-deploy.sh`, vuelve a correr el
+`install` del paso 2.
+
 ## Comandos útiles
 
 ```bash
