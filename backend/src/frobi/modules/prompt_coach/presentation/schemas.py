@@ -1,16 +1,11 @@
 """M7 · Entrenador de instrucciones: contract with the front."""
 
-from enum import StrEnum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
-class RecipePiece(StrEnum):
-    CONTEXT = "context"
-    GOAL = "goal"
-    LEVEL = "level"
-    FORMAT = "format"
+from frobi.modules.prompt_coach.application import Comparison
+from frobi.modules.prompt_coach.domain import PromptEvaluation, RecipePiece
 
 
 class EvaluatePromptRequest(BaseModel):
@@ -35,6 +30,22 @@ class PromptEvaluationOut(BaseModel):
     autonomy_level: int = Field(ge=1, le=3)
     autonomy_label: str = Field(examples=["Nivel 2: ya pides con contexto"])
 
+    @classmethod
+    def from_domain(cls, evaluation: PromptEvaluation) -> "PromptEvaluationOut":
+        return cls(
+            id=evaluation.id,
+            text=evaluation.text,
+            scores=[
+                PieceScore(piece=s.piece, score=s.score, feedback=s.feedback)
+                for s in evaluation.scores
+            ],
+            missing_piece=evaluation.missing_piece,
+            suggestion=evaluation.suggestion,
+            improved_text=evaluation.improved_text,
+            autonomy_level=evaluation.autonomy_level,
+            autonomy_label=evaluation.autonomy_label,
+        )
+
 
 class PromptRun(BaseModel):
     prompt: str
@@ -46,3 +57,13 @@ class PromptComparisonOut(BaseModel):
     original: PromptRun
     improved: PromptRun
     fallback: bool
+
+    @classmethod
+    def from_comparison(cls, comparison: Comparison) -> "PromptComparisonOut":
+        evaluation = comparison.evaluation
+        return cls(
+            evaluation_id=evaluation.id,
+            original=PromptRun(prompt=evaluation.text, output=comparison.original.text),
+            improved=PromptRun(prompt=evaluation.improved_text, output=comparison.improved.text),
+            fallback=comparison.fallback,
+        )
