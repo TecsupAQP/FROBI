@@ -3108,7 +3108,7 @@
                 }
               }
             },
-            "description": "Datos inválidos (`Validation.Invalid`)."
+            "description": "Datos de la clase inválidos."
           }
         },
         "security": [
@@ -3318,7 +3318,7 @@
             "HTTPBearer": []
           }
         ],
-        "summary": "Panel docente",
+        "summary": "Panel docente (solo actividad hecha dentro de la clase)",
         "tags": [
           "M12 · Clase del docente"
         ]
@@ -4505,7 +4505,7 @@
                 }
               }
             },
-            "description": "Datos inválidos (`Validation.Invalid`)."
+            "description": "Alias vacío o de más de 40 caracteres."
           }
         },
         "security": [
@@ -4581,6 +4581,16 @@
               }
             },
             "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No estás en ninguna clase (`Classrooms.NotInAClass`)."
           },
           "422": {
             "content": {
