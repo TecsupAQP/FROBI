@@ -4,5 +4,4 @@ import type { BorradorTrabajo } from "@/core/shared/domain/view/claim-review.vie
 
 const trabajoPort: TrabajoPort = new TrabajoUseCase();
 
-export const obtenerBorradorEjemploService = () => trabajoPort.obtenerBorradorEjemplo();
 export const revisarTrabajoService = (trabajo: BorradorTrabajo) => trabajoPort.revisarTrabajo(trabajo);

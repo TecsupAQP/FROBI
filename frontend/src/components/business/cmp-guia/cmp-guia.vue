@@ -20,7 +20,7 @@
     />
 
     <div v-if="guia" :class="`${PREFIX}__columnas`">
-      <div :class="`${PREFIX}__temas`">
+      <div data-recorrido="temas" :class="`${PREFIX}__temas`">
         <cmp-tema
           v-for="tema in guia.temas"
           :key="tema.id"
@@ -30,7 +30,11 @@
         />
       </div>
 
-      <section :class="`${PREFIX}__formatos`" :aria-labelledby="`${PREFIX}-formatos`">
+      <section
+        data-recorrido="formatos"
+        :class="`${PREFIX}__formatos`"
+        :aria-labelledby="`${PREFIX}-formatos`"
+      >
         <h2 :id="`${PREFIX}-formatos`" :class="`${PREFIX}__subtitulo`">¿Cómo quieres aprender este tema?</h2>
         <ul :class="`${PREFIX}__lista`">
           <li v-for="formato in FORMATOS" :key="formato.id">

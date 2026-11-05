@@ -12,8 +12,10 @@ import type {
   IntentoAyudaDto,
   RespuestaPropiaDto,
 } from "@/core/shared/infraestructure/http/api.dto";
-import { adaptacionActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
-import { CRITERIOS_SIN_IA, TAREAS } from "@/constants/tareas.constant";
+import type { MaterialDto } from "@/core/shared/infraestructure/http/api.dto";
+import { adaptacionActualId, materialActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
+import { temasDesdeTexto, tituloDeGuia } from "@/core/shared/application/util/texto.util";
+import { CRITERIOS_SIN_IA, ESCALONES_AYUDA } from "@/constants/tareas.constant";
 
 const ESCALONES: Record<EscalonId, EscalonApi> = {
   "pista-1": "hint_1",
@@ -43,14 +45,29 @@ const enLineas = (texto: string): string[] =>
 
 // POST /help-attempts, /help-attempts/{id}/steps y /help-attempts/{id}/own-answer.
 export class AyudaUseCase implements AyudaPort {
+  // La tarea es explicar un tema de la guía actual (tareaId = "tema-N").
   async abrirIntento(tareaId: string): Promise<IntentoAbierto | null> {
-    const tarea = TAREAS[tareaId];
-    if (!tarea) return null;
+    const material = await api.get<MaterialDto>(`/materials/${await materialActualId()}`);
+    const temas = temasDesdeTexto(material.extracted_text);
+    const tema = temas.find((item) => item.id === tareaId);
+    if (!tema) return null;
     const intento = await api.post<IntentoAyudaDto>("/help-attempts", {
       adaptation_id: await adaptacionActualId(),
       task_ref: tareaId,
     });
-    return { intentoId: intento.id, tarea: structuredClone(tarea), estado: estadoDesdeApi(intento) };
+    // Una guía sin secciones tiene un solo tema: se nombra con el título de la guía.
+    const nombre = temas.length === 1 ? tituloDeGuia(material.title) : tema.titulo;
+    return {
+      intentoId: intento.id,
+      tarea: {
+        id: tareaId,
+        ruta: [tituloDeGuia(material.title), `Tema ${tema.numero} de ${temas.length}`],
+        titulo: `Explica «${nombre}» con tus palabras`,
+        enunciado: `Según tu guía, ¿qué es «${nombre}» y para qué sirve? Respóndelo con tus palabras y, si puedes, con un ejemplo.`,
+        escalones: structuredClone(ESCALONES_AYUDA),
+      },
+      estado: estadoDesdeApi(intento),
+    };
   }
 
   async abrirEscalon(intentoId: string, escalon: EscalonId): Promise<EscalonAbierto> {

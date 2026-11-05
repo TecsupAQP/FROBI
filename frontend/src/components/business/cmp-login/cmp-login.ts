@@ -66,7 +66,7 @@ export default defineComponent({
 
     onMounted(() => {
       cargarCarreras();
-      // El enlace de invitación trae el código: /login?clase=SENSOR1
+      // El enlace de invitación trae el código: /login?clase=ABC123
       if (typeof route.query.clase === "string") codigoClase.value = route.query.clase;
     });
 

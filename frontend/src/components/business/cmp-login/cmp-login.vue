@@ -62,7 +62,7 @@
           id="login-codigo"
           v-model="codigoClase"
           etiqueta="Código de clase (opcional)"
-          placeholder="Ejemplo: SENSOR1"
+          placeholder="Ej. ABC123"
           autocompletar="off"
           :error="errores.codigo"
           ayuda="Si tu docente te dio un código, escríbelo aquí."

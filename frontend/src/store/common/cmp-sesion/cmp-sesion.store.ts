@@ -53,6 +53,7 @@ export const useCmpSesionStore = defineStore("CmpSesionStore", () => {
 
   const estudiante = computed<Student | null>(() => sesion.value?.estudiante ?? null);
   const clase = computed(() => sesion.value?.clase ?? null);
+  const personaId = computed(() => sesion.value?.personaId ?? null);
   const haIniciado = computed(() => sesion.value !== null);
   const esDocente = computed(() => estudiante.value?.rol === "docente");
   const inicial = computed(() => estudiante.value?.alias.charAt(0).toUpperCase() ?? "");
@@ -98,6 +99,7 @@ export const useCmpSesionStore = defineStore("CmpSesionStore", () => {
 
   return {
     clase,
+    personaId,
     estudiante,
     haIniciado,
     esDocente,

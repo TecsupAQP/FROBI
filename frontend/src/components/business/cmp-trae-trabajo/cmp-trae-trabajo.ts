@@ -1,4 +1,4 @@
-import { defineComponent, onMounted } from "vue";
+import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import VButton from "@/components/base/v-button/v-button.vue";
 import VCargando from "@/components/base/v-cargando/v-cargando.vue";
@@ -19,7 +19,7 @@ export default defineComponent({
 
     const router = useRouter();
 
-    const { borrador, consigna, palabras, puedeRevisar, revisando, cargarEjemplo, revisar } = useCmpTrabajo();
+    const { borrador, consigna, palabras, puedeRevisar, revisando, revisar } = useCmpTrabajo();
 
     // El modal de subida es el mismo de Inicio.
     const {
@@ -46,8 +46,6 @@ export default defineComponent({
       else if (archivo.value) borrador.value = archivo.value.texto;
       cerrarModal();
     };
-
-    onMounted(cargarEjemplo);
 
     return {
       PREFIX,

@@ -1,6 +1,9 @@
-import { defineComponent, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed, defineComponent, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import VAviso from "@/components/base/v-aviso/v-aviso.vue";
+import VButton from "@/components/base/v-button/v-button.vue";
 import VCargando from "@/components/base/v-cargando/v-cargando.vue";
+import VEstadoVacio from "@/components/base/v-estado-vacio/v-estado-vacio.vue";
 import CmpTarjetaGuia from "@/components/business/cmp-inicio/content/cmp-tarjeta-guia/cmp-tarjeta-guia.vue";
 import CmpMisGuias from "@/components/business/cmp-inicio/content/cmp-mis-guias/cmp-mis-guias.vue";
 import CmpTarjetaSubir from "@/components/business/cmp-inicio/content/cmp-tarjeta-subir/cmp-tarjeta-subir.vue";
@@ -10,7 +13,16 @@ import { RutaEnum } from "@/enums/ruta.enum";
 
 export default defineComponent({
   name: "CmpInicio",
-  components: { VCargando, CmpTarjetaGuia, CmpTarjetaSubir, CmpSubirPdf, CmpMisGuias },
+  components: {
+    VAviso,
+    VButton,
+    VEstadoVacio,
+    VCargando,
+    CmpTarjetaGuia,
+    CmpTarjetaSubir,
+    CmpSubirPdf,
+    CmpMisGuias,
+  },
   props: {
     alias: { type: String, required: true },
   },
@@ -19,11 +31,18 @@ export default defineComponent({
 
     const router = useRouter();
 
+    const route = useRoute();
+
+    // Se llegó aquí desde una pantalla de estudio sin tener guía.
+    const vieneSinGuia = computed(() => route.query.sinGuia === "1");
+
     const {
       archivo,
       fase,
       guia,
-      guias,
+      guiaEjemplo,
+      propias,
+      sinGuia,
       modalAbierto,
       nombreArchivo,
       progreso,
@@ -63,7 +82,10 @@ export default defineComponent({
       archivo,
       fase,
       guia,
-      guias,
+      guiaEjemplo,
+      propias,
+      sinGuia,
+      vieneSinGuia,
       eligiendo,
       estudiar,
       modalAbierto,

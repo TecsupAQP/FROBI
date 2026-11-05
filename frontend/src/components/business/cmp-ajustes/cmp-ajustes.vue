@@ -51,6 +51,7 @@
           <v-button variante="secundario" bloque @click="rehacerAsistente"
             >Volver a hacer el asistente</v-button
           >
+          <v-button variante="secundario" bloque @click="verRecorrido">Ver el recorrido guiado</v-button>
           <router-link :class="`${PREFIX}__enlace`" :to="{ name: RutaEnum.PERFIL_ACCESIBILIDAD }">
             Elegir según mi perfil de accesibilidad
           </router-link>

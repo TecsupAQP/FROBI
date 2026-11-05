@@ -14,6 +14,7 @@
     <div v-if="fase === 'escribiendo' || fase === 'evaluando'" :class="`${PREFIX}__columnas`">
       <cmp-editor-instruccion
         v-model="instruccion"
+        data-recorrido="instruccion"
         :class="`${PREFIX}__principal`"
         etiqueta="Escribe cómo quieres que la IA te explique"
         :piezas-escritas="piezasEscritas"

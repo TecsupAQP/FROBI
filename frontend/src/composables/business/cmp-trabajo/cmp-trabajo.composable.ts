@@ -13,8 +13,6 @@ function useCmpTrabajo() {
     revisando,
     revision,
 
-    asegurarRevision: store.asegurarRevision,
-    cargarEjemplo: store.cargarEjemplo,
     revisar: store.revisar,
   };
 }

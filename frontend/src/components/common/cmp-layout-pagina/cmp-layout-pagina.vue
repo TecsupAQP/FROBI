@@ -7,6 +7,7 @@
     <div v-if="$slots['barra-inferior']" :class="`${PREFIX}__barra-inferior`">
       <slot name="barra-inferior" />
     </div>
+    <cmp-recorrido />
   </div>
 </template>
 

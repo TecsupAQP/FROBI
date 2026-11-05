@@ -27,6 +27,7 @@
       <button
         v-if="estudiante"
         type="button"
+        data-recorrido="menu"
         :class="`${PREFIX}__menu`"
         aria-haspopup="dialog"
         aria-controls="menu-lateral"

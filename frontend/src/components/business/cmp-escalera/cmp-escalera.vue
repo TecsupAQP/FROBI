@@ -18,7 +18,7 @@
       <cmp-encabezado-pagina :titulo="tarea.titulo" :descripcion="tarea.ruta.join(' · ')" />
 
       <div :class="`${PREFIX}__columnas`">
-        <section :class="`${PREFIX}__escalera`" aria-labelledby="escalera-titulo">
+        <section data-recorrido="escalera" :class="`${PREFIX}__escalera`" aria-labelledby="escalera-titulo">
           <h2 id="escalera-titulo" :class="`${PREFIX}__titulo`">Escalera de ayuda</h2>
           <ol :class="`${PREFIX}__escalones`">
             <cmp-escalon
@@ -59,7 +59,7 @@
               id="escalera-intento"
               :model-value="progreso.intento"
               etiqueta="Tu intento"
-              placeholder="Creo que es el capacitivo porque…"
+              placeholder="Con mis palabras, esto significa…"
               @update:model-value="escribirIntento"
             />
             <v-cargando v-if="probando">Revisando tu intento…</v-cargando>

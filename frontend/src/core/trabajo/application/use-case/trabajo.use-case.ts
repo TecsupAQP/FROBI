@@ -11,7 +11,6 @@ import type {
   RevisionDto,
   TrabajoDto,
 } from "@/core/shared/infraestructure/http/api.dto";
-import { BORRADOR_EJEMPLO } from "@/constants/trabajo.constant";
 
 // Nunca se dice "falso": los tres estados posibles de una afirmación.
 const ESTADOS: Record<EstadoAfirmacionApi, EstadoAfirmacion> = {
@@ -22,10 +21,6 @@ const ESTADOS: Record<EstadoAfirmacionApi, EstadoAfirmacion> = {
 
 // POST /materials (consigna y borrador), POST /works y POST /works/{id}/claim-review.
 export class TrabajoUseCase implements TrabajoPort {
-  obtenerBorradorEjemplo(): Promise<BorradorTrabajo> {
-    return Promise.resolve({ ...BORRADOR_EJEMPLO });
-  }
-
   async revisarTrabajo(trabajo: BorradorTrabajo): Promise<WorkReview> {
     const [consigna, borrador] = await Promise.all([
       api.post<MaterialDto>("/materials", { title: "Consigna", kind: "brief", text: trabajo.consigna }),
