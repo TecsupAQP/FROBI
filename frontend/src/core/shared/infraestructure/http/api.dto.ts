@@ -268,3 +268,11 @@ export interface DetalleEstudianteDto {
   solved_without_ai: number;
   most_failed_question: string | null;
 }
+
+// M14 · Asistente: GET /assistant/conversation.
+export interface ConversacionDto {
+  enabled: boolean;
+  lines: { speaker: "person" | "assistant"; text: string }[];
+  questions_left: number;
+  answering: boolean;
+}

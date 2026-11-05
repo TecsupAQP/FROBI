@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = Field(default=15.0, gt=0)
     llm_requests_per_minute: int = Field(default=10, ge=1)
     health_timeout_seconds: float = Field(default=2.0, gt=0)
+    # Chat assistant (needs FROBI_LLM_PROVIDER=anthropic and FROBI_LLM_API_KEY).
+    assistant_model: str = "claude-opus-5-5"
+    assistant_effort: Literal["low", "medium", "high", "xhigh", "max"] = "medium"
     # Cloudflare R2 (S3 API) for the original PDFs. Without keys uploads keep only their text.
     r2_endpoint: str | None = None
     r2_access_key_id: str | None = None

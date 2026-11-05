@@ -38,7 +38,8 @@ forbi/backend/
 │       ├── claim_review/     # M9: semáforo de afirmaciones con respaldo
 │       ├── tools/            # M10: catálogo fijo y recomendación
 │       ├── classrooms/       # M12: clases, invitaciones, membresías, panel docente
-│       └── progress/         # M11: solo lectura sobre los demás; progreso y cierre
+│       ├── progress/         # M11: solo lectura sobre los demás; progreso y cierre
+│       └── assistant/        # M14: chat privado con FROBI (Claude + herramientas) por WebSocket
 └── tests/
     ├── unit/<modulo>/        # Dominio y casos de uso con fakes de los puertos
     ├── integration/          # Repositorios SQLAlchemy y Redis reales (testcontainers)
@@ -61,8 +62,11 @@ forbi/backend/
 | `tools` | M10 | `tools` (seed) | — |
 | `classrooms` | M12 | `classes`, `memberships`, `dashboard:*` | `ClassActivityReader` (actividad filtrada por `class_id`) |
 | `progress` | M11 | — (solo lectura) | `PersonActivityReader` |
+| `assistant` | M14 | `assistant:conversation:*`, `assistant:answering:*`, canales `assistant:person:*` | `StudyData` (API pública de identity, settings, materials, progress y classrooms), `AssistantModel` (Claude) |
 
 `progress` cumple el mismo papel que `alerts` en famas: **solo lee** de los demás y no es dueño de ninguna tabla.
+
+`assistant` habla por `WS /api/v1/assistant/ws` (protocolo en `assistant/presentation/router.py`). Escala en horizontal sin sesiones pegajosas: la conversación vive en Redis, un candado `assistant:answering:{persona}` evita dos respuestas a la vez y cada instancia mantiene **una** conexión pub/sub (`RedisHub`) que reparte los eventos a todos los sockets abiertos de la persona, estén en la instancia que estén. Sus herramientas leen siempre los datos de quien pregunta (el modelo nunca elige de quién) y el panel docente pasa por las mismas reglas de `classrooms`.
 
 ## 3. Estructura interna de cada módulo
 

@@ -95,6 +95,7 @@ export default defineComponent({
       const cuenta: GrupoMenu = {
         titulo: "Cuenta y ayuda",
         enlaces: [
+          enlace("Pregúntale a FROBI", "spark", RutaEnum.CHAT),
           enlace("Ajustes", "user", RutaEnum.AJUSTES),
           enlace("Cómo aprendes mejor", "eye", RutaEnum.PERFIL_ACCESIBILIDAD),
           enlace("Cómo se usa FROBI", "info", RutaEnum.COMO_SE_USA),

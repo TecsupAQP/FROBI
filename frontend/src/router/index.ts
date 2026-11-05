@@ -153,6 +153,12 @@ const routes: RouteRecordRaw[] = [
     meta: { titulo: "Detalle del alumno", seccion: SeccionNavEnum.DOCENTE },
   },
   {
+    path: "/pregunta-a-frobi",
+    name: RutaEnum.CHAT,
+    component: () => import("@/views/vw-chat/vw-chat.vue"),
+    meta: { titulo: "Pregúntale a FROBI" },
+  },
+  {
     path: "/como-se-usa",
     name: RutaEnum.COMO_SE_USA,
     component: () => import("@/views/vw-como-se-usa/vw-como-se-usa.vue"),

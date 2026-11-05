@@ -8,6 +8,7 @@ authors = [{ name = "Adriano Gongora" }]
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.20.1",
+    "anthropic>=2.5.0",
     "asyncpg>=0.32.0",
     "fastapi>=0.162.0",
     "httpx>=0.28.1",
@@ -92,6 +93,7 @@ containers = [
     "frobi.modules.tools",
     "frobi.modules.classrooms",
     "frobi.modules.progress",
+    "frobi.modules.assistant",
 ]
 
 [[tool.importlinter.contracts]]
@@ -135,6 +137,7 @@ modules = [
     "frobi.modules.tools",
     "frobi.modules.classrooms",
     "frobi.modules.progress",
+    "frobi.modules.assistant",
 ]
 ignore_imports = ["frobi.modules.*.infrastructure.** -> frobi.modules.*"]
 # The rule is valid before any adapter exists; do not fail while nothing matches it yet.

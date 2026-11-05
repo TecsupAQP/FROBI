@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from frobi.modules.adaptations.presentation.router import router as adaptations_router
+from frobi.modules.assistant.infrastructure import RedisHub, build_assistant
+from frobi.modules.assistant.presentation.router import router as assistant_router
 from frobi.modules.claim_review.presentation.router import router as claim_review_router
 from frobi.modules.classrooms.infrastructure import ClassroomsClassContext
 from frobi.modules.classrooms.presentation.router import router as classrooms_router
@@ -52,6 +54,7 @@ SECTION_ORDER = [
     "M11 · Progreso y cierre",
     "M12 · Clase del docente",
     "M13 · Ajustes y privacidad",
+    "M14 · Asistente",
 ]
 
 MODULE_ROUTERS = [
@@ -68,6 +71,7 @@ MODULE_ROUTERS = [
     progress_router,
     classrooms_router,
     settings_router,
+    assistant_router,
 ]
 
 
@@ -77,10 +81,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # (tests, OpenAPI export) works without Postgres or Redis running.
     engine = create_engine(settings.database_url)
     redis = create_redis(settings.redis_url)
+    # One Redis pub/sub connection per instance carries every open assistant socket.
+    assistant_hub = RedisHub(redis)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         yield
+        await assistant_hub.close()
         await redis.aclose()
         await engine.dispose()
 
@@ -111,6 +118,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         base_url=settings.llm_base_url,
         timeout_seconds=settings.llm_timeout_seconds,
     )
+    # Chat with FROBI (M14): Claude with the same Anthropic key, or fixed help without it.
+    app.state.assistant = build_assistant(settings)
+    app.state.assistant_hub = assistant_hub
 
     app.add_middleware(
         CORSMiddleware,

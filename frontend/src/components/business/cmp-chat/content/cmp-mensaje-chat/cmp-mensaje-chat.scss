@@ -1,0 +1,114 @@
+$prefix: cmp-mensaje-chat;
+
+.#{$prefix} {
+  display: flex;
+  align-items: flex-end;
+  gap: $esp-10;
+  max-width: 100%;
+  animation: aparecer 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.14);
+  }
+
+  &__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+    min-width: 0;
+    max-width: min(640px, 82%);
+  }
+
+  &__burbuja {
+    padding: $esp-12 $esp-16;
+    border-radius: $radio-20;
+    @include texto-cuerpo;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  &__cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    margin-left: $esp-2;
+    vertical-align: text-bottom;
+    background-color: $marca-azul;
+    animation: parpadeo 900ms steps(1) infinite;
+  }
+
+  &__nota {
+    display: inline-flex;
+    align-items: center;
+    gap: $esp-4;
+    @include texto-cuerpo;
+    color: $texto-secundario;
+  }
+
+  // FROBI a la izquierda, sobre blanco, con su avatar.
+  &--frobi {
+    align-self: flex-start;
+
+    .#{$prefix}__burbuja {
+      border: $linea-1 solid $borde-suave;
+      border-bottom-left-radius: $radio-8;
+      background-color: $fondo-superficie;
+      color: $texto-cuerpo;
+      box-shadow: 0 2px 8px rgba(11, 27, 58, 0.05);
+    }
+  }
+
+  // La persona a la derecha, con el degradado de la marca.
+  &--persona {
+    align-self: flex-end;
+    justify-content: flex-end;
+
+    .#{$prefix}__cuerpo {
+      align-items: flex-end;
+    }
+
+    .#{$prefix}__burbuja {
+      border-bottom-right-radius: $radio-8;
+      background: $marca-degradado;
+      color: $texto-inverso;
+      box-shadow: 0 6px 16px rgba(29, 78, 216, 0.22);
+    }
+  }
+
+  &--pendiente .#{$prefix}__burbuja {
+    opacity: 0.75;
+  }
+
+  &--respaldo .#{$prefix}__burbuja {
+    border-color: $estado-aviso-texto;
+    background-color: $estado-aviso-fondo;
+    color: $estado-aviso-texto;
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes parpadeo {
+  50% {
+    opacity: 0;
+  }
+}

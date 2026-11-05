@@ -426,6 +426,28 @@
         "title": "Body_upload_material_api_v1_materials_upload_post",
         "type": "object"
       },
+      "ChatLineOut": {
+        "properties": {
+          "speaker": {
+            "enum": [
+              "person",
+              "assistant"
+            ],
+            "title": "Speaker",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "speaker",
+          "text"
+        ],
+        "title": "ChatLineOut",
+        "type": "object"
+      },
       "ClaimOut": {
         "properties": {
           "backing_passage": {
@@ -694,6 +716,41 @@
           "body"
         ],
         "title": "ContentSection",
+        "type": "object"
+      },
+      "ConversationOut": {
+        "properties": {
+          "answering": {
+            "description": "Está respondiendo una pregunta en este momento.",
+            "title": "Answering",
+            "type": "boolean"
+          },
+          "enabled": {
+            "description": "Hay IA configurada; si no, responde con ayuda fija.",
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "lines": {
+            "description": "La conversación, la más antigua primero.",
+            "items": {
+              "$ref": "#/components/schemas/ChatLineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "questions_left": {
+            "description": "Preguntas que quedan (de 30).",
+            "title": "Questions Left",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "enabled",
+          "lines",
+          "questions_left",
+          "answering"
+        ],
+        "title": "ConversationOut",
         "type": "object"
       },
       "CreateAdaptationRequest": {
@@ -3141,6 +3198,99 @@
         "summary": "Pregunta similar sin ayuda",
         "tags": [
           "M8 · Verificación"
+        ]
+      }
+    },
+    "/api/v1/assistant/conversation": {
+      "delete": {
+        "operationId": "restart_conversation_api_v1_assistant_conversation_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Todavía está respondiendo (`Assistant.StillAnswering`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Empezar una conversación nueva",
+        "tags": [
+          "M14 · Asistente"
+        ]
+      },
+      "get": {
+        "operationId": "get_conversation_api_v1_assistant_conversation_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mi conversación con el asistente",
+        "tags": [
+          "M14 · Asistente"
         ]
       }
     },
@@ -6022,6 +6172,9 @@
     },
     {
       "name": "M13 · Ajustes y privacidad"
+    },
+    {
+      "name": "M14 · Asistente"
     }
   ]
 }

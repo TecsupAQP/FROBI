@@ -47,6 +47,11 @@ export async function hayGuiaActual(): Promise<boolean> {
   }
 }
 
+// La guía que la persona tiene abierta, sin pedirla a la API (null si aún no eligió una).
+export function materialGuardadoId(): string | null {
+  return leer(CLAVE_MATERIAL);
+}
+
 export function elegirMaterial(id: string): void {
   if (leer(CLAVE_MATERIAL) === id) return;
   escribir(CLAVE_MATERIAL, id);

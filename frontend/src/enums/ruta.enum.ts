@@ -23,6 +23,7 @@ export enum RutaEnum {
   AJUSTES = "ajustes",
   COMO_SE_USA = "como-se-usa",
   PERSONAS = "personas",
+  CHAT = "chat",
 }
 
 // La escalera de ayuda practica un tema de la guía actual; por defecto, el primero.

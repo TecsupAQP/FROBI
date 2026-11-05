@@ -1,0 +1,462 @@
+$prefix: cmp-chat;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 960px;
+  // Ocupa la pantalla bajo la barra superior; los mensajes se desplazan por dentro.
+  height: calc(100dvh - #{$alto-barra-movil} - #{$esp-24} - #{$esp-32});
+  min-height: 520px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-24;
+  background-color: $fondo-superficie;
+  box-shadow: $sombra-flotante;
+
+  @include escritorio {
+    height: calc(100dvh - #{$alto-barra-escritorio} - #{$esp-32} - #{$esp-48});
+  }
+
+  // Encabezado con el degradado de la marca y dos halos decorativos.
+  &__encabezado {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-12;
+    padding: $esp-16 $esp-20;
+    overflow: hidden;
+    background: $marca-degradado;
+    color: $texto-inverso;
+
+    &::before,
+    &::after {
+      position: absolute;
+      border-radius: $radio-pildora;
+      background-color: rgba(255, 255, 255, 0.1);
+      content: "";
+      pointer-events: none;
+    }
+
+    &::before {
+      top: -60px;
+      right: -30px;
+      width: 180px;
+      height: 180px;
+    }
+
+    &::after {
+      bottom: -70px;
+      right: 160px;
+      width: 120px;
+      height: 120px;
+    }
+
+    @include tablet {
+      padding: $esp-20 $esp-28;
+    }
+  }
+
+  &__identidad {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: $esp-14;
+  }
+
+  &__avatar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+    box-shadow: 0 6px 18px rgba(11, 27, 58, 0.25);
+  }
+
+  &__punto {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    width: 14px;
+    height: 14px;
+    border: $linea-2 solid $fondo-superficie;
+    border-radius: $radio-pildora;
+
+    &--en-linea {
+      background-color: $estado-en-linea;
+      animation: respirar 2.4s ease-in-out infinite;
+    }
+
+    &--conectando {
+      background-color: $estado-conectando;
+      animation: respirar 1s ease-in-out infinite;
+    }
+
+    &--sin-conexion {
+      background-color: $estado-error;
+    }
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+  }
+
+  &__estado {
+    @include texto-cuerpo;
+    opacity: 0.92;
+  }
+
+  &__nueva {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: $esp-8;
+    min-height: $alto-tactil;
+    padding: 0 $esp-16;
+    border: $linea-15 solid rgba(255, 255, 255, 0.55);
+    border-radius: $radio-pildora;
+    @include texto-boton;
+    color: $texto-inverso;
+    transition:
+      background-color $duracion-rapida,
+      transform $duracion-rapida;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 3px solid $texto-inverso;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  // Zona de mensajes: fondo suave con un brillo de marca arriba.
+  &__mensajes {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: $esp-20 $esp-16;
+    background: radial-gradient(circle at 15% 0%, rgba(59, 130, 246, 0.08), transparent 45%),
+      radial-gradient(circle at 100% 100%, rgba(29, 78, 216, 0.06), transparent 40%), $fondo-app;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+
+    @include tablet {
+      padding: $esp-28 $esp-32;
+    }
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-16;
+  }
+
+  // Bienvenida: mascota que flota, saludo y sugerencias.
+  &__bienvenida {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $esp-12;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-top: $esp-16;
+    text-align: center;
+
+    @include tablet {
+      padding-top: $esp-32;
+    }
+  }
+
+  &__mascota {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    margin-bottom: $esp-8;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+    box-shadow:
+      0 0 0 10px rgba(59, 130, 246, 0.08),
+      0 16px 32px rgba(29, 78, 216, 0.18);
+    animation: flotar 3.6s ease-in-out infinite;
+  }
+
+  &__chispa {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: $marca-degradado;
+    transform: rotate(45deg);
+    animation: destello 2.4s ease-in-out infinite;
+
+    &--1 {
+      top: 4px;
+      right: -6px;
+    }
+
+    &--2 {
+      bottom: 10px;
+      left: -10px;
+      width: 8px;
+      height: 8px;
+      animation-delay: 0.8s;
+    }
+
+    &--3 {
+      top: -8px;
+      left: 20px;
+      width: 6px;
+      height: 6px;
+      animation-delay: 1.6s;
+    }
+  }
+
+  &__saludo {
+    @include texto-titulo;
+    color: $texto-principal;
+  }
+
+  &__presentacion {
+    max-width: 560px;
+    @include texto-cuerpo-grande;
+    color: $texto-secundario;
+  }
+
+  &__sugerencias {
+    display: grid;
+    gap: $esp-12;
+    width: 100%;
+    margin-top: $esp-16;
+    text-align: left;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__sugerencia {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-12;
+    width: 100%;
+    height: 100%;
+    padding: $esp-16;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-16;
+    background-color: $fondo-superficie;
+    text-align: left;
+    box-shadow: 0 2px 6px rgba(11, 27, 58, 0.04);
+    animation: aparecer 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    transition:
+      border-color $duracion-rapida,
+      box-shadow $duracion-rapida,
+      transform $duracion-rapida;
+
+    &:hover:not(:disabled) {
+      border-color: $marca-azul;
+      box-shadow: 0 10px 24px rgba(29, 78, 216, 0.14);
+      transform: translateY(-2px);
+
+      .#{$prefix}__sugerencia-icono {
+        background: $marca-degradado;
+        color: $texto-inverso;
+      }
+    }
+
+    @include foco-visible;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+
+  &__sugerencia-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+    transition:
+      background-color $duracion-rapida,
+      color $duracion-rapida;
+  }
+
+  &__sugerencia-texto {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-2;
+    @include texto-cuerpo;
+    color: $texto-secundario;
+
+    strong {
+      @include texto-etiqueta;
+      color: $texto-principal;
+    }
+  }
+
+  // Redactor fijo abajo.
+  &__redactor {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-10;
+    padding: $esp-12 $esp-16 $esp-14;
+    border-top: $linea-1 solid $borde-suave;
+    background-color: $fondo-superficie;
+
+    @include tablet {
+      padding: $esp-16 $esp-28 $esp-16;
+    }
+  }
+
+  &__campo {
+    display: flex;
+    align-items: flex-end;
+    gap: $esp-8;
+    padding: $esp-6 $esp-6 $esp-6 $esp-16;
+    border: $linea-15 solid $borde-campo;
+    border-radius: $radio-20;
+    background-color: $fondo-superficie;
+    transition:
+      border-color $duracion-rapida,
+      box-shadow $duracion-rapida;
+
+    &:focus-within {
+      border-color: $marca-azul;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
+    }
+  }
+
+  &__texto {
+    flex: 1 1 auto;
+    min-height: $alto-tactil;
+    max-height: 168px;
+    padding: $esp-10 0;
+    border: 0;
+    background: transparent;
+    @include texto-cuerpo;
+    color: $texto-cuerpo;
+    resize: none;
+
+    &::placeholder {
+      color: $texto-secundario;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__enviar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background: $marca-degradado;
+    color: $texto-inverso;
+    box-shadow: 0 6px 14px rgba(29, 78, 216, 0.3);
+    transition:
+      transform $duracion-rapida,
+      box-shadow $duracion-rapida,
+      opacity $duracion-rapida;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow: 0 10px 20px rgba(29, 78, 216, 0.36);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    @include foco-visible;
+
+    &:disabled {
+      opacity: 0.4;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  }
+
+  &__campo--activo .#{$prefix}__enviar {
+    animation: listo 420ms ease-out;
+  }
+
+  &__pie {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: $esp-4 $esp-16;
+    @include texto-cuerpo;
+    color: $texto-secundario;
+  }
+}
+
+@keyframes flotar {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes destello {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: rotate(45deg) scale(0.7);
+  }
+
+  50% {
+    opacity: 1;
+    transform: rotate(45deg) scale(1.1);
+  }
+}
+
+@keyframes respirar {
+  50% {
+    box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.25);
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes listo {
+  40% {
+    transform: scale(1.12);
+  }
+}
