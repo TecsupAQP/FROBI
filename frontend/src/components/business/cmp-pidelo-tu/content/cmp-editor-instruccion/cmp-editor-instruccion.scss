@@ -1,0 +1,52 @@
+$prefix: cmp-editor-instruccion;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__etiqueta {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__texto {
+    width: 100%;
+    min-height: 200px;
+    padding: $esp-14 $esp-16;
+    border: $linea-2 solid $marca-azul;
+    border-radius: $radio-14;
+    background-color: $fondo-superficie;
+    @include texto-cuerpo-grande;
+    color: $texto-principal;
+    resize: vertical;
+
+    &::placeholder {
+      color: $texto-secundario;
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      outline-offset: 1px;
+    }
+  }
+
+  &__conteo {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  &__ayuda {
+    color: $texto-secundario;
+  }
+
+  &--compacto .#{$prefix}__texto {
+    min-height: 120px;
+  }
+}

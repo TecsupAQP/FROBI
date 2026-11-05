@@ -1,0 +1,84 @@
+$prefix: cmp-tema;
+
+.#{$prefix} {
+  overflow: hidden;
+  border: $linea-15 solid $borde-campo;
+  border-radius: $radio-16;
+  background-color: $fondo-superficie;
+
+  &__boton {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    width: 100%;
+    min-height: 64px;
+    padding: 0 $esp-16;
+    text-align: left;
+
+    &:focus-visible {
+      outline-offset: -3px;
+    }
+  }
+
+  &__numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__titulo {
+    flex: 1 1 0;
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__chevron {
+    color: $texto-secundario;
+  }
+
+  &__cuerpo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-12;
+    padding: $esp-16 $esp-16 $esp-20;
+  }
+
+  &__etiqueta {
+    padding: $esp-4 $esp-12;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-8;
+    background-color: $fondo-app;
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  &__texto {
+    @include texto-cuerpo-grande;
+    color: $texto-cuerpo;
+  }
+
+  &--abierto {
+    border: $linea-2 solid $marca-azul;
+
+    .#{$prefix}__boton {
+      background-color: $marca-azul-claro;
+    }
+
+    .#{$prefix}__numero {
+      background-color: $marca-azul;
+      color: $texto-inverso;
+    }
+
+    .#{$prefix}__chevron {
+      color: $marca-azul;
+    }
+  }
+}

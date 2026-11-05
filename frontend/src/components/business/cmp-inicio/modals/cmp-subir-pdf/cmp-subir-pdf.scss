@@ -1,0 +1,155 @@
+$prefix: cmp-subir-pdf;
+
+.#{$prefix} {
+  &__intro,
+  &__privacidad {
+    color: $texto-secundario;
+  }
+
+  // Móvil: icono, texto y botón apilados. Tablet+: en una fila.
+  &__zona {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $esp-12;
+    padding: $esp-20 $esp-16;
+    border: $linea-15 dashed $borde-campo;
+    border-radius: $radio-16;
+    background-color: $fondo-app;
+    text-align: center;
+
+    @include tablet {
+      flex-direction: row;
+      gap: $esp-16;
+    }
+  }
+
+  &__zona-icono {
+    color: $marca-azul;
+  }
+
+  &__zona-texto {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__zona-o {
+    display: none;
+    color: $texto-secundario;
+
+    @include tablet {
+      display: block;
+    }
+  }
+
+  &__exito {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    padding: $esp-12 $esp-14;
+    border-radius: $radio-12;
+    background-color: $estado-exito-fondo;
+    color: $estado-exito;
+  }
+
+  &__exito-nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__vista {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+  }
+
+  &__vista-titulo {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+    height: 168px;
+    overflow-y: auto;
+    padding: $esp-14 $esp-16;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+    color: $texto-cuerpo;
+  }
+
+  &__texto-titulo {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__archivo {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    padding: $esp-12 $esp-14;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+    color: $marca-azul;
+  }
+
+  &__archivo-nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__archivo-detalle {
+    color: $texto-secundario;
+  }
+
+  &__progreso {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+  }
+
+  &__progreso-texto {
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__cancelar {
+    align-self: flex-start;
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $esp-8;
+    padding: $esp-20 $esp-16;
+    border: $linea-15 dashed $estado-error;
+    border-radius: $radio-16;
+    background-color: $estado-error-fondo;
+    text-align: center;
+    color: $texto-cuerpo;
+
+    .v-icon {
+      color: $estado-error;
+    }
+  }
+
+  &__error-titulo {
+    @include texto-etiqueta;
+    color: $estado-error;
+  }
+
+  &__acciones-error {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+
+    @include tablet {
+      flex-direction: row;
+    }
+  }
+}

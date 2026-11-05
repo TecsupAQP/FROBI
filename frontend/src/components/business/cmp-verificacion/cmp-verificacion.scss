@@ -1,0 +1,163 @@
+$prefix: cmp-verificacion;
+
+// Una sola columna de 880 px como máximo (Figma).
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  &__cargando {
+    display: flex;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__progreso {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+
+    @include tablet {
+      flex-direction: row;
+      align-items: center;
+      gap: $esp-12;
+    }
+  }
+
+  &__progreso-texto {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+    white-space: nowrap;
+  }
+
+  &__barras {
+    display: flex;
+    flex: 1 1 0;
+    gap: $esp-6;
+  }
+
+  &__barra {
+    flex: 1 1 0;
+    height: $esp-8;
+    border-radius: $radio-pildora;
+    background-color: $borde-suave;
+
+    &--hecha {
+      background-color: $marca-azul;
+    }
+  }
+
+  &__sugerencia {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    padding: $esp-16;
+    border: $linea-15 solid $marca-azul;
+    border-radius: $radio-16;
+    background-color: $marca-azul-claro;
+    color: $texto-cuerpo;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__sugerencia-cabecera {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__sugerencia-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $alto-tactil;
+    height: $alto-tactil;
+    flex-shrink: 0;
+    border-radius: $radio-12;
+    background-color: $marca-azul;
+    color: $texto-inverso;
+  }
+
+  &__sugerencia-titulo {
+    @include texto-subtitulo;
+    color: $marca-marino;
+  }
+
+  &__sugerencia-enlace {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $esp-8;
+    min-height: 48px;
+    padding: 0 $esp-16;
+    border: $linea-15 solid $marca-azul;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+    @include texto-boton;
+    color: $marca-azul;
+    text-decoration: underline;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+
+    @include tablet {
+      flex-direction: row;
+    }
+  }
+
+  &__siguiente {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-16;
+    padding: $esp-20;
+    border-radius: $radio-16;
+    background-color: $marca-azul;
+    color: $texto-inverso;
+
+    @include tablet {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__siguiente-antetitulo {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    @include texto-etiqueta;
+  }
+
+  &__siguiente-titulo {
+    @include texto-subtitulo;
+  }
+
+  &__siguiente-boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $esp-8;
+    min-height: $alto-boton;
+    padding: 0 $esp-24;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+    @include texto-boton;
+    color: $marca-azul;
+
+    &:focus-visible {
+      outline-color: $texto-inverso;
+    }
+  }
+}

@@ -1,0 +1,60 @@
+$prefix: cmp-tarjeta-herramienta;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  height: 100%;
+  padding: $esp-16;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__encabezado {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+  }
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $alto-tactil;
+    height: $alto-tactil;
+    flex-shrink: 0;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__para-que {
+    color: $texto-secundario;
+  }
+
+  &__uso {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-8;
+    color: $texto-cuerpo;
+
+    .v-icon {
+      margin-top: $esp-2;
+    }
+  }
+
+  &__si {
+    color: $estado-exito;
+  }
+
+  &__no {
+    color: $estado-error;
+  }
+}

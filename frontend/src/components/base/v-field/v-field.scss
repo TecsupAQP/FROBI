@@ -1,0 +1,78 @@
+$prefix: v-field;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-8;
+  width: 100%;
+
+  &__etiqueta {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__entrada {
+    display: flex;
+  }
+
+  &__control {
+    width: 100%;
+    min-height: $alto-campo;
+    padding: 0 $esp-16;
+    border: $linea-15 solid $borde-campo;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+    @include texto-cuerpo;
+    color: $texto-principal;
+
+    &::placeholder {
+      color: $texto-secundario;
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      outline: 3px solid $marca-azul;
+      outline-offset: 1px;
+      border-color: $marca-azul;
+    }
+
+    &--multilinea {
+      padding: $esp-14 $esp-16;
+      resize: vertical;
+    }
+  }
+
+  &__error,
+  &__ayuda {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-6;
+    @include texto-cuerpo;
+  }
+
+  &__error {
+    color: $estado-error;
+
+    .v-icon {
+      margin-top: $esp-2;
+    }
+  }
+
+  &__ayuda {
+    color: $texto-secundario;
+  }
+
+  &--grande {
+    gap: $esp-6;
+
+    .#{$prefix}__control {
+      border-radius: $radio-14;
+      @include texto-cuerpo-grande;
+    }
+  }
+
+  &--error .#{$prefix}__control {
+    border-width: $linea-2;
+    border-color: $estado-error;
+  }
+}

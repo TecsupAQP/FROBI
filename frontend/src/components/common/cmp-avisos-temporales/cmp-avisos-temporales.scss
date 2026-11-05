@@ -1,0 +1,84 @@
+$prefix: cmp-avisos-temporales;
+
+.#{$prefix} {
+  position: fixed;
+  left: $esp-16;
+  right: $esp-16;
+  bottom: 96px;
+  z-index: $capa-toast;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $esp-8;
+  pointer-events: none;
+
+  @include escritorio {
+    left: auto;
+    right: $esp-32;
+    bottom: $esp-32;
+    align-items: flex-end;
+  }
+
+  &__aviso {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    width: 100%;
+    max-width: 420px;
+    padding: $esp-8 $esp-8 $esp-8 $esp-16;
+    border-radius: $radio-12;
+    background-color: $marca-marino;
+    box-shadow: $sombra-flotante;
+    color: $texto-inverso;
+    pointer-events: auto;
+  }
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $estado-exito;
+    color: $texto-inverso;
+  }
+
+  &__textos {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+  }
+
+  &__titulo {
+    @include texto-etiqueta;
+  }
+
+  &__cerrar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $alto-tactil;
+    height: $alto-tactil;
+    border-radius: $radio-pildora;
+    color: $texto-inverso;
+
+    &:focus-visible {
+      outline-color: $marca-azul-claro;
+    }
+  }
+}
+
+.#{$prefix}-enter-active,
+.#{$prefix}-leave-active {
+  transition:
+    opacity $duracion-rapida ease,
+    transform $duracion-rapida ease;
+}
+
+.#{$prefix}-enter-from,
+.#{$prefix}-leave-to {
+  opacity: 0;
+  transform: translateY($esp-8);
+}

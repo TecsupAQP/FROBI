@@ -1,0 +1,106 @@
+$prefix: v-select;
+
+.#{$prefix} {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-8;
+  width: 100%;
+
+  &__etiqueta {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__boton {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    width: 100%;
+    min-height: $alto-campo;
+    padding: 0 $esp-16;
+    border: $linea-15 solid $borde-campo;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+    text-align: left;
+    color: $texto-secundario;
+  }
+
+  &__valor {
+    flex: 1 1 0;
+    min-width: 0;
+    @include texto-cuerpo;
+    color: $texto-principal;
+
+    &--vacio {
+      color: $texto-secundario;
+    }
+  }
+
+  &__lista {
+    position: absolute;
+    top: calc(100% + #{$esp-4});
+    left: 0;
+    right: 0;
+    z-index: $capa-modal;
+    max-height: 280px;
+    overflow-y: auto;
+    padding: $esp-6;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+    box-shadow: $sombra-flotante;
+
+    // El foco se ve en la opción activa, no en la lista.
+    &:focus-visible {
+      outline: none;
+
+      .#{$prefix}__opcion--activa {
+        outline: $linea-2 solid $marca-azul;
+        outline-offset: -2px;
+      }
+    }
+  }
+
+  &__opcion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-8;
+    min-height: 50px;
+    padding: $esp-10 $esp-12;
+    border-radius: $radio-8;
+    @include texto-cuerpo-grande;
+    color: $texto-principal;
+    cursor: pointer;
+
+    &--activa {
+      background-color: $fondo-app;
+    }
+
+    &--seleccionada {
+      background-color: $marca-azul-claro;
+
+      .v-icon {
+        color: $marca-azul;
+      }
+    }
+  }
+
+  &__error {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-6;
+    color: $estado-error;
+  }
+
+  &--abierto .#{$prefix}__boton {
+    border-width: $linea-2;
+    border-color: $marca-azul;
+  }
+
+  &--error .#{$prefix}__boton {
+    border-width: $linea-2;
+    border-color: $estado-error;
+  }
+}

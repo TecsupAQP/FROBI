@@ -1,0 +1,50 @@
+$prefix: cmp-layout-pagina;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: $fondo-app;
+
+  &__principal {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    width: 100%;
+    max-width: calc(#{$ancho-contenido} + #{$esp-64} * 2);
+    margin: 0 auto;
+    padding: $esp-24 $esp-16 $esp-32;
+
+    &:focus {
+      outline: none;
+    }
+
+    @include tablet {
+      padding: $esp-24 $esp-32 $esp-32;
+    }
+
+    @include escritorio {
+      padding: $esp-32 $esp-64 $esp-48;
+    }
+  }
+
+  // Barra fija inferior (móvil y tablet). En escritorio la acción va en el encabezado.
+  &__barra-inferior {
+    position: sticky;
+    bottom: 0;
+    z-index: $capa-barra;
+    padding: $esp-12 $esp-16;
+    border-top: $linea-1 solid $borde-suave;
+    background-color: $fondo-superficie;
+
+    @include tablet {
+      display: flex;
+      justify-content: flex-end;
+      padding: $esp-12 $esp-32;
+    }
+
+    @include escritorio {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,59 @@
+$prefix: v-radio-opcion;
+
+.#{$prefix} {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $esp-12;
+  min-height: $alto-campo;
+  padding: 0 $esp-16;
+  border: $linea-15 solid $borde-campo;
+  border-radius: $radio-12;
+  background-color: $fondo-superficie;
+  cursor: pointer;
+
+  &__control {
+    @include solo-lector;
+  }
+
+  &__circulo {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border: $linea-2 solid $borde-campo;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+  }
+
+  &__texto {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &:has(:focus-visible) {
+    outline: 3px solid $marca-azul;
+    outline-offset: 2px;
+  }
+
+  &--seleccionada {
+    border: $linea-2 solid $marca-azul;
+    background-color: $marca-azul-claro;
+
+    .#{$prefix}__circulo {
+      border-color: $marca-azul;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border-radius: $radio-pildora;
+        background-color: $marca-azul;
+      }
+    }
+  }
+
+  &--error {
+    border: $linea-2 solid $estado-error;
+  }
+}

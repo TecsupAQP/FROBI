@@ -1,0 +1,72 @@
+$prefix: cmp-panel-marca;
+
+// Solo se muestra en escritorio (Figma: panel marino de 760 px).
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: $esp-40;
+  min-height: 100dvh;
+  padding: $esp-64;
+  background-color: $marca-marino;
+  color: $texto-inverso;
+
+  // Logo horizontal sobre una caja blanca (Figma · 2): su texto marino no se lee sobre el panel.
+  &__logo {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: $esp-12 $esp-14;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+  }
+
+  &__centro {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-28;
+  }
+
+  &__lema {
+    @include texto-titulo-xl;
+  }
+
+  &__descripcion {
+    @include texto-cuerpo-grande;
+    color: $marca-azul-claro;
+  }
+
+  &__receta {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-24;
+    border: $linea-1 solid $marca-azul;
+    border-radius: $radio-20;
+  }
+
+  &__receta-titulo {
+    @include texto-etiqueta;
+    color: $marca-azul-claro;
+  }
+
+  &__piezas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+  }
+
+  &__pieza {
+    display: flex;
+    align-items: center;
+    gap: $esp-14;
+  }
+
+  &__chip {
+    justify-content: flex-start;
+    min-width: 104px;
+  }
+
+  &__pie {
+    color: $marca-azul-claro;
+  }
+}

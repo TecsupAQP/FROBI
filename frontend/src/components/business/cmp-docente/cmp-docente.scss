@@ -1,0 +1,115 @@
+$prefix: cmp-docente;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  &__cargando {
+    display: flex;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__grupo {
+    width: 100%;
+
+    @include escritorio {
+      width: 320px;
+    }
+  }
+
+  &__ejemplo {
+    color: $estado-aviso-texto;
+  }
+
+  &__tarjetas {
+    display: grid;
+    gap: $esp-20;
+
+    @include escritorio {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+      gap: $esp-20;
+    }
+  }
+
+  &__tarjeta {
+    @include tarjeta;
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__secundario {
+    color: $texto-secundario;
+  }
+
+  &__sugerencia {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    padding: $esp-12 $esp-14;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+    color: $texto-principal;
+
+    .v-icon {
+      color: $marca-azul;
+    }
+  }
+
+  &__uso-columnas {
+    display: grid;
+    gap: $esp-16;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: $esp-32;
+    }
+  }
+
+  &__bloque {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-14;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+  }
+
+  &__bloque-titulo {
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__promedio {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    color: $texto-principal;
+  }
+
+  &__promedio-valor {
+    @include texto-titulo;
+    color: $marca-azul;
+  }
+
+  &__paso {
+    align-self: flex-start;
+  }
+}

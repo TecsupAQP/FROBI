@@ -1,0 +1,80 @@
+$prefix: cmp-mi-clase;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $esp-8;
+  }
+
+  // Móvil: un alumno debajo del otro. Tablet y escritorio: dos columnas.
+  &__alumnos {
+    display: grid;
+    gap: $esp-14;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__alumno {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-14;
+    padding: $esp-12;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+
+    > :deep(.v-barra-dato) {
+      align-self: stretch;
+    }
+  }
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    @include texto-subtitulo;
+    color: $marca-azul;
+  }
+
+  &__nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__posicion {
+    color: $texto-secundario;
+  }
+
+  &__nota {
+    color: $texto-cuerpo;
+  }
+}

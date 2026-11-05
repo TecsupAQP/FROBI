@@ -1,0 +1,75 @@
+$prefix: cmp-lectura-facil;
+
+.#{$prefix} {
+  display: grid;
+  gap: $esp-16;
+
+  @include escritorio {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  &__frases,
+  &__glosario {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    padding: $esp-16;
+    border-radius: $radio-12;
+  }
+
+  &__frases {
+    background-color: $fondo-app;
+  }
+
+  &__glosario {
+    border: $linea-15 solid $marca-azul;
+    background-color: $marca-azul-claro;
+  }
+
+  &__titulo {
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+  }
+
+  &__frase {
+    position: relative;
+    padding-left: $esp-20;
+    @include texto-cuerpo-grande;
+    color: $texto-principal;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: $radio-pildora;
+      background-color: $marca-azul;
+    }
+  }
+
+  &__terminos {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+    margin: 0;
+  }
+
+  &__termino {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__definicion {
+    margin: 0;
+    color: $texto-cuerpo;
+  }
+}

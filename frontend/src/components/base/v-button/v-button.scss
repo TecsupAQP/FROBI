@@ -1,0 +1,84 @@
+$prefix: v-button;
+
+.#{$prefix} {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $esp-10;
+  min-height: $alto-boton;
+  padding: 0 $esp-24;
+  border-radius: $radio-12;
+  @include texto-boton;
+  white-space: nowrap;
+  transition:
+    background-color $duracion-rapida,
+    box-shadow $duracion-rapida;
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  &--primario {
+    background-color: $marca-azul;
+    color: $texto-inverso;
+
+    &:hover:not(:disabled) {
+      background-color: $marca-marino;
+    }
+
+    // Figma: botón deshabilitado gris con texto secundario (contraste 6,4:1).
+    &:disabled,
+    &[aria-disabled="true"] {
+      background-color: $borde-suave;
+      color: $texto-secundario;
+    }
+  }
+
+  &--secundario:disabled {
+    border-color: $borde-campo;
+    color: $texto-secundario;
+  }
+
+  &--secundario {
+    background-color: $fondo-superficie;
+    border: $linea-2 solid $marca-azul;
+    color: $marca-azul;
+
+    &:hover:not(:disabled) {
+      background-color: $marca-azul-claro;
+    }
+  }
+
+  &--texto {
+    min-height: $alto-tactil;
+    padding: 0 $esp-8;
+    color: $marca-azul;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &--cerrar {
+    width: $alto-tactil;
+    min-height: $alto-tactil;
+    padding: 0;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+    border: $linea-15 solid $borde-campo;
+    color: $texto-principal;
+
+    &:hover {
+      background-color: $fondo-app;
+    }
+  }
+
+  &--bloque {
+    display: flex;
+    width: 100%;
+  }
+
+  &__texto {
+    white-space: normal;
+    text-align: center;
+  }
+}

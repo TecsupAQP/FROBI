@@ -1,0 +1,94 @@
+$prefix: cmp-guia;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  &__cargando {
+    display: flex;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  // Móvil y tablet apilado; escritorio: temas (540 px) + formatos.
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-24;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-32;
+    }
+  }
+
+  &__temas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+
+    @include escritorio {
+      width: 540px;
+      flex-shrink: 0;
+    }
+  }
+
+  &__formatos {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-16;
+    min-width: 0;
+  }
+
+  &__subtitulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__lista {
+    display: grid;
+    gap: $esp-12;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: $esp-16;
+    }
+  }
+
+  &__nota {
+    color: $texto-secundario;
+  }
+
+  &__adaptando {
+    padding: $esp-16 $esp-20;
+    border: $linea-15 solid $marca-azul;
+    border-radius: $radio-16;
+    background-color: $marca-azul-claro;
+
+    :deep(.v-cargando) {
+      gap: $esp-20;
+    }
+
+    :deep(.v-cargando__texto) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__adaptando-titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__adaptando-detalle {
+    @include texto-cuerpo;
+    color: $texto-cuerpo;
+  }
+}

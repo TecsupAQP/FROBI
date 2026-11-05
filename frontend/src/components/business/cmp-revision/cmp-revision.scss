@@ -1,0 +1,68 @@
+$prefix: cmp-revision;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  &__cargando {
+    display: flex;
+    justify-content: center;
+    padding: $esp-48 0;
+  }
+
+  &__resumen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $esp-10;
+  }
+
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-24;
+    }
+  }
+
+  &__secciones {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-12;
+    min-width: 0;
+  }
+
+  &__siguiente {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-14;
+    padding: $esp-16;
+    border: $linea-15 solid $marca-azul;
+    border-radius: $radio-16;
+    background-color: $marca-azul-claro;
+    color: $texto-principal;
+
+    @include tablet {
+      padding: $esp-24;
+    }
+
+    @include escritorio {
+      width: $ancho-lateral;
+      flex-shrink: 0;
+    }
+  }
+
+  &__siguiente-titulo {
+    @include texto-subtitulo;
+    color: $marca-marino;
+  }
+}

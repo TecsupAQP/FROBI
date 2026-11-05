@@ -1,0 +1,33 @@
+$prefix: cmp-sugerencia;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+  border: $linea-15 solid $estado-aviso-texto;
+  border-radius: $radio-16;
+  background-color: $estado-aviso-fondo;
+  color: $estado-aviso-texto;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &__titulo {
+    display: flex;
+    align-items: center;
+    gap: $esp-10;
+    @include texto-subtitulo;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+
+    @include tablet {
+      flex-direction: row;
+    }
+  }
+}

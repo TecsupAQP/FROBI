@@ -1,0 +1,52 @@
+$prefix: v-cargando;
+
+// Tres puntos azules que se encienden uno tras otro, 600 ms por ciclo (Figma · nota de carga).
+// Con "menos movimiento" quedan fijos y solo se ve el texto.
+.#{$prefix} {
+  display: flex;
+  align-items: center;
+  gap: $esp-12;
+  color: $texto-principal;
+
+  &__puntos {
+    display: flex;
+    gap: $esp-6;
+  }
+
+  &__punto {
+    width: 10px;
+    height: 10px;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul;
+    opacity: 0.25;
+    animation: #{$prefix}-encender $duracion-carga infinite;
+
+    &:nth-child(2) {
+      animation-delay: calc(#{$duracion-carga} / 3);
+    }
+
+    &:nth-child(3) {
+      animation-delay: calc(#{$duracion-carga} * 2 / 3);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+      opacity: 1;
+    }
+  }
+
+  &__texto {
+    @include texto-etiqueta;
+  }
+}
+
+@keyframes #{$prefix}-encender {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+
+  33% {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,64 @@
+$prefix: v-card-formato;
+
+.#{$prefix} {
+  display: flex;
+  align-items: center;
+  gap: $esp-14;
+  width: 100%;
+  min-height: 80px;
+  padding: $esp-16;
+  border: $linea-15 solid $borde-campo;
+  border-radius: $radio-16;
+  background-color: $fondo-superficie;
+  text-align: left;
+  transition: border-color $duracion-rapida;
+
+  &:hover:not(.#{$prefix}--atenuada) {
+    border-color: $marca-azul;
+  }
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__textos {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: $esp-2;
+    min-width: 0;
+  }
+
+  &__nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__descripcion {
+    @include texto-cuerpo;
+    color: $texto-secundario;
+  }
+
+  &__flecha {
+    color: $texto-secundario;
+  }
+
+  // Mientras se adapta: los otros 3 formatos quedan atenuados y no se pueden tocar.
+  &--atenuada {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &--elegida {
+    border-color: $marca-azul;
+    background-color: $marca-azul-claro;
+  }
+}

@@ -1,0 +1,51 @@
+$prefix: cmp-afirmacion;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $esp-8;
+  padding: $esp-12 $esp-14;
+  border: $linea-2 solid;
+  border-radius: $radio-12;
+
+  &--con-respaldo {
+    border-color: $estado-exito;
+    background-color: $estado-exito-fondo;
+  }
+
+  &--no-comprobable {
+    border-color: $estado-aviso-texto;
+    background-color: $estado-aviso-fondo;
+  }
+
+  &--contradice {
+    border-color: $estado-error;
+    background-color: $estado-error-fondo;
+  }
+
+  &__texto {
+    @include texto-cuerpo-grande;
+    color: $texto-principal;
+  }
+
+  &__cita {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-2;
+    width: 100%;
+    padding: $esp-10 $esp-12;
+    border-radius: $radio-10;
+    background-color: $fondo-superficie;
+    color: $texto-principal;
+  }
+
+  &__cita-titulo {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  &__motivo {
+    color: $texto-cuerpo;
+  }
+}

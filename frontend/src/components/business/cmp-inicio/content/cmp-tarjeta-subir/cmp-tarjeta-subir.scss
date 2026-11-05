@@ -1,0 +1,24 @@
+$prefix: cmp-tarjeta-subir;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-20;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-20;
+  background-color: $fondo-superficie;
+
+  @include tablet {
+    padding: $esp-28;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__texto {
+    color: $texto-secundario;
+  }
+}

@@ -1,0 +1,41 @@
+$prefix: cmp-alumno-item;
+
+.#{$prefix} {
+  display: flex;
+  align-items: flex-start;
+  gap: $esp-12;
+  padding: $esp-12;
+  border-radius: $radio-12;
+  background-color: $fondo-app;
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $alto-tactil;
+    height: $alto-tactil;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    @include texto-subtitulo;
+    color: $marca-azul;
+  }
+
+  &__textos {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $esp-4;
+    min-width: 0;
+  }
+
+  &__nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__detalle {
+    color: $texto-secundario;
+  }
+}

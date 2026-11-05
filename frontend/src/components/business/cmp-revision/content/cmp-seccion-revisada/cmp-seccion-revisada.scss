@@ -1,0 +1,52 @@
+$prefix: cmp-seccion-revisada;
+
+.#{$prefix} {
+  @include tarjeta;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  // Móvil: la etiqueta de estado baja a otra línea si no cabe.
+  &__encabezado {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $esp-10;
+  }
+
+  &__numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__titulo {
+    flex: 1 1 0;
+    min-width: 160px;
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__texto {
+    @include texto-cuerpo-grande;
+    color: $texto-principal;
+  }
+
+  &__afirmaciones {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+  }
+}

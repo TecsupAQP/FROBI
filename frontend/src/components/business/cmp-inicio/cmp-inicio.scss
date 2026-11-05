@@ -1,0 +1,79 @@
+$prefix: cmp-inicio;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-20;
+
+  @include tablet {
+    gap: $esp-28;
+  }
+
+  @include escritorio {
+    padding-top: $esp-8;
+  }
+
+  &__saludo {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-6;
+  }
+
+  &__titulo {
+    @include texto-titulo;
+    color: $texto-principal;
+    overflow-wrap: anywhere;
+
+    @include tablet {
+      @include texto-titulo-xl;
+    }
+  }
+
+  &__subtitulo {
+    @include texto-cuerpo-grande;
+    color: $texto-secundario;
+  }
+
+  // En móvil Figma solo muestra la pregunta.
+  &__extra {
+    display: none;
+
+    @include tablet {
+      display: inline;
+    }
+  }
+
+  &__columnas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+
+    @include escritorio {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $esp-24;
+    }
+  }
+
+  &__guia {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &__cargando {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-20;
+    background-color: $fondo-superficie;
+  }
+
+  &__subir {
+    @include escritorio {
+      width: $ancho-lateral;
+      flex-shrink: 0;
+    }
+  }
+}

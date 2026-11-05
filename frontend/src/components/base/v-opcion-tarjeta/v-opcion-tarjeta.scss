@@ -1,0 +1,103 @@
+$prefix: v-opcion-tarjeta;
+
+.#{$prefix} {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-10;
+  padding: $esp-20;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-16;
+  background-color: $fondo-superficie;
+  transition: border-color $duracion-rapida;
+
+  @include tablet {
+    padding: $esp-24;
+  }
+
+  &:hover:not(.#{$prefix}--elegida) {
+    border-color: $marca-azul;
+  }
+
+  &:has(:focus-visible) {
+    outline: 3px solid $marca-azul;
+    outline-offset: 2px;
+  }
+
+  &__control {
+    @include solo-lector;
+  }
+
+  &__etiqueta {
+    display: flex;
+    flex-direction: column;
+    gap: inherit;
+    cursor: pointer;
+  }
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__titulo {
+    flex: 1 1 0;
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__check {
+    margin-left: auto;
+    color: $marca-azul;
+  }
+
+  &__descripcion {
+    color: $texto-cuerpo;
+  }
+
+  &--elegida {
+    border: $linea-2 solid $marca-azul;
+    background-color: $marca-azul-claro;
+
+    .#{$prefix}__icono {
+      background-color: $fondo-superficie;
+    }
+  }
+
+  // Asistente · paso 2: icono suelto, título y descripción de 16 px.
+  &--compacta {
+    gap: $esp-8;
+    padding: $esp-14;
+
+    @include tablet {
+      padding: $esp-14;
+    }
+
+    .#{$prefix}__icono {
+      width: auto;
+      height: auto;
+      background-color: transparent;
+    }
+
+    .#{$prefix}__titulo {
+      @include texto-etiqueta;
+    }
+
+    .#{$prefix}__descripcion {
+      color: $texto-secundario;
+    }
+  }
+}
