@@ -2,19 +2,24 @@
 
 Backend for FROBI (Hack4Edu 2026): FastAPI + PostgreSQL + Redis, organized as a hexagonal modular monolith.
 
-> Status: Phase 0 done. Every endpoint of `PLAN_BACKEND.md` §6 exists under `/api/v1` with its
-> final schema, but **module endpoints are stubs that return example data** (they keep no state).
-> Phase 1 replaces them with the real use cases without changing the contract.
+> Status: Phase 1 in progress. Every endpoint of `PLAN_BACKEND.md` §6 exists under `/api/v1` with
+> its final schema.
+>
+> | Real | Still example data (stubs, keep no state) |
+> | --- | --- |
+> | M1: sessions, `/me`, logout | M2–M13 |
 
 ## Authentication
 
-1. `POST /api/v1/sessions` with `{"alias": "Ana", "career": "Mecatrónica", "role": "learner"}`
-   (optional `"class_code"`; the stub accepts `SENSOR1`, anything else is
-   `422 Classrooms.InvalidCode`).
-2. Send the returned token on every other call: `Authorization: Bearer <token>`.
-   Without it you get `401 Identity.Unauthenticated`.
+1. `POST /api/v1/sessions` with `{"alias": "Ana", "career": "Mecatrónica", "role": "learner"}`.
+   The person is stored in Postgres and the token in Redis for 30 days.
+   `class_code` is optional; until classrooms (M12) exists only `SENSOR1` is a valid code,
+   anything else is `422 Classrooms.InvalidCode` and nothing is created.
+2. Send the returned token on every other call, stubs included:
+   `Authorization: Bearer <token>`. A missing, made-up or logged-out token is
+   `401 Identity.Unauthenticated`.
 
-While the endpoints are stubs, any non-empty token is accepted. In `/docs`, use **Authorize**.
+In `/docs`: call `POST /sessions`, copy the token, then click **Authorize**.
 
 ## Requirements
 
@@ -27,13 +32,23 @@ While the endpoints are stubs, any non-empty token is accepted. In `/docs`, use 
 cp .env.example .env                                        # optional, defaults work locally
 uv sync                                                     # dependencies into .venv
 docker compose -f docker/compose.yml up -d postgres redis   # databases
+uv run alembic upgrade head                                 # create/update tables
 uv run uvicorn frobi.main:create_app --factory --reload --reload-dir src  # API on http://localhost:8000
 ```
 
 - Interactive docs: http://localhost:8000/docs (only while the API is running)
 - Health: http://localhost:8000/api/v1/health → `{"status": "ok", "checks": {"postgres": "up", "redis": "up"}}`, or `503` with `"degraded"` if one is down
 
-Everything in Docker, API included: `docker compose -f docker/compose.yml up --build`.
+Everything in Docker, API included: `docker compose -f docker/compose.yml up --build`
+(the API container runs the migrations before starting).
+
+New table or column: change the model in `<module>/infrastructure/models.py`, register the
+module in `src/frobi/models.py` if it is its first table, then
+`uv run alembic revision --autogenerate -m "..."` and review the file. A test fails if models
+and migrations disagree.
+
+Integration tests use their own database (`frobi_test`, created and migrated automatically) and
+Redis database 15, so they never touch your dev data.
 
 ## Checks (same as CI)
 
