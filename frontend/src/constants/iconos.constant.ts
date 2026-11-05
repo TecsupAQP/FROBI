@@ -135,6 +135,11 @@ export const ICONOS = {
     contenido:
       '<path d="M3.5 7L10.5 3.5L17.5 7L24.5 3.5V21L17.5 24.5L10.5 21L3.5 24.5V7Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M10.5 3.5V21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M17.5 7V24.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
   },
+  menu: {
+    viewBox: "0 0 24 24",
+    contenido:
+      '<path d="M4 6H20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M4 12H20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/><path d="M4 18H20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/>',
+  },
   minus: {
     viewBox: "0 0 20 20",
     contenido:

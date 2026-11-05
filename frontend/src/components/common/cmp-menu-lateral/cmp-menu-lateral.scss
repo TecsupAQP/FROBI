@@ -1,0 +1,117 @@
+$prefix: cmp-menu-lateral;
+
+// Panel que entra desde la derecha: todo el ancho en móvil, 360 px desde tablet.
+.#{$prefix} {
+  position: fixed;
+  inset: 0;
+  z-index: $capa-modal;
+  display: flex;
+  justify-content: flex-end;
+  background-color: $fondo-oscuro;
+
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-20;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: $esp-16 $esp-16 $esp-32;
+    background-color: $fondo-superficie;
+    box-shadow: $sombra-modal;
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    @include tablet {
+      max-width: 360px;
+      padding: $esp-24 $esp-24 $esp-32;
+    }
+  }
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-12;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__cerrar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $alto-tactil;
+    height: $alto-tactil;
+    border-radius: $radio-12;
+    color: $texto-principal;
+
+    &:hover {
+      background-color: $fondo-app;
+    }
+  }
+
+  &__persona {
+    color: $texto-secundario;
+    overflow-wrap: anywhere;
+  }
+
+  &__grupo {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-6;
+  }
+
+  &__grupo-titulo {
+    @include texto-etiqueta;
+    color: $texto-secundario;
+  }
+
+  &__enlaces {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-2;
+  }
+
+  &__enlace,
+  &__salir {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+    width: 100%;
+    min-height: $alto-tactil;
+    padding: $esp-8 $esp-12;
+    border-radius: $radio-12;
+    @include texto-etiqueta;
+    color: $texto-principal;
+    text-align: left;
+
+    &:hover {
+      background-color: $fondo-app;
+    }
+
+    .v-icon {
+      flex-shrink: 0;
+      color: $marca-azul;
+    }
+  }
+
+  // La página actual se marca con fondo, borde y texto (no solo con color).
+  &__enlace--actual {
+    border-left: $linea-2 solid $marca-azul;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__salir {
+    margin-top: auto;
+    border-top: $linea-1 solid $borde-suave;
+    border-radius: 0;
+    padding-top: $esp-16;
+  }
+}

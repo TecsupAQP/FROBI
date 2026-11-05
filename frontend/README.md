@@ -36,6 +36,13 @@ La URL de la API se cambia con `VITE_API_URL` (ver [`.env.example`](./.env.examp
   y, al entrar, regresa a la pantalla donde estabas.
 - Sin sesión solo se ven `/login`, `/como-se-usa` y `/demo/personas`.
 
+## Navegación
+
+- **Barra superior:** 3 pestañas (Inicio, Guía y Mi progreso; el docente ve Panel docente) como en Figma.
+- **Menú** (botón ☰ arriba a la derecha): panel lateral con todas las pantallas agrupadas
+  (Estudiar, Mi trabajo, Mi avance, Mi clase, Cuenta y ayuda) y «Cerrar sesión». Cambia según el rol.
+- **Ajustes:** desde el menú o, en tablet y escritorio, tocando tu inicial o alias.
+
 ## Rutas
 
 | Ruta | Pantalla (Figma) |
