@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, String, text
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Integer, String, Text, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -46,3 +46,31 @@ class MembershipModel(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     joined_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     left_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class GuidePlanModel(Base):
+    """How a class material is studied: a study guide or a guide with tasks."""
+
+    __tablename__ = "class_guides"
+    __table_args__ = (
+        CheckConstraint("mode IN ('study', 'tasks')", name="mode"),
+        Index("ix_class_guides_class_id", "class_id"),
+    )
+
+    material_id: Mapped[UUID] = mapped_column(
+        ForeignKey("materials.id", ondelete="CASCADE"), primary_key=True
+    )
+    class_id: Mapped[UUID] = mapped_column(ForeignKey("classes.id", ondelete="CASCADE"))
+    mode: Mapped[str] = mapped_column(String(8))
+
+
+class GuideTaskModel(Base):
+    __tablename__ = "class_guide_tasks"
+    __table_args__ = (Index("ix_class_guide_tasks_material_id", "material_id"),)
+
+    id: Mapped[UUID] = mapped_column(primary_key=True)
+    material_id: Mapped[UUID] = mapped_column(
+        ForeignKey("class_guides.material_id", ondelete="CASCADE")
+    )
+    position: Mapped[int] = mapped_column(Integer)
+    statement: Mapped[str] = mapped_column(Text)

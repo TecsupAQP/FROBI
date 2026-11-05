@@ -1,11 +1,18 @@
 from uuid import UUID
 
-from sqlalchemy import exists, select
+from sqlalchemy import delete, exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from frobi.modules.classrooms.domain import Classroom, Membership, MembershipStatus
+from frobi.modules.classrooms.domain import (
+    Classroom,
+    GuideMode,
+    GuidePlan,
+    GuideTask,
+    Membership,
+    MembershipStatus,
+)
 
-from .models import ClassModel, MembershipModel
+from .models import ClassModel, GuidePlanModel, GuideTaskModel, MembershipModel
 
 
 def _classroom(row: ClassModel) -> Classroom:
@@ -120,3 +127,67 @@ class SqlAlchemyMembershipRepository:
             .order_by(MembershipModel.created_at, MembershipModel.alias)
         )
         return [_membership(row) for row in (await self._session.scalars(query)).all()]
+
+
+class SqlAlchemyGuidePlanRepository:
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
+    async def _tasks(self, material_ids: list[UUID]) -> dict[UUID, tuple[GuideTask, ...]]:
+        rows = await self._session.scalars(
+            select(GuideTaskModel)
+            .where(GuideTaskModel.material_id.in_(material_ids))
+            .order_by(GuideTaskModel.position)
+        )
+        by_material: dict[UUID, list[GuideTask]] = {}
+        for row in rows:
+            by_material.setdefault(row.material_id, []).append(
+                GuideTask(row.id, row.position, row.statement)
+            )
+        return {material_id: tuple(tasks) for material_id, tasks in by_material.items()}
+
+    async def get(self, material_id: UUID) -> GuidePlan | None:
+        row = await self._session.get(GuidePlanModel, material_id)
+        if row is None:
+            return None
+        tasks = await self._tasks([material_id])
+        return GuidePlan(
+            row.material_id, row.class_id, GuideMode(row.mode), tasks.get(material_id, ())
+        )
+
+    async def save(self, plan: GuidePlan) -> None:
+        row = await self._session.get(GuidePlanModel, plan.material_id)
+        if row is None:
+            self._session.add(
+                GuidePlanModel(material_id=plan.material_id, class_id=plan.class_id, mode=plan.mode)
+            )
+        else:
+            row.mode = plan.mode.value
+        await self._session.flush()
+        await self._session.execute(
+            delete(GuideTaskModel).where(GuideTaskModel.material_id == plan.material_id)
+        )
+        self._session.add_all(
+            GuideTaskModel(
+                id=task.id,
+                material_id=plan.material_id,
+                position=task.position,
+                statement=task.statement,
+            )
+            for task in plan.tasks
+        )
+        await self._session.flush()
+
+    async def list_for_class(self, class_id: UUID) -> list[GuidePlan]:
+        rows = list(
+            await self._session.scalars(
+                select(GuidePlanModel).where(GuidePlanModel.class_id == class_id)
+            )
+        )
+        tasks = await self._tasks([row.material_id for row in rows])
+        return [
+            GuidePlan(
+                row.material_id, row.class_id, GuideMode(row.mode), tasks.get(row.material_id, ())
+            )
+            for row in rows
+        ]

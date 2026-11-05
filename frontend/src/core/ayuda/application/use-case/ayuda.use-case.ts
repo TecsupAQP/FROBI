@@ -12,8 +12,13 @@ import type {
   IntentoAyudaDto,
   RespuestaPropiaDto,
 } from "@/core/shared/infraestructure/http/api.dto";
-import type { MaterialDto } from "@/core/shared/infraestructure/http/api.dto";
-import { adaptacionActualId, materialActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
+import type { MaterialClaseDto, MaterialDto } from "@/core/shared/infraestructure/http/api.dto";
+import { claseActualId } from "@/core/shared/infraestructure/http/clase-actual";
+import {
+  adaptacionActualId,
+  elegirMaterial,
+  materialActualId,
+} from "@/core/shared/infraestructure/http/contexto-estudio";
 import { temasDesdeTexto, tituloDeGuia } from "@/core/shared/application/util/texto.util";
 import { CRITERIOS_SIN_IA, ESCALONES_AYUDA } from "@/constants/tareas.constant";
 
@@ -45,8 +50,10 @@ const enLineas = (texto: string): string[] =>
 
 // POST /help-attempts, /help-attempts/{id}/steps y /help-attempts/{id}/own-answer.
 export class AyudaUseCase implements AyudaPort {
-  // La tarea es explicar un tema de la guía actual (tareaId = "tema-N").
+  // La tarea es explicar un tema de la guía actual (tareaId = "tema-N") o una tarea que dejó el
+  // docente en una guía de la clase (tareaId = "tarea-{id}").
   async abrirIntento(tareaId: string): Promise<IntentoAbierto | null> {
+    if (tareaId.startsWith("tarea-")) return this.abrirTareaDeClase(tareaId);
     const material = await api.get<MaterialDto>(`/materials/${await materialActualId()}`);
     const temas = temasDesdeTexto(material.extracted_text);
     const tema = temas.find((item) => item.id === tareaId);
@@ -64,6 +71,32 @@ export class AyudaUseCase implements AyudaPort {
         ruta: [tituloDeGuia(material.title), `Tema ${tema.numero} de ${temas.length}`],
         titulo: `Explica «${nombre}» con tus palabras`,
         enunciado: `Según tu guía, ¿qué es «${nombre}» y para qué sirve? Respóndelo con tus palabras y, si puedes, con un ejemplo.`,
+        escalones: structuredClone(ESCALONES_AYUDA),
+      },
+      estado: estadoDesdeApi(intento),
+    };
+  }
+
+  private async abrirTareaDeClase(tareaId: string): Promise<IntentoAbierto | null> {
+    const claseId = await claseActualId();
+    if (!claseId) return null;
+    const guias = await api.get<MaterialClaseDto[]>(`/classes/${claseId}/materials`);
+    const guia = guias.find((item) => item.tasks.some((tarea) => tarea.task_ref === tareaId));
+    const tarea = guia?.tasks.find((item) => item.task_ref === tareaId);
+    if (!guia || !tarea) return null;
+    // La tarea se resuelve sobre su guía: la adaptación queda atada a ese material.
+    elegirMaterial(guia.id);
+    const intento = await api.post<IntentoAyudaDto>("/help-attempts", {
+      adaptation_id: await adaptacionActualId(),
+      task_ref: tareaId,
+    });
+    return {
+      intentoId: intento.id,
+      tarea: {
+        id: tareaId,
+        ruta: [tituloDeGuia(guia.title), `Tarea ${tarea.position} de ${guia.tasks.length}`],
+        titulo: tarea.statement,
+        enunciado: tarea.statement,
         escalones: structuredClone(ESCALONES_AYUDA),
       },
       estado: estadoDesdeApi(intento),

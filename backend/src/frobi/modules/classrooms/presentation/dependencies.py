@@ -6,6 +6,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from frobi.modules.classrooms.application import (
+    ClassGuidesProgressHandler,
     CreateClassHandler,
     DashboardHandler,
     GetClassHandler,
@@ -13,8 +14,11 @@ from frobi.modules.classrooms.application import (
     JoinClassHandler,
     JoinWithCodeHandler,
     ListClassContentHandler,
+    ListClassGuidesHandler,
     ListMembersHandler,
     ListMyClassesHandler,
+    MyGuidesProgressHandler,
+    SaveGuidePlanHandler,
     StudentDetailHandler,
     UploadClassContentHandler,
 )
@@ -22,8 +26,10 @@ from frobi.modules.classrooms.domain import new_invite_code
 from frobi.modules.classrooms.infrastructure import (
     ClassActivityReaderAdapter,
     ClassMaterialsAdapter,
+    GuideActivityReaderAdapter,
     PersonDirectoryAdapter,
     SqlAlchemyClassRepository,
+    SqlAlchemyGuidePlanRepository,
     SqlAlchemyMembershipRepository,
 )
 from frobi.shared.domain import Clock
@@ -99,3 +105,38 @@ def get_list_class_content(db: DbSession) -> ListClassContentHandler:
 
 def get_list_my_classes(db: DbSession) -> ListMyClassesHandler:
     return ListMyClassesHandler(SqlAlchemyClassRepository(db), PersonDirectoryAdapter(db))
+
+
+def get_save_guide_plan(db: DbSession) -> SaveGuidePlanHandler:
+    return SaveGuidePlanHandler(
+        SqlAlchemyUnitOfWork(db),
+        SqlAlchemyClassRepository(db),
+        ClassMaterialsAdapter(db),
+        SqlAlchemyGuidePlanRepository(db),
+    )
+
+
+def get_list_class_guides(db: DbSession) -> ListClassGuidesHandler:
+    return ListClassGuidesHandler(
+        get_get_class(db), ClassMaterialsAdapter(db), SqlAlchemyGuidePlanRepository(db)
+    )
+
+
+def get_my_guides_progress(db: DbSession) -> MyGuidesProgressHandler:
+    return MyGuidesProgressHandler(
+        get_get_class(db),
+        ClassMaterialsAdapter(db),
+        SqlAlchemyGuidePlanRepository(db),
+        GuideActivityReaderAdapter(db),
+    )
+
+
+def get_class_guides_progress(db: DbSession) -> ClassGuidesProgressHandler:
+    return ClassGuidesProgressHandler(
+        SqlAlchemyClassRepository(db),
+        SqlAlchemyMembershipRepository(db),
+        PersonDirectoryAdapter(db),
+        ClassMaterialsAdapter(db),
+        SqlAlchemyGuidePlanRepository(db),
+        GuideActivityReaderAdapter(db),
+    )

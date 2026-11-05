@@ -369,6 +369,26 @@
             "description": "PDF de hasta 10 MB.",
             "title": "File"
           },
+          "mode": {
+            "$ref": "#/components/schemas/GuideMode",
+            "default": "study",
+            "description": "`study` (por defecto) o `tasks`."
+          },
+          "tasks": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Enunciados de las tareas (solo con `mode=tasks`).",
+            "title": "Tasks"
+          },
           "text": {
             "anyOf": [
               {
@@ -577,6 +597,18 @@
             "title": "Kind",
             "type": "string"
           },
+          "mode": {
+            "$ref": "#/components/schemas/GuideMode",
+            "default": "study",
+            "description": "`study`: la IA evalúa al final. `tasks`: tiene tareas del docente."
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/GuideTaskOut"
+            },
+            "title": "Tasks",
+            "type": "array"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -614,10 +646,21 @@
             "title": "Kind",
             "type": "string"
           },
+          "mode": {
+            "$ref": "#/components/schemas/GuideMode",
+            "default": "study"
+          },
           "preview": {
             "description": "Primeras líneas del texto.",
             "title": "Preview",
             "type": "string"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/GuideTaskOut"
+            },
+            "title": "Tasks",
+            "type": "array"
           },
           "title": {
             "title": "Title",
@@ -1003,6 +1046,24 @@
         "title": "EvaluatePromptRequest",
         "type": "object"
       },
+      "EvaluationOut": {
+        "properties": {
+          "correct": {
+            "title": "Correct",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "correct",
+          "total"
+        ],
+        "title": "EvaluationOut",
+        "type": "object"
+      },
       "FailedQuestion": {
         "properties": {
           "fail_rate": {
@@ -1147,6 +1208,50 @@
         "title": "FormatUsage",
         "type": "object"
       },
+      "GuideClassProgressOut": {
+        "properties": {
+          "material_id": {
+            "format": "uuid",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/GuideMode"
+          },
+          "students": {
+            "items": {
+              "$ref": "#/components/schemas/StudentGuideProgressOut"
+            },
+            "title": "Students",
+            "type": "array"
+          },
+          "tasks_total": {
+            "title": "Tasks Total",
+            "type": "integer"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "material_id",
+          "title",
+          "mode",
+          "tasks_total",
+          "students"
+        ],
+        "title": "GuideClassProgressOut",
+        "type": "object"
+      },
+      "GuideMode": {
+        "enum": [
+          "study",
+          "tasks"
+        ],
+        "title": "GuideMode",
+        "type": "string"
+      },
       "GuidePassage": {
         "properties": {
           "location": {
@@ -1166,6 +1271,130 @@
           "location"
         ],
         "title": "GuidePassage",
+        "type": "object"
+      },
+      "GuidePlanOut": {
+        "properties": {
+          "material_id": {
+            "format": "uuid",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/GuideMode"
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/GuideTaskOut"
+            },
+            "title": "Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "material_id",
+          "mode",
+          "tasks"
+        ],
+        "title": "GuidePlanOut",
+        "type": "object"
+      },
+      "GuidePlanRequest": {
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/GuideMode"
+          },
+          "tasks": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "title": "GuidePlanRequest",
+        "type": "object"
+      },
+      "GuideProgressOut": {
+        "properties": {
+          "completion": {
+            "description": "Avance de la guía, de 0 a 100.",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Completion",
+            "type": "integer"
+          },
+          "done_task_ids": {
+            "description": "Tareas con intento propio (guía con tareas).",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Done Task Ids",
+            "type": "array"
+          },
+          "evaluation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvaluationOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Última evaluación final respondida (guía de estudio); null si aún no hay."
+          },
+          "material_id": {
+            "format": "uuid",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/GuideMode"
+          }
+        },
+        "required": [
+          "material_id",
+          "mode",
+          "completion",
+          "done_task_ids",
+          "evaluation"
+        ],
+        "title": "GuideProgressOut",
+        "type": "object"
+      },
+      "GuideTaskOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "statement": {
+            "title": "Statement",
+            "type": "string"
+          },
+          "task_ref": {
+            "description": "Lo que se envía como `task_ref` al abrir la escalera de ayuda de esta tarea.",
+            "title": "Task Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "position",
+          "statement",
+          "task_ref"
+        ],
+        "title": "GuideTaskOut",
         "type": "object"
       },
       "HealthResponse": {
@@ -2828,6 +3057,33 @@
         "title": "StudentDetailOut",
         "type": "object"
       },
+      "StudentGuideProgressOut": {
+        "properties": {
+          "alias": {
+            "title": "Alias",
+            "type": "string"
+          },
+          "completion": {
+            "description": "Avance de la guía, de 0 a 100.",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Completion",
+            "type": "integer"
+          },
+          "person_id": {
+            "format": "uuid",
+            "title": "Person Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "person_id",
+          "alias",
+          "completion"
+        ],
+        "title": "StudentGuideProgressOut",
+        "type": "object"
+      },
       "StudentRow": {
         "properties": {
           "alerts": {
@@ -3621,6 +3877,162 @@
         ]
       }
     },
+    "/api/v1/classes/{class_id}/guides/my-progress": {
+      "get": {
+        "description": "Guía con tareas: tareas con intento propio sobre el total. Guía de estudio: resultado de la última evaluación final respondida. Solo cuenta lo hecho dentro de la clase.",
+        "operationId": "my_guides_progress_api_v1_classes__class_id__guides_my_progress_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GuideProgressOut"
+                  },
+                  "title": "Response My Guides Progress Api V1 Classes  Class Id  Guides My Progress Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mi avance en cada guía de la clase",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/{class_id}/guides/progress": {
+      "get": {
+        "description": "Solo el docente de la clase. Detecta a tiempo quién se traba; no califica.",
+        "operationId": "class_guides_progress_api_v1_classes__class_id__guides_progress_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GuideClassProgressOut"
+                  },
+                  "title": "Response Class Guides Progress Api V1 Classes  Class Id  Guides Progress Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Avance de cada alumno en cada guía (docente)",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
     "/api/v1/classes/{class_id}/invitations": {
       "post": {
         "operationId": "invite_students_api_v1_classes__class_id__invitations_post",
@@ -3786,7 +4198,7 @@
         ]
       },
       "post": {
-        "description": "Solo el docente de la clase. Envía `text` o `file` (PDF de hasta 10 MB), no los dos. Los estudiantes unidos a la clase lo ven en `GET /classes/{id}/materials` y lo usan como cualquier material (`GET /materials/{id}`, adaptaciones, revisión de afirmaciones).",
+        "description": "Solo el docente de la clase. Envía `text` o `file` (PDF de hasta 10 MB), no los dos. Los estudiantes unidos a la clase lo ven en `GET /classes/{id}/materials` y lo usan como cualquier material (`GET /materials/{id}`, adaptaciones, revisión de afirmaciones). Con `mode=tasks` envía las tareas como varios campos `tasks`.",
         "operationId": "upload_class_material_api_v1_classes__class_id__materials_post",
         "parameters": [
           {
@@ -3868,6 +4280,105 @@
           }
         ],
         "summary": "Subir contenido de la clase (texto o PDF)",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      }
+    },
+    "/api/v1/classes/{class_id}/materials/{material_id}/guide": {
+      "put": {
+        "description": "Solo el docente de la clase. `study`: sin tareas, la IA evalúa al final. `tasks`: 1 a 20 tareas. Las tareas que no cambian conservan su id (y el avance de los alumnos).",
+        "operationId": "save_guide_plan_api_v1_classes__class_id__materials__material_id__guide_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "class_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Class Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "material_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Material Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuidePlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuidePlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Tipo de guía y tareas incompatibles (`Classrooms.InvalidGuide`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Definir si una guía es de estudio o tiene tareas",
         "tags": [
           "M12 · Clase del docente"
         ]

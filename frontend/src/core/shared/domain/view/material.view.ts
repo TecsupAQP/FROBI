@@ -40,4 +40,14 @@ export interface GuiaResumen {
   vistaPrevia: string;
   // La que se está estudiando ahora.
   actual: boolean;
+  // Solo en el material de la clase: cómo se trabaja y cuánto avanzó la persona.
+  enClase?: GuiaDeClase;
+}
+
+export interface GuiaDeClase {
+  modo: "estudio" | "tareas";
+  // 0 a 100: tareas hechas sobre el total, o aciertos de la evaluación final.
+  avance: number;
+  tareas: { ref: string; numero: number; enunciado: string; hecha: boolean }[];
+  evaluacion: { aciertos: number; total: number } | null;
 }

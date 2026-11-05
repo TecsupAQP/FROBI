@@ -43,9 +43,12 @@
         v-if="clase"
         data-recorrido="contenido-clase"
         :materiales="contenido"
+        :avances="avances"
         :subiendo="subiendo"
+        :guardando="guardando"
         :error="errorContenido"
         @subir="subirContenido"
+        @guardar-plan="guardarPlan"
       />
 
       <v-aviso v-if="panel.esEjemplo" :class="`${PREFIX}__ejemplo`" tipo="aviso" icono="info">

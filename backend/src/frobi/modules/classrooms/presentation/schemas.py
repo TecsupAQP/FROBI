@@ -6,7 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from frobi.modules.classrooms.domain import MembershipStatus
+from frobi.modules.classrooms.domain import MAX_TASKS, GuideMode, MembershipStatus
 
 
 class CreateClassRequest(BaseModel):
@@ -24,12 +24,26 @@ class ClassOut(BaseModel):
     created_at: datetime
 
 
+class GuideTaskOut(BaseModel):
+    id: UUID
+    position: int
+    statement: str
+    task_ref: str = Field(
+        description="Lo que se envía como `task_ref` al abrir la escalera de ayuda de esta tarea."
+    )
+
+
 class ClassMaterialOut(BaseModel):
     id: UUID
     class_id: UUID
     title: str
     kind: Literal["class_content"] = "class_content"
     extracted_text: str
+    mode: GuideMode = Field(
+        default=GuideMode.STUDY,
+        description="`study`: la IA evalúa al final. `tasks`: tiene tareas del docente.",
+    )
+    tasks: list[GuideTaskOut] = Field(default_factory=list)
 
 
 class ClassMaterialSummaryOut(BaseModel):
@@ -39,6 +53,48 @@ class ClassMaterialSummaryOut(BaseModel):
     kind: Literal["class_content"] = "class_content"
     preview: str = Field(description="Primeras líneas del texto.")
     created_at: datetime
+    mode: GuideMode = GuideMode.STUDY
+    tasks: list[GuideTaskOut] = Field(default_factory=list)
+
+
+class GuidePlanRequest(BaseModel):
+    mode: GuideMode
+    tasks: list[str] = Field(default_factory=list, max_length=MAX_TASKS)
+
+
+class GuidePlanOut(BaseModel):
+    material_id: UUID
+    mode: GuideMode
+    tasks: list[GuideTaskOut]
+
+
+class EvaluationOut(BaseModel):
+    correct: int
+    total: int
+
+
+class GuideProgressOut(BaseModel):
+    material_id: UUID
+    mode: GuideMode
+    completion: int = Field(ge=0, le=100, description="Avance de la guía, de 0 a 100.")
+    done_task_ids: list[UUID] = Field(description="Tareas con intento propio (guía con tareas).")
+    evaluation: EvaluationOut | None = Field(
+        description="Última evaluación final respondida (guía de estudio); null si aún no hay."
+    )
+
+
+class StudentGuideProgressOut(BaseModel):
+    person_id: UUID
+    alias: str
+    completion: int = Field(ge=0, le=100, description="Avance de la guía, de 0 a 100.")
+
+
+class GuideClassProgressOut(BaseModel):
+    material_id: UUID
+    title: str
+    mode: GuideMode
+    tasks_total: int
+    students: list[StudentGuideProgressOut]
 
 
 class InvitationsRequest(BaseModel):

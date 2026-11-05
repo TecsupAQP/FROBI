@@ -71,6 +71,22 @@ export default defineComponent({
       }
     };
 
+    // Abre una guía de la clase (si no es la actual) y lleva a su tarea o a su evaluación final.
+    const irConGuia = async (guiaId: string, destino: Parameters<typeof router.push>[0]) => {
+      eligiendo.value = guiaId;
+      try {
+        if (!guiasClase.value.find((item) => item.id === guiaId)?.actual) await elegirGuia(guiaId);
+        await router.push(destino);
+      } finally {
+        eligiendo.value = null;
+      }
+    };
+
+    const resolverTarea = (guiaId: string, tareaRef: string) =>
+      irConGuia(guiaId, { name: RutaEnum.AYUDA, params: { tarea: tareaRef } });
+
+    const evaluarGuia = (guiaId: string) => irConGuia(guiaId, { name: RutaEnum.VERIFICACION });
+
     const usarGuia = async (textoPegado?: string) => {
       await usarMaterial(textoPegado);
       cerrarModal();
@@ -92,6 +108,8 @@ export default defineComponent({
       vieneSinGuia,
       eligiendo,
       estudiar,
+      resolverTarea,
+      evaluarGuia,
       modalAbierto,
       nombreArchivo,
       progreso,

@@ -5,7 +5,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from frobi.modules import adaptations, comprehension, identity, materials, prompt_coach, tutoring
-from frobi.modules.classrooms.application.ports import ClassActivity, ClassMaterial
+from frobi.modules.classrooms.application.ports import ClassActivity, ClassMaterial, GuideActivity
 
 from .sqlalchemy_repositories import SqlAlchemyMembershipRepository
 
@@ -22,6 +22,23 @@ class ClassActivityReaderAdapter:
             help=await tutoring.help_in_class(self._session, class_id),
             answers=await comprehension.answers_in_class(self._session, class_id),
             prompt_scores=await prompt_coach.scores_in_class(self._session, class_id),
+        )
+
+
+class GuideActivityReaderAdapter:
+    """What the guides' progress is made of, read «in this class» from each module (RNF16)."""
+
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
+    async def read(self, class_id: UUID) -> GuideActivity:
+        guide_adaptations = await adaptations.guide_adaptations_in_class(self._session, class_id)
+        return GuideActivity(
+            adaptations=guide_adaptations,
+            questions=await comprehension.question_results(
+                self._session, [a.adaptation_id for a in guide_adaptations]
+            ),
+            attempts=await tutoring.task_attempts_in_class(self._session, class_id),
         )
 
 

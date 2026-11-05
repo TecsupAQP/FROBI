@@ -1,21 +1,28 @@
 import type { ClasePort } from "@/core/clase/infraestructure/ports/in/clase.port";
 import type {
   AlumnoClase,
+  AvanceGuia,
+  AvanceGuiaClase,
   Clase,
   ClaseResumen,
   DetalleAlumno,
   MaterialClase,
   EstadoAlumno,
+  ModoGuia,
   NuevaClase,
+  PlanGuia,
 } from "@/core/shared/domain/view/clase.view";
 import { api } from "@/core/shared/infraestructure/http/api.client";
 import type {
+  AvanceGuiaClaseDto,
+  AvanceGuiaDto,
   ClaseDto,
   DetalleEstudianteDto,
   EscalonApi,
   MaterialClaseDto,
   MiembroDto,
   MiembrosDto,
+  ModoGuiaApi,
   PanelDto,
   YoDto,
 } from "@/core/shared/infraestructure/http/api.dto";
@@ -35,6 +42,26 @@ const NOMBRE_ESCALON: Record<EscalonApi, string> = {
   step_by_step: "Paso a paso",
   final: "Respuesta final",
 };
+
+const MODOS: Record<ModoGuiaApi, ModoGuia> = { study: "estudio", tasks: "tareas" };
+const MODOS_API: Record<ModoGuia, ModoGuiaApi> = { estudio: "study", tareas: "tasks" };
+
+const materialDesdeApi = (material: MaterialClaseDto): MaterialClase => ({
+  id: material.id,
+  titulo: material.title,
+  vistaPrevia: material.preview.replace(/##\s*/g, "").trim(),
+  fecha: material.created_at,
+  modo: MODOS[material.mode],
+  tareas: material.tasks.map((tarea) => ({
+    id: tarea.id,
+    numero: tarea.position,
+    enunciado: tarea.statement,
+    ref: tarea.task_ref,
+  })),
+});
+
+const tareasDelPlan = (plan: PlanGuia): string[] =>
+  plan.modo === "tareas" ? plan.tareas.map((tarea) => tarea.trim()).filter(Boolean) : [];
 
 function alumnoDesdeApi(miembro: MiembroDto, panel: PanelDto | null): AlumnoClase {
   const fila = panel?.students.find(
@@ -147,22 +174,64 @@ export class ClaseUseCase implements ClasePort {
     const id = await claseActualId();
     if (!id) return [];
     const materiales = await api.get<MaterialClaseDto[]>(`/classes/${id}/materials`);
-    return materiales.map((material) => ({
-      id: material.id,
-      titulo: material.title,
-      vistaPrevia: material.preview.replace(/##\s*/g, "").trim(),
-      fecha: material.created_at,
-    }));
+    return materiales.map(materialDesdeApi);
   }
 
-  async subirMaterial(archivo: File): Promise<MaterialClase[]> {
+  async subirMaterial(archivo: File, plan: PlanGuia): Promise<MaterialClase[]> {
     const id = await claseActualId();
     if (!id) throw new Error("Primero crea tu clase");
     const formulario = new FormData();
     formulario.append("title", tituloDesdeArchivo(archivo.name));
     formulario.append("file", archivo);
+    formulario.append("mode", MODOS_API[plan.modo]);
+    for (const tarea of tareasDelPlan(plan)) formulario.append("tasks", tarea);
     await api.enviarFormulario(`/classes/${id}/materials`, formulario);
     return this.listarMateriales();
+  }
+
+  // PUT /classes/{id}/materials/{material_id}/guide: las tareas que no cambian conservan el avance.
+  async guardarPlan(materialId: string, plan: PlanGuia): Promise<MaterialClase[]> {
+    const id = await claseActualId();
+    if (!id) throw new Error("Primero crea tu clase");
+    await api.put(`/classes/${id}/materials/${materialId}/guide`, {
+      mode: MODOS_API[plan.modo],
+      tasks: tareasDelPlan(plan),
+    });
+    return this.listarMateriales();
+  }
+
+  // GET /classes/{id}/guides/my-progress: solo cuenta lo hecho dentro de la clase.
+  async miAvance(): Promise<AvanceGuia[]> {
+    const id = await claseActualId();
+    if (!id) return [];
+    const avances = await api.get<AvanceGuiaDto[]>(`/classes/${id}/guides/my-progress`);
+    return avances.map((avance) => ({
+      materialId: avance.material_id,
+      modo: MODOS[avance.mode],
+      avance: avance.completion,
+      tareasHechas: avance.done_task_ids,
+      evaluacion: avance.evaluation
+        ? { aciertos: avance.evaluation.correct, total: avance.evaluation.total }
+        : null,
+    }));
+  }
+
+  // GET /classes/{id}/guides/progress: solo el docente de la clase.
+  async avanceClase(): Promise<AvanceGuiaClase[]> {
+    const id = await claseActualId();
+    if (!id) return [];
+    const guias = await api.get<AvanceGuiaClaseDto[]>(`/classes/${id}/guides/progress`);
+    return guias.map((guia) => ({
+      materialId: guia.material_id,
+      titulo: guia.title,
+      modo: MODOS[guia.mode],
+      totalTareas: guia.tasks_total,
+      alumnos: guia.students.map((alumno) => ({
+        personaId: alumno.person_id,
+        alias: alumno.alias,
+        avance: alumno.completion,
+      })),
+    }));
   }
 
   async salirDeClase(): Promise<void> {

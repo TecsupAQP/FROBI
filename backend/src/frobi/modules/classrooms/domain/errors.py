@@ -37,3 +37,17 @@ class MissingClassContent(DomainError):
     code = "Classrooms.MissingContent"
     kind = ErrorKind.VALIDATION
     default_message = "Pega el texto o sube un PDF para la clase (solo uno de los dos)."
+
+
+class InvalidGuidePlan(DomainError):
+    code = "Classrooms.InvalidGuide"
+    kind = ErrorKind.VALIDATION
+    default_message = "Revisa el tipo de guía y sus tareas."
+
+
+class GuideNotFound(DomainError):
+    """The material is not content of this class."""
+
+    code = "Resource.NotFound"
+    kind = ErrorKind.NOT_FOUND
+    default_message = "No encontramos esa guía en la clase."
