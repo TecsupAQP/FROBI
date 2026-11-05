@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     )
     llm_api_key: SecretStr | None = None
     llm_timeout_seconds: float = Field(default=15.0, gt=0)
+    llm_requests_per_minute: int = Field(default=10, ge=1)
     health_timeout_seconds: float = Field(default=2.0, gt=0)
 
     @field_validator("cors_origins", mode="before")
