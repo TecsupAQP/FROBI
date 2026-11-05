@@ -67,6 +67,24 @@ $prefix: cmp-panel-marca;
   }
 
   &__pie {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $esp-16;
     color: $marca-azul-claro;
+  }
+
+  // Logo del reto sobre caja blanca, igual que el de FROBI: tiene fondo claro propio.
+  &__reto {
+    display: inline-flex;
+    padding: $esp-6 $esp-12;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+
+    img {
+      display: block;
+      width: auto;
+      height: 40px;
+    }
   }
 }

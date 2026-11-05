@@ -16,7 +16,12 @@
         </ul>
       </div>
     </div>
-    <p :class="`${PREFIX}__pie`">Hack4Edu Arequipa 2026 · Reto 03</p>
+    <div :class="`${PREFIX}__pie`">
+      <p>Hack4Edu Arequipa 2026 · Reto 03</p>
+      <span :class="`${PREFIX}__reto`">
+        <img :src="LOGO_RETO" alt="Reto ProFuturo" width="2000" height="667" decoding="async" />
+      </span>
+    </div>
   </section>
 </template>
 

@@ -3,7 +3,6 @@ import { useRoute, useRouter } from "vue-router";
 import VButton from "@/components/base/v-button/v-button.vue";
 import VField from "@/components/base/v-field/v-field.vue";
 import VIcon from "@/components/base/v-icon/v-icon.vue";
-import LOGO_RETO from "@/assets/resources/images/logo-reto-profuturo.webp";
 import VLogo from "@/components/base/v-logo/v-logo.vue";
 import VRadioOpcion from "@/components/base/v-radio-opcion/v-radio-opcion.vue";
 import VSelect from "@/components/base/v-select/v-select.vue";
@@ -71,18 +70,6 @@ export default defineComponent({
       if (typeof route.query.clase === "string") codigoClase.value = route.query.clase;
     });
 
-    return {
-      PREFIX,
-      ROLES,
-      LOGO_RETO,
-      alias,
-      carrera,
-      carreras,
-      codigoClase,
-      enviando,
-      errores,
-      rol,
-      enviar,
-    };
+    return { PREFIX, ROLES, alias, carrera, carreras, codigoClase, enviando, errores, rol, enviar };
   },
 });

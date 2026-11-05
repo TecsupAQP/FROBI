@@ -1,4 +1,5 @@
 import { defineComponent } from "vue";
+import LOGO_RETO from "@/assets/resources/images/logo-reto-profuturo.webp";
 import VChipPieza from "@/components/base/v-chip-pieza/v-chip-pieza.vue";
 import VLogo from "@/components/base/v-logo/v-logo.vue";
 import type { PiezaInstruccion } from "@/core/shared/domain/view/pieza.view";
@@ -17,6 +18,6 @@ export default defineComponent({
       { pieza: "formato", texto: "Usa un ejemplo de una línea de embotellado." },
     ];
 
-    return { PREFIX, receta };
+    return { PREFIX, LOGO_RETO, receta };
   },
 });
