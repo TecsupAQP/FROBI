@@ -1,7 +1,7 @@
 import type { ObtenerAdaptacionPort } from "@/core/adaptacion/infraestructure/ports/in/obtener-adaptacion.port";
 import type { Adaptation, ContenidoAdaptado, FormatoId } from "@/core/shared/domain/view/adaptation.view";
 import { api } from "@/core/shared/infraestructure/http/api.client";
-import type { AdaptacionDto, SeccionContenidoDto } from "@/core/shared/infraestructure/http/api.dto";
+import type { AdaptacionDto } from "@/core/shared/infraestructure/http/api.dto";
 import {
   formatoDesdeApi,
   formatoHaciaApi,
@@ -23,15 +23,16 @@ const conPunto = (texto: string) => (/[.!?]$/.test(texto) ? texto : `${texto}.`)
 // La API entrega secciones (título, texto y puntos); cada formato las muestra a su manera.
 function contenidoDesdeApi(formato: FormatoId, dto: AdaptacionDto): ContenidoAdaptado {
   const { title, sections, plain_text: textoPlano } = dto.content;
-  const detalle = (seccion: SeccionContenidoDto) =>
-    seccion.items.length ? `${conPunto(seccion.body)} ${seccion.items.join("; ")}.` : seccion.body;
-
   switch (formato) {
     case "mapa-visual":
       return {
         formato,
         conceptoCentral: title,
-        nodos: sections.map((seccion) => ({ titulo: seccion.heading, detalle: detalle(seccion) })),
+        nodos: sections.map((seccion) => ({
+          titulo: seccion.heading,
+          detalle: seccion.body,
+          puntos: seccion.items,
+        })),
         usos: "",
       };
     case "ejemplo-real":

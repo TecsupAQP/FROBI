@@ -15,7 +15,7 @@ $prefix: cmp-guia;
     padding: $esp-48 0;
   }
 
-  // Móvil y tablet apilado; escritorio: temas (540 px) + formatos.
+  // Móvil y tablet apilado; escritorio: PDF (560 px) + formatos. Sin PDF, solo los formatos.
   &__columnas {
     display: flex;
     flex-direction: column;
@@ -28,13 +28,10 @@ $prefix: cmp-guia;
     }
   }
 
-  &__temas {
-    display: flex;
-    flex-direction: column;
-    gap: $esp-12;
-
+  // El PDF original ocupa la columna izquierda en escritorio.
+  &__documento {
     @include escritorio {
-      width: 540px;
+      width: 560px;
       flex-shrink: 0;
     }
   }

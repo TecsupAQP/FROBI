@@ -26,12 +26,12 @@ export const RECORRIDO_ESTUDIANTE: PasoRecorrido[] = [
     objetivo: "guia-actual",
   },
   {
-    titulo: "Elige un tema",
-    texto: "Tu guía se divide en temas. Abre uno para leer el texto original de tu material.",
+    titulo: "Tu PDF, tal como lo subiste",
+    texto: "Si tu guía es un PDF, aquí lo ves completo para revisarlo mientras estudias.",
     destino: { name: RutaEnum.GUIA },
     ruta: RutaEnum.GUIA,
-    objetivo: "temas",
-    siFalta: SIN_GUIA,
+    objetivo: "documento",
+    siFalta: "Cuando subas un PDF, aquí lo verás tal cual. Si pegaste texto, pasa a elegir un formato.",
   },
   {
     titulo: "Elige cómo aprenderlo",
