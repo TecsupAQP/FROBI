@@ -1,0 +1,23 @@
+# Con FROBI_DOMAIN (ej. frobi.midominio.com) Caddy saca el certificado HTTPS solo.
+# Sin dominio sirve en http por el puerto 80 (por ejemplo, con la IP del VPS).
+{$FROBI_DOMAIN} {
+	encode gzip
+
+	# API y su documentación: al contenedor del backend.
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+	handle /docs* {
+		reverse_proxy api:8000
+	}
+	handle /openapi.json {
+		reverse_proxy api:8000
+	}
+
+	# El front es una SPA: cualquier otra ruta sirve index.html.
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

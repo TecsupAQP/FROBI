@@ -51,7 +51,8 @@ interface OpcionesPeticion {
 }
 
 async function peticion<T>(metodo: string, ruta: string, opciones: OpcionesPeticion = {}): Promise<T> {
-  const url = new URL(API_URL + ruta);
+  // La base permite una VITE_API_URL relativa ("/api/v1") cuando el front y la API comparten dominio.
+  const url = new URL(API_URL + ruta, window.location.origin);
   Object.entries(opciones.consulta ?? {}).forEach(([clave, valor]) => {
     if (valor !== undefined) url.searchParams.set(clave, valor);
   });
