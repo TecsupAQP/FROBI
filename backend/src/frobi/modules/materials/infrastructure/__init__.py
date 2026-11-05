@@ -1,6 +1,7 @@
 from .class_context_adapter import ClassroomsActiveClass
 from .models import MaterialModel, WorkModel
 from .pypdf_extractor import PypdfTextExtractor
+from .r2_file_storage import R2FileStorage
 from .sample_catalog import SAMPLE_IDS, FileSampleCatalog
 from .sqlalchemy_repositories import SqlAlchemyMaterialRepository, SqlAlchemyWorkRepository
 
@@ -10,6 +11,7 @@ __all__ = [
     "FileSampleCatalog",
     "MaterialModel",
     "PypdfTextExtractor",
+    "R2FileStorage",
     "SqlAlchemyMaterialRepository",
     "SqlAlchemyWorkRepository",
     "WorkModel",

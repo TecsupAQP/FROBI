@@ -1482,6 +1482,26 @@
         "title": "LearnedRecipe",
         "type": "object"
       },
+      "MaterialFileOut": {
+        "properties": {
+          "expires_in": {
+            "description": "Segundos que dura el enlace.",
+            "title": "Expires In",
+            "type": "integer"
+          },
+          "url": {
+            "description": "Enlace temporal al PDF original; se abre sin token.",
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "expires_in"
+        ],
+        "title": "MaterialFileOut",
+        "type": "object"
+      },
       "MaterialKind": {
         "enum": [
           "guide",
@@ -1514,6 +1534,12 @@
           "extracted_text": {
             "title": "Extracted Text",
             "type": "string"
+          },
+          "has_file": {
+            "default": false,
+            "description": "Hay un PDF original para la vista previa (`GET /materials/{id}/file`).",
+            "title": "Has File",
+            "type": "boolean"
           },
           "id": {
             "format": "uuid",
@@ -4659,6 +4685,74 @@
         "summary": "Adaptar un material a un formato (tope de 15 s, con respaldo)",
         "tags": [
           "M4 y M5 · Adaptación"
+        ]
+      }
+    },
+    "/api/v1/materials/{material_id}/file": {
+      "get": {
+        "operationId": "material_file_api_v1_materials__material_id__file_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "material_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Material Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialFileOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Enlace temporal al PDF original, para la vista previa",
+        "tags": [
+          "M3 · Material"
         ]
       }
     },

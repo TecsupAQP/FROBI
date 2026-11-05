@@ -35,6 +35,10 @@ class MaterialOut(BaseModel):
     class_id: UUID | None
     extracted_text: str
     created_at: datetime
+    has_file: bool = Field(
+        default=False,
+        description="Hay un PDF original para la vista previa (`GET /materials/{id}/file`).",
+    )
 
     @classmethod
     def from_domain(cls, material: Material) -> "MaterialOut":
@@ -46,7 +50,13 @@ class MaterialOut(BaseModel):
             class_id=material.class_id,
             extracted_text=material.text,
             created_at=material.created_at,
+            has_file=material.has_file,
         )
+
+
+class MaterialFileOut(BaseModel):
+    url: str = Field(description="Enlace temporal al PDF original; se abre sin token.")
+    expires_in: int = Field(description="Segundos que dura el enlace.")
 
 
 class CreateMaterialRequest(BaseModel):

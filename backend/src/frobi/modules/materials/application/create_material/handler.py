@@ -1,6 +1,14 @@
 """Bring your own material: paste text or upload a PDF of up to 10 MB (RF02, RF31)."""
 
-from frobi.modules.materials.application.ports import MaterialRepository, PdfTextExtractor
+import logging
+from dataclasses import replace
+
+from frobi.modules.materials.application.ports import (
+    FileStorage,
+    FileStorageUnavailable,
+    MaterialRepository,
+    PdfTextExtractor,
+)
 from frobi.modules.materials.domain import (
     MAX_UPLOAD_BYTES,
     EmptyText,
@@ -13,6 +21,8 @@ from frobi.shared.application import UnitOfWork
 from frobi.shared.domain import Clock
 
 from .command import CreateMaterialCommand, UploadMaterialCommand
+
+logger = logging.getLogger(__name__)
 
 
 class CreateMaterialHandler:
@@ -44,11 +54,14 @@ class UploadMaterialHandler:
         materials: MaterialRepository,
         extractor: PdfTextExtractor,
         clock: Clock,
+        storage: FileStorage | None = None,
     ) -> None:
+        """Without ``storage`` only the extracted text is kept (no preview of the original)."""
         self._uow = uow
         self._materials = materials
         self._extractor = extractor
         self._clock = clock
+        self._storage = storage
 
     async def handle(self, command: UploadMaterialCommand) -> Material:
         if len(command.data) > MAX_UPLOAD_BYTES:
@@ -67,7 +80,32 @@ class UploadMaterialHandler:
         except EmptyText as error:
             # A scanned PDF without a text layer reads as empty: tell the person it is unreadable.
             raise PdfUnreadable() from error
-        async with self._uow:
-            await self._materials.add(material)
-            await self._uow.commit()
+        material = await self._store_original(material, command.data)
+        try:
+            async with self._uow:
+                await self._materials.add(material)
+                await self._uow.commit()
+        except Exception:
+            await self._forget_original(material)
+            raise
         return material
+
+    async def _store_original(self, material: Material, data: bytes) -> Material:
+        """The PDF goes to storage for the preview; if storage fails the text still counts."""
+        if self._storage is None:
+            return material
+        key = material.file_key_for_upload()
+        try:
+            await self._storage.put(key, data, "application/pdf")
+        except FileStorageUnavailable:
+            logger.warning("Original PDF of material %s not stored", material.id, exc_info=True)
+            return material
+        return replace(material, file_key=key)
+
+    async def _forget_original(self, material: Material) -> None:
+        if self._storage is None or material.file_key is None:
+            return
+        try:
+            await self._storage.delete(material.file_key)
+        except FileStorageUnavailable:
+            logger.warning("Orphan PDF left at %s", material.file_key, exc_info=True)

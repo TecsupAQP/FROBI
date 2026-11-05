@@ -2,7 +2,10 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { Material } from "@/core/shared/domain/view/material.view";
 import type { FormatoId } from "@/core/shared/domain/view/adaptation.view";
-import { obtenerGuiaService } from "@/core/material/infraestructure/adapters/in/service/material.service";
+import {
+  enlaceDocumentoService,
+  obtenerGuiaService,
+} from "@/core/material/infraestructure/adapters/in/service/material.service";
 import { useCmpResultadoStore } from "@/store/business/cmp-resultado/cmp-resultado.store";
 
 // RNF06: si la adaptación tarda más de 15 s, se avisa que se usará una respuesta de ejemplo.
@@ -13,9 +16,27 @@ export const useCmpGuiaStore = defineStore("CmpGuiaStore", () => {
   const temaAbierto = ref<string | null>("tema-1");
   const formatoAdaptando = ref<FormatoId | null>(null);
   const tardaMucho = ref(false);
+  // Vista previa del PDF original: el enlace firmado vence, así que se pide cada vez que se abre.
+  const documentoAbierto = ref(false);
+  const documentoUrl = ref<string | null>(null);
+  const documentoError = ref(false);
 
   const cargarGuia = async () => {
+    documentoAbierto.value = false;
+    documentoUrl.value = null;
     guia.value = await obtenerGuiaService();
+  };
+
+  const alternarDocumento = async () => {
+    documentoAbierto.value = !documentoAbierto.value;
+    if (!documentoAbierto.value || !guia.value) return;
+    documentoUrl.value = null;
+    documentoError.value = false;
+    try {
+      documentoUrl.value = await enlaceDocumentoService(guia.value.id);
+    } catch {
+      documentoError.value = true;
+    }
   };
 
   const alternarTema = (temaId: string) => {
@@ -37,5 +58,17 @@ export const useCmpGuiaStore = defineStore("CmpGuiaStore", () => {
     }
   };
 
-  return { formatoAdaptando, guia, tardaMucho, temaAbierto, adaptar, alternarTema, cargarGuia };
+  return {
+    documentoAbierto,
+    documentoError,
+    documentoUrl,
+    formatoAdaptando,
+    guia,
+    tardaMucho,
+    temaAbierto,
+    adaptar,
+    alternarDocumento,
+    alternarTema,
+    cargarGuia,
+  };
 });

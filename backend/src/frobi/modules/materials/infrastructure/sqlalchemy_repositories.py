@@ -26,6 +26,7 @@ def _material(row: MaterialModel) -> Material:
         source=MaterialSource(row.source),
         text=row.extracted_text,
         created_at=row.created_at,
+        file_key=row.file_key,
     )
 
 
@@ -45,6 +46,7 @@ class SqlAlchemyMaterialRepository:
                 kind=material.kind.value,
                 source=material.source.value,
                 extracted_text=material.text,
+                file_key=material.file_key,
                 created_at=material.created_at,
             )
         )

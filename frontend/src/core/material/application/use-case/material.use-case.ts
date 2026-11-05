@@ -1,7 +1,11 @@
 import { PdfIlegibleError, type MaterialPort } from "@/core/material/infraestructure/ports/in/material.port";
 import type { ArchivoLeido, GuiaResumen, Material, Tema } from "@/core/shared/domain/view/material.view";
 import { api, esErrorApi } from "@/core/shared/infraestructure/http/api.client";
-import type { MaterialDto, MaterialResumenDto } from "@/core/shared/infraestructure/http/api.dto";
+import type {
+  MaterialArchivoDto,
+  MaterialDto,
+  MaterialResumenDto,
+} from "@/core/shared/infraestructure/http/api.dto";
 import { elegirMaterial, materialActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
 import { CARRERAS } from "@/constants/carreras.constant";
 import { tituloDeGuia, tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
@@ -41,6 +45,7 @@ export function materialDesdeApi(dto: MaterialDto, carrera: string): Material {
       .map((titulo) => titulo.charAt(0).toUpperCase() + titulo.slice(1)),
     minutosLectura: Math.max(1, Math.round(palabras / PALABRAS_POR_MINUTO)),
     temas,
+    tieneArchivo: dto.has_file ?? false,
   };
 }
 
@@ -117,6 +122,12 @@ export class MaterialUseCase implements MaterialPort {
     } finally {
       window.clearInterval(avance);
     }
+  }
+
+  // GET /materials/{id}/file: enlace temporal (15 min) al PDF guardado en R2.
+  async enlaceDocumento(materialId: string): Promise<string> {
+    const dto = await api.get<MaterialArchivoDto>(`/materials/${materialId}/file`);
+    return dto.url;
   }
 
   async pegarTexto(titulo: string, texto: string): Promise<string> {

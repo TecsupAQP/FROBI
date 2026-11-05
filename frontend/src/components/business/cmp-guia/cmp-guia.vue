@@ -10,7 +10,16 @@
       <v-cargando>Cargando la guía…</v-cargando>
     </div>
 
-    <div v-else :class="`${PREFIX}__columnas`">
+    <cmp-documento-original
+      v-if="guia?.tieneArchivo"
+      :titulo="guia.titulo"
+      :abierto="documentoAbierto"
+      :url="documentoUrl"
+      :error="documentoError"
+      @alternar="alternarDocumento"
+    />
+
+    <div v-if="guia" :class="`${PREFIX}__columnas`">
       <div :class="`${PREFIX}__temas`">
         <cmp-tema
           v-for="tema in guia.temas"

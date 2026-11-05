@@ -42,3 +42,11 @@ class MaterialNotFound(DomainError):
     code = "Resource.NotFound"
     kind = ErrorKind.NOT_FOUND
     default_message = "No encontramos ese material."
+
+
+class MaterialFileNotFound(DomainError):
+    """The material exists but has no original file (pasted text, samples, older uploads)."""
+
+    code = "Resource.NotFound"
+    kind = ErrorKind.NOT_FOUND
+    default_message = "Este material no tiene un documento original para mostrar."

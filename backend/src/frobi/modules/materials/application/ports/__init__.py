@@ -36,4 +36,27 @@ class PdfTextExtractor(Protocol):
         ...
 
 
-__all__ = ["MaterialRepository", "PdfTextExtractor", "SampleCatalog", "WorkRepository"]
+class FileStorageUnavailable(Exception):
+    """The storage did not take or give the file. Uploads still keep their text."""
+
+
+class FileStorage(Protocol):
+    """Original uploaded files (the PDF), private to whoever may see the material."""
+
+    async def put(self, key: str, data: bytes, content_type: str) -> None: ...
+
+    async def delete(self, key: str) -> None: ...
+
+    def signed_url(self, key: str, *, expires_in: int, filename: str) -> str:
+        """A temporary URL the browser can open without FROBI's token."""
+        ...
+
+
+__all__ = [
+    "FileStorage",
+    "FileStorageUnavailable",
+    "MaterialRepository",
+    "PdfTextExtractor",
+    "SampleCatalog",
+    "WorkRepository",
+]

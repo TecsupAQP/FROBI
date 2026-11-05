@@ -67,6 +67,13 @@ export interface MaterialDto {
   class_id: string | null;
   extracted_text: string;
   created_at: string;
+  // Hay un PDF original guardado (vista previa con GET /materials/{id}/file).
+  has_file?: boolean;
+}
+
+export interface MaterialArchivoDto {
+  url: string;
+  expires_in: number;
 }
 
 export interface MaterialResumenDto {

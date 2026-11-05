@@ -53,6 +53,8 @@ class Material:
     source: MaterialSource
     text: str
     created_at: datetime
+    # Where the original upload lives in file storage; None for pasted text and samples.
+    file_key: str | None = None
 
     @classmethod
     def create(
@@ -90,6 +92,13 @@ class Material:
             and self.class_id is not None
             and self.class_id == active_class_id
         )
+
+    @property
+    def has_file(self) -> bool:
+        return self.file_key is not None
+
+    def file_key_for_upload(self) -> str:
+        return f"materials/{self.owner_id}/{self.id}.pdf"
 
     def preview(self, length: int = 160) -> str:
         flat = " ".join(self.text.split())

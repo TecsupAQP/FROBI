@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     llm_timeout_seconds: float = Field(default=15.0, gt=0)
     llm_requests_per_minute: int = Field(default=10, ge=1)
     health_timeout_seconds: float = Field(default=2.0, gt=0)
+    # Cloudflare R2 (S3 API) for the original PDFs. Without keys uploads keep only their text.
+    r2_endpoint: str | None = None
+    r2_access_key_id: str | None = None
+    r2_secret_access_key: SecretStr | None = None
+    r2_bucket: str = "frobi"
+    r2_signed_url_seconds: int = Field(default=900, ge=60, le=604_800)
 
     @field_validator("cors_origins", mode="before")
     @classmethod

@@ -10,6 +10,7 @@ from frobi.modules.materials.application import (
     CreateMaterialHandler,
     CreateWorkCommand,
     CreateWorkHandler,
+    GetMaterialFileHandler,
     GetMaterialHandler,
     GuidesHandler,
     ListSamplesHandler,
@@ -30,11 +31,13 @@ from .dependencies import (
     get_get_material,
     get_guides,
     get_list_samples,
+    get_material_file,
     get_upload_material,
 )
 from .schemas import (
     CreateMaterialRequest,
     CreateWorkRequest,
+    MaterialFileOut,
     MaterialOut,
     MaterialSummaryOut,
     WorkOut,
@@ -120,6 +123,20 @@ async def get_material(
     handler: Annotated[GetMaterialHandler, Depends(get_get_material)],
 ) -> MaterialOut:
     return MaterialOut.from_domain(await handler.handle(person_id, material_id))
+
+
+@router.get(
+    "/materials/{material_id}/file",
+    summary="Enlace temporal al PDF original, para la vista previa",
+    responses=NOT_FOUND_RESPONSES,
+)
+async def material_file(
+    material_id: UUID,
+    person_id: CurrentPersonId,
+    handler: Annotated[GetMaterialFileHandler, Depends(get_material_file)],
+) -> MaterialFileOut:
+    file = await handler.handle(person_id, material_id)
+    return MaterialFileOut(url=file.url, expires_in=file.expires_in)
 
 
 @router.post(

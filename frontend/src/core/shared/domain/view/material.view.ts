@@ -13,6 +13,8 @@ export interface Material {
   etiquetas: string[];
   minutosLectura: number;
   temas: Tema[];
+  // La persona subió un PDF y se puede ver el documento original.
+  tieneArchivo: boolean;
 }
 
 // Resultado de leer un PDF subido: se muestra para que la persona lo revise.

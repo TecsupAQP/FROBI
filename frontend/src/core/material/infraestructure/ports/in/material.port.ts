@@ -14,6 +14,8 @@ export interface MaterialPort {
   listarGuias(): Promise<GuiaResumen[]>;
   // alAvanzar recibe 0–100 mientras se sube y se lee el archivo.
   leerPdf(archivo: File, alAvanzar: (porcentaje: number) => void): Promise<ArchivoLeido>;
+  // Enlace temporal al PDF original que subió la persona, para verlo en la guía.
+  enlaceDocumento(materialId: string): Promise<string>;
   // Cuando el PDF no se puede leer, la persona pega el texto.
   pegarTexto(titulo: string, texto: string): Promise<string>;
   // Desde aquí, la guía, las adaptaciones y la escalera usan este material.

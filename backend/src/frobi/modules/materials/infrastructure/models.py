@@ -27,6 +27,7 @@ class MaterialModel(Base):
     kind: Mapped[str] = mapped_column(String(16))
     source: Mapped[str] = mapped_column(String(8))
     extracted_text: Mapped[str] = mapped_column(Text)
+    file_key: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 

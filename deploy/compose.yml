@@ -43,6 +43,10 @@ services:
       FROBI_LLM_API_KEY: ${FROBI_LLM_API_KEY:-}
       FROBI_LLM_MODEL: ${FROBI_LLM_MODEL:-}
       FROBI_LLM_BASE_URL: ${FROBI_LLM_BASE_URL:-}
+      FROBI_R2_ENDPOINT: ${FROBI_R2_ENDPOINT:-}
+      FROBI_R2_ACCESS_KEY_ID: ${FROBI_R2_ACCESS_KEY_ID:-}
+      FROBI_R2_SECRET_ACCESS_KEY: ${FROBI_R2_SECRET_ACCESS_KEY:-}
+      FROBI_R2_BUCKET: ${FROBI_R2_BUCKET:-frobi}
     depends_on:
       postgres:
         condition: service_healthy

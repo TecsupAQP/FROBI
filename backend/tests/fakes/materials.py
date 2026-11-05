@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 from uuid import UUID
 
+from frobi.modules.materials.application.ports import FileStorageUnavailable
 from frobi.modules.materials.domain import (
     Material,
     MaterialKind,
@@ -78,3 +79,22 @@ class FixedClassContext:
 
     async def active_class(self, person_id: UUID) -> UUID | None:
         return self.active.get(person_id)
+
+
+class InMemoryFileStorage:
+    """``FileStorage`` in a dict; ``broken=True`` behaves like R2 being down."""
+
+    def __init__(self, *, broken: bool = False) -> None:
+        self.files: dict[str, bytes] = {}
+        self.broken = broken
+
+    async def put(self, key: str, data: bytes, content_type: str) -> None:
+        if self.broken:
+            raise FileStorageUnavailable("down")
+        self.files[key] = data
+
+    async def delete(self, key: str) -> None:
+        self.files.pop(key, None)
+
+    def signed_url(self, key: str, *, expires_in: int, filename: str) -> str:
+        return f"https://files.test/{key}?expires={expires_in}"

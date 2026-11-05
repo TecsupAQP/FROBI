@@ -1,3 +1,3 @@
-from .handler import GetMaterialHandler
+from .handler import GetMaterialFileHandler, GetMaterialHandler, MaterialFile
 
-__all__ = ["GetMaterialHandler"]
+__all__ = ["GetMaterialFileHandler", "GetMaterialHandler", "MaterialFile"]
