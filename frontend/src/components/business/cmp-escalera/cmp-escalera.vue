@@ -27,25 +27,16 @@
               :escalon="escalon"
               :numero="indice + 1"
               :estado="estadoDe(escalon.id)"
-              :texto-bloqueo="BLOQUEOS[escalon.id]"
+              :texto-bloqueo="textoBloqueo(escalon.id)"
             >
-              <form
-                v-if="escalon.id === 'pista-2' && !progreso.resultado"
-                :class="`${PREFIX}__intento`"
-                @submit.prevent="probarIntento"
+              <v-button
+                v-if="escalon.id === siguiente"
+                variante="secundario"
+                :deshabilitado="abriendo"
+                @click="abrirSiguiente"
               >
-                <v-field
-                  id="escalera-intento"
-                  :model-value="progreso.intento"
-                  etiqueta="Tu intento"
-                  placeholder="Creo que es el capacitivo porque…"
-                  @update:model-value="escribirIntento"
-                />
-                <v-cargando v-if="probando">Revisando tu intento…</v-cargando>
-                <v-button v-else tipo="submit" bloque :deshabilitado="!progreso.intento.trim()">
-                  Probar mi respuesta
-                </v-button>
-              </form>
+                {{ abriendo ? "Abriendo…" : `Ver ${escalon.titulo.toLowerCase()}` }}
+              </v-button>
               <div
                 v-if="escalon.id === 'respuesta' && progreso.resultado"
                 :class="[
@@ -61,6 +52,21 @@
               </div>
             </cmp-escalon>
           </ol>
+
+          <!-- El intento propio se puede escribir en cualquier momento, incluso sin pedir pistas. -->
+          <form v-if="!progreso.resultado" :class="`${PREFIX}__intento`" @submit.prevent="probarIntento">
+            <v-field
+              id="escalera-intento"
+              :model-value="progreso.intento"
+              etiqueta="Tu intento"
+              placeholder="Creo que es el capacitivo porque…"
+              @update:model-value="escribirIntento"
+            />
+            <v-cargando v-if="probando">Revisando tu intento…</v-cargando>
+            <v-button v-else tipo="submit" bloque :deshabilitado="!progreso.intento.trim()">
+              Probar mi respuesta
+            </v-button>
+          </form>
           <p v-if="escalonesOcultos" :class="`${PREFIX}__nota`">
             <v-icon nombre="type" :tamano="20" />
             Textos cortos: verás el siguiente escalón cuando avances.
@@ -80,10 +86,10 @@
           <v-button
             variante="secundario"
             bloque
-            :deshabilitado="progreso.pasoAPasoAbierto"
-            @click="abrirPasoAPaso"
+            :deshabilitado="!siguiente || abriendo"
+            @click="abrirSiguiente"
           >
-            {{ progreso.pasoAPasoAbierto ? "Paso a paso abierto" : "Necesito el paso a paso" }}
+            {{ siguiente ? `Pedir ${tituloDe(siguiente).toLowerCase()}` : "No hay más ayudas por ahora" }}
           </v-button>
           <v-button
             variante="secundario"

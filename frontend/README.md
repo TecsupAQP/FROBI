@@ -60,7 +60,7 @@ La URL de la API se cambia con `VITE_API_URL` (ver [`.env.example`](./.env.examp
 | --- | --- |
 | `autenticacion` | `POST /sessions`, `DELETE /sessions/current`, `PATCH /me` |
 | `perfil` | `GET /me`, `POST /me/onboarding` (`/reset`), `GET`/`PATCH /me/settings`, `GET /languages`, `POST /classes/join` |
-| `material` | `GET /materials/samples`, `GET /materials/{id}`, `POST /materials/upload`, `POST /materials` |
+| `material` | `GET /materials/guides` (Mis guías), `GET /materials/samples`, `GET /materials/{id}`, `POST /materials/upload`, `POST /materials` |
 | `adaptacion` | `POST /materials/{id}/adaptations` |
 | `ayuda` | `POST /help-attempts`, `POST /help-attempts/{id}/steps`, `POST /help-attempts/{id}/own-answer` |
 | `verificacion` | `POST /adaptations/{id}/questions`, `POST /questions/{id}/answers` |
@@ -76,6 +76,8 @@ Notas del contrato:
   lo traduce al vocabulario del front.
 - La escalera y las preguntas se piden sobre una adaptación: el front recuerda el material y la última
   adaptación vistos (`contexto-estudio.ts`). Si aún no hay ninguna, pide una en lectura fácil.
+- La escalera no abre nada sola (RF39): cada escalón se pide con su botón y la API exige el orden
+  pista 1 → pista 2 → paso a paso → respuesta final (esta, además, después de un intento propio).
 - «Inténtalo sin IA» abre su propio intento: practicar sin IA cuenta como logro aunque antes se hayan
   pedido pistas en la escalera.
 - Lo que la API no guarda vive en el navegador: por qué puerta entró la persona (`frobi-perfil-local`) y la

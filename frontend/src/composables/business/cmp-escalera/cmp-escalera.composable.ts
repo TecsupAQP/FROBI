@@ -3,20 +3,30 @@ import { useCmpEscaleraStore } from "@/store/business/cmp-escalera/cmp-escalera.
 
 function useCmpEscalera() {
   const store = useCmpEscaleraStore();
-  const { criterios, error, nivelAyuda, probando, progreso, respuestaDesbloqueada, tarea } =
-    storeToRefs(store);
-
-  return {
+  const {
+    abriendo,
     criterios,
     error,
     nivelAyuda,
     probando,
     progreso,
     respuestaDesbloqueada,
+    siguiente,
+    tarea,
+  } = storeToRefs(store);
+
+  return {
+    abriendo,
+    criterios,
+    error,
+    nivelAyuda,
+    probando,
+    progreso,
+    respuestaDesbloqueada,
+    siguiente,
     tarea,
 
-    abrirPasoAPaso: store.abrirPasoAPaso,
-    abrirPistas: store.abrirPistas,
+    abrirSiguiente: store.abrirSiguiente,
     alternarCriterio: store.alternarCriterio,
     cargar: store.cargar,
     escribirIntento: store.escribirIntento,

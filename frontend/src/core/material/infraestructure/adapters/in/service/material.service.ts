@@ -4,6 +4,7 @@ import { MaterialUseCase } from "@/core/material/application/use-case/material.u
 const materialPort: MaterialPort = new MaterialUseCase();
 
 export const obtenerGuiaService = () => materialPort.obtenerGuia();
+export const listarGuiasService = () => materialPort.listarGuias();
 export const leerPdfService = (archivo: File, alAvanzar: (porcentaje: number) => void) =>
   materialPort.leerPdf(archivo, alAvanzar);
 export const pegarTextoService = (titulo: string, texto: string) => materialPort.pegarTexto(titulo, texto);

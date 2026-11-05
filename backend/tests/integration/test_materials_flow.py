@@ -180,3 +180,30 @@ async def test_work_with_the_wrong_kinds_is_422(live_client: AsyncClient) -> Non
 
     assert work.status_code == 422
     assert work.json()["code"] == "Materials.WrongKind"
+
+
+async def test_my_guides_lists_my_own_first_then_the_samples(live_client: AsyncClient) -> None:
+    ana = await _enter(live_client, "Ana")
+    luis = await _enter(live_client, "Luis")
+    for title in ("Motores", "Neumática"):
+        await live_client.post(
+            "/api/v1/materials",
+            headers=ana,
+            json={"title": title, "kind": "guide", "text": f"Apuntes de {title}."},
+        )
+    await live_client.post(
+        "/api/v1/materials",
+        headers=ana,
+        json={"title": "Borrador", "kind": "draft", "text": "Esto no es una guía."},
+    )
+
+    mine = await live_client.get("/api/v1/materials/guides", headers=ana)
+    theirs = await live_client.get("/api/v1/materials/guides", headers=luis)
+
+    assert mine.status_code == 200
+    assert [g["title"] for g in mine.json()] == [
+        "Neumática",
+        "Motores",
+        "Guía de sensores industriales",
+    ]
+    assert [g["id"] for g in theirs.json()] == [SAMPLE_ID]

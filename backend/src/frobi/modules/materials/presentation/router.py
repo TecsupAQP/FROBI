@@ -11,6 +11,7 @@ from frobi.modules.materials.application import (
     CreateWorkCommand,
     CreateWorkHandler,
     GetMaterialHandler,
+    GuidesHandler,
     ListSamplesHandler,
     UploadMaterialCommand,
     UploadMaterialHandler,
@@ -27,6 +28,7 @@ from .dependencies import (
     get_create_material,
     get_create_work,
     get_get_material,
+    get_guides,
     get_list_samples,
     get_upload_material,
 )
@@ -47,6 +49,17 @@ async def list_samples(
     handler: Annotated[ListSamplesHandler, Depends(get_list_samples)],
 ) -> list[MaterialSummaryOut]:
     return [MaterialSummaryOut.from_domain(m) for m in await handler.handle()]
+
+
+@router.get(
+    "/materials/guides",
+    summary="Mis guías: las que subí o pegué (las más recientes primero) y las de ejemplo",
+)
+async def list_my_guides(
+    person_id: CurrentPersonId,
+    handler: Annotated[GuidesHandler, Depends(get_guides)],
+) -> list[MaterialSummaryOut]:
+    return [MaterialSummaryOut.from_domain(m) for m in await handler.for_person(person_id)]
 
 
 @router.post(

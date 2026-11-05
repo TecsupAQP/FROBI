@@ -9,6 +9,7 @@ from frobi.modules.materials.application import (
     CreateMaterialHandler,
     CreateWorkHandler,
     GetMaterialHandler,
+    GuidesHandler,
     ListSamplesHandler,
     UploadMaterialHandler,
 )
@@ -28,6 +29,10 @@ AppClock = Annotated[Clock, Depends(get_clock)]
 
 def get_list_samples() -> ListSamplesHandler:
     return ListSamplesHandler(FileSampleCatalog())
+
+
+def get_guides(db: DbSession) -> GuidesHandler:
+    return GuidesHandler(SqlAlchemyMaterialRepository(db), FileSampleCatalog())
 
 
 def get_get_material(db: DbSession) -> GetMaterialHandler:

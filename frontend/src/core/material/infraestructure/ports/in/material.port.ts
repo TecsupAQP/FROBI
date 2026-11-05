@@ -1,4 +1,4 @@
-import type { ArchivoLeido, Material } from "@/core/shared/domain/view/material.view";
+import type { ArchivoLeido, GuiaResumen, Material } from "@/core/shared/domain/view/material.view";
 
 export class PdfIlegibleError extends Error {
   constructor() {
@@ -10,6 +10,8 @@ export class PdfIlegibleError extends Error {
 export interface MaterialPort {
   // La guía que estudia la persona: la de ejemplo o la que subió.
   obtenerGuia(): Promise<Material>;
+  // Todas sus guías (las propias primero) para volver a cualquiera.
+  listarGuias(): Promise<GuiaResumen[]>;
   // alAvanzar recibe 0–100 mientras se sube y se lee el archivo.
   leerPdf(archivo: File, alAvanzar: (porcentaje: number) => void): Promise<ArchivoLeido>;
   // Cuando el PDF no se puede leer, la persona pega el texto.

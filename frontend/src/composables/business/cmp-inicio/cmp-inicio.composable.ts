@@ -3,14 +3,24 @@ import { useCmpInicioStore } from "@/store/business/cmp-inicio/cmp-inicio.store"
 
 function useCmpInicio() {
   const store = useCmpInicioStore();
-  const { archivo, archivoElegido, fase, guia, modalAbierto, nombreArchivo, progreso, tamanoArchivoMb } =
-    storeToRefs(store);
+  const {
+    archivo,
+    archivoElegido,
+    fase,
+    guia,
+    guias,
+    modalAbierto,
+    nombreArchivo,
+    progreso,
+    tamanoArchivoMb,
+  } = storeToRefs(store);
 
   return {
     archivo,
     archivoElegido,
     fase,
     guia,
+    guias,
     modalAbierto,
     nombreArchivo,
     progreso,
@@ -21,6 +31,7 @@ function useCmpInicio() {
     cargarGuia: store.cargarGuia,
     cerrarModal: store.cerrarModal,
     elegirArchivo: store.elegirArchivo,
+    elegirGuia: store.elegirGuia,
     usarGuia: store.usarGuia,
   };
 }

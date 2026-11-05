@@ -4167,6 +4167,56 @@
         ]
       }
     },
+    "/api/v1/materials/guides": {
+      "get": {
+        "operationId": "list_my_guides_api_v1_materials_guides_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MaterialSummaryOut"
+                  },
+                  "title": "Response List My Guides Api V1 Materials Guides Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mis guías: las que subí o pegué (las más recientes primero) y las de ejemplo",
+        "tags": [
+          "M3 · Material"
+        ]
+      }
+    },
     "/api/v1/materials/samples": {
       "get": {
         "operationId": "list_samples_api_v1_materials_samples_get",
