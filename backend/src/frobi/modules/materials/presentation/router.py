@@ -1,91 +1,71 @@
-"""M3 · Material.
+"""M3 · Material."""
 
-Stub: returns example data so the front can integrate. The real use cases replace each body.
-"""
-
-from datetime import UTC, datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 
-from frobi.modules.materials.domain.errors import MAX_UPLOAD_BYTES, FileTooLarge, PdfUnreadable
+from frobi.modules.materials.application import (
+    CreateMaterialCommand,
+    CreateMaterialHandler,
+    CreateWorkCommand,
+    CreateWorkHandler,
+    GetMaterialHandler,
+    ListSamplesHandler,
+    UploadMaterialCommand,
+    UploadMaterialHandler,
+)
+from frobi.modules.materials.domain import MAX_UPLOAD_BYTES, FileTooLarge, MaterialKind
 from frobi.shared.presentation import (
     AUTH_RESPONSES,
     NOT_FOUND_RESPONSES,
+    CurrentPersonId,
     problem,
-    require_token,
 )
 
+from .dependencies import (
+    get_create_material,
+    get_create_work,
+    get_get_material,
+    get_list_samples,
+    get_upload_material,
+)
 from .schemas import (
     CreateMaterialRequest,
     CreateWorkRequest,
-    MaterialKind,
     MaterialOut,
-    MaterialSource,
     MaterialSummaryOut,
-    OrganizedWork,
     WorkOut,
 )
 
-router = APIRouter(
-    tags=["M3 · Material"],
-    dependencies=[Depends(require_token)],
-    responses=AUTH_RESPONSES,
-)
-
-SAMPLE_ID = UUID("00000000-0000-4000-8000-00000000a001")
-EXAMPLE_WORK_ID = UUID("00000000-0000-4000-8000-00000000b001")
-CREATED_AT = datetime(2026, 11, 4, 12, 0, tzinfo=UTC)
-SAMPLE_TEXT = (
-    "Guía de sensores industriales.\n"
-    "Un sensor convierte una magnitud física, como la temperatura o la presión, en una señal "
-    "eléctrica. Los sensores inductivos detectan metales sin contacto. Los capacitivos detectan "
-    "también plásticos y líquidos. Un termopar mide temperatura por la unión de dos metales."
-)
-SAMPLES = [
-    MaterialSummaryOut(
-        id=SAMPLE_ID,
-        title="Guía de sensores industriales",
-        kind=MaterialKind.GUIDE,
-        source=MaterialSource.SAMPLE,
-        preview=SAMPLE_TEXT[:120],
-    )
-]
-
-
-def _material(
-    material_id: UUID, title: str, kind: MaterialKind, source: MaterialSource, text: str
-) -> MaterialOut:
-    return MaterialOut(
-        id=material_id,
-        title=title,
-        kind=kind,
-        source=source,
-        class_id=None,
-        extracted_text=text,
-        created_at=CREATED_AT,
-    )
+router = APIRouter(tags=["M3 · Material"], responses=AUTH_RESPONSES)
 
 
 @router.get("/materials/samples", summary="Guías de ejemplo")
-async def list_samples() -> list[MaterialSummaryOut]:
-    return SAMPLES
+async def list_samples(
+    _: CurrentPersonId,
+    handler: Annotated[ListSamplesHandler, Depends(get_list_samples)],
+) -> list[MaterialSummaryOut]:
+    return [MaterialSummaryOut.from_domain(m) for m in await handler.handle()]
 
 
 @router.post(
     "/materials",
     status_code=status.HTTP_201_CREATED,
     summary="Crear un material pegando texto",
+    responses={422: problem("Título o texto vacío (`Materials.InvalidTitle`, `EmptyText`).")},
 )
-async def create_material(body: CreateMaterialRequest) -> MaterialOut:
-    return _material(
-        UUID("00000000-0000-4000-8000-00000000a002"),
-        body.title,
-        MaterialKind(body.kind),
-        MaterialSource.PASTE,
-        body.text,
+async def create_material(
+    body: CreateMaterialRequest,
+    person_id: CurrentPersonId,
+    handler: Annotated[CreateMaterialHandler, Depends(get_create_material)],
+) -> MaterialOut:
+    material = await handler.handle(
+        CreateMaterialCommand(
+            owner_id=person_id, title=body.title, kind=MaterialKind(body.kind), text=body.text
+        )
     )
+    return MaterialOut.from_domain(material)
 
 
 @router.post(
@@ -93,26 +73,27 @@ async def create_material(body: CreateMaterialRequest) -> MaterialOut:
     status_code=status.HTTP_201_CREATED,
     summary="Subir un PDF (máximo 10 MB) y obtener su texto",
     responses={
-        422: problem("PDF ilegible (`Materials.PdfUnreadable`) o más de 10 MB."),
+        422: problem(
+            "PDF ilegible o sin texto (`Materials.PdfUnreadable`) "
+            "o más de 10 MB (`Materials.FileTooLarge`)."
+        ),
     },
 )
 async def upload_material(
+    person_id: CurrentPersonId,
+    handler: Annotated[UploadMaterialHandler, Depends(get_upload_material)],
     file: Annotated[UploadFile, File(description="PDF de hasta 10 MB.")],
     title: Annotated[str, Form(min_length=1, max_length=120)],
     kind: Annotated[Literal["guide", "brief", "draft"], Form()] = "guide",
 ) -> MaterialOut:
-    content = await file.read(MAX_UPLOAD_BYTES + 1)
-    if len(content) > MAX_UPLOAD_BYTES:
+    # Read one byte past the limit so a huge upload is rejected without loading it all.
+    data = await file.read(MAX_UPLOAD_BYTES + 1)
+    if len(data) > MAX_UPLOAD_BYTES:
         raise FileTooLarge()
-    if not content.startswith(b"%PDF"):
-        raise PdfUnreadable()
-    return _material(
-        UUID("00000000-0000-4000-8000-00000000a003"),
-        title,
-        MaterialKind(kind),
-        MaterialSource.UPLOAD,
-        SAMPLE_TEXT,
+    material = await handler.handle(
+        UploadMaterialCommand(owner_id=person_id, title=title, kind=MaterialKind(kind), data=data)
     )
+    return MaterialOut.from_domain(material)
 
 
 @router.get(
@@ -120,34 +101,33 @@ async def upload_material(
     summary="Detalle de un material y su texto",
     responses=NOT_FOUND_RESPONSES,
 )
-async def get_material(material_id: UUID) -> MaterialOut:
-    return _material(
-        material_id,
-        "Guía de sensores industriales",
-        MaterialKind.GUIDE,
-        MaterialSource.SAMPLE,
-        SAMPLE_TEXT,
-    )
+async def get_material(
+    material_id: UUID,
+    person_id: CurrentPersonId,
+    handler: Annotated[GetMaterialHandler, Depends(get_get_material)],
+) -> MaterialOut:
+    return MaterialOut.from_domain(await handler.handle(person_id, material_id))
 
 
 @router.post(
     "/works",
     status_code=status.HTTP_201_CREATED,
     summary="Organizar consigna y borrador (sin juzgar la autoría)",
-    responses=NOT_FOUND_RESPONSES,
+    responses={
+        **NOT_FOUND_RESPONSES,
+        422: problem("La consigna no es `brief` o el borrador no es `draft`."),
+    },
 )
-async def create_work(body: CreateWorkRequest) -> WorkOut:
-    return WorkOut(
-        id=EXAMPLE_WORK_ID,
-        brief_material_id=body.brief_material_id,
-        draft_material_id=body.draft_material_id,
-        organized=OrganizedWork(
-            requirements=[
-                "Explicar qué es un sensor",
-                "Comparar dos tipos de sensores",
-                "Dar un ejemplo industrial",
-            ],
-            topics=["Sensores inductivos", "Sensores capacitivos"],
-            missing=["Dar un ejemplo industrial"],
-        ),
+async def create_work(
+    body: CreateWorkRequest,
+    person_id: CurrentPersonId,
+    handler: Annotated[CreateWorkHandler, Depends(get_create_work)],
+) -> WorkOut:
+    work = await handler.handle(
+        CreateWorkCommand(
+            person_id=person_id,
+            brief_material_id=body.brief_material_id,
+            draft_material_id=body.draft_material_id,
+        )
     )
+    return WorkOut.from_domain(work)
