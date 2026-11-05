@@ -55,6 +55,25 @@ git pull
 docker compose -f deploy/compose.yml --env-file deploy/.env up -d --build
 ```
 
+## VPS pequeño (menos de 2 GB de RAM)
+
+Compilar el front en el servidor puede quedarse sin memoria. Construye las imágenes en tu compu y
+pásalas por SSH (`combi` es el nombre del host en `~/.ssh/config`):
+
+```bash
+# En tu compu (Git Bash), desde la raíz del repo
+POSTGRES_PASSWORD=solo-para-construir docker compose -f deploy/compose.yml build
+docker save frobi-web:latest frobi-api:latest | gzip -1 | ssh combi 'gunzip | docker load'
+
+# En el servidor
+cd ~/FROBI && git pull
+docker compose -f deploy/compose.yml --env-file deploy/.env up -d --no-build
+```
+
+Esa contraseña solo sirve para que Compose acepte construir y no queda en las imágenes: la
+contraseña y la clave reales se leen del `deploy/.env` del servidor al levantar. Cada contenedor tiene un tope de memoria
+(`mem_limit`); en total FROBI usa unos 150 MB.
+
 ## Comandos útiles
 
 ```bash
