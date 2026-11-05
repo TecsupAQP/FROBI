@@ -43,3 +43,36 @@ class PromptScoreRow:
     total: int
     autonomy_level: int
     created_at: datetime
+
+
+# --- Guías de la clase: de qué se calcula su porcentaje de avance ------------------------------
+
+
+@dataclass(frozen=True, slots=True)
+class GuideAdaptation:
+    """An adaptation made inside a class: which guide (material) it adapted."""
+
+    adaptation_id: UUID
+    person_id: UUID
+    material_id: UUID
+    created_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
+class QuestionResult:
+    """A question asked over an adaptation, with the person's latest answer (if any)."""
+
+    person_id: UUID
+    adaptation_id: UUID
+    question_id: UUID
+    answered: bool
+    correct: bool
+
+
+@dataclass(frozen=True, slots=True)
+class TaskAttempt:
+    """A help-ladder attempt on a task (``task_ref``); done when there is an own answer."""
+
+    person_id: UUID
+    task_ref: str
+    own_answer: bool

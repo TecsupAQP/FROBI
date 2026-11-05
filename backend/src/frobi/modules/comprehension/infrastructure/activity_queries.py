@@ -5,7 +5,7 @@ from uuid import UUID
 from sqlalchemy import ColumnElement, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from frobi.shared.application import AnswerRow
+from frobi.shared.application import AnswerRow, QuestionResult
 
 from .models import AnswerModel, QuestionModel
 
@@ -45,3 +45,30 @@ async def answers_in_class(session: AsyncSession, class_id: UUID) -> list[Answer
 
 async def answers_of_person(session: AsyncSession, person_id: UUID) -> list[AnswerRow]:
     return await _answers(session, AnswerModel.person_id == person_id)
+
+
+async def question_results(
+    session: AsyncSession, adaptation_ids: list[UUID]
+) -> list[QuestionResult]:
+    """Questions over these adaptations, each with its person's latest answer (if any)."""
+    if not adaptation_ids:
+        return []
+    questions = (
+        await session.execute(
+            select(QuestionModel.id, QuestionModel.person_id, QuestionModel.adaptation_id).where(
+                QuestionModel.adaptation_id.in_(adaptation_ids)
+            )
+        )
+    ).all()
+    latest: dict[UUID, bool] = {}
+    answers = await session.execute(
+        select(AnswerModel.question_id, AnswerModel.is_correct)
+        .where(AnswerModel.question_id.in_([q.id for q in questions]))
+        .order_by(AnswerModel.created_at)
+    )
+    for answer in answers:
+        latest[answer.question_id] = answer.is_correct
+    return [
+        QuestionResult(q.person_id, q.adaptation_id, q.id, q.id in latest, latest.get(q.id, False))
+        for q in questions
+    ]

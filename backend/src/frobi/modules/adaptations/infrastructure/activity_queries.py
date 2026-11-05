@@ -6,7 +6,7 @@ from sqlalchemy import ColumnElement, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from frobi.modules.adaptations.domain import Format, Recipe
-from frobi.shared.application import FormatUse
+from frobi.shared.application import FormatUse, GuideAdaptation
 
 from .models import AdaptationModel
 
@@ -40,3 +40,18 @@ async def latest_recipe_of_person(session: AsyncSession, person_id: UUID) -> Rec
     if recipe is None:
         return None
     return Recipe(recipe["context"], recipe["goal"], recipe["level"], Format(recipe["format"]))
+
+
+async def guide_adaptations_in_class(
+    session: AsyncSession, class_id: UUID
+) -> list[GuideAdaptation]:
+    query = select(
+        AdaptationModel.id,
+        AdaptationModel.person_id,
+        AdaptationModel.material_id,
+        AdaptationModel.created_at,
+    ).where(AdaptationModel.class_id == class_id)
+    return [
+        GuideAdaptation(row.id, row.person_id, row.material_id, row.created_at)
+        for row in await session.execute(query)
+    ]

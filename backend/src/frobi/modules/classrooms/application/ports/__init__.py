@@ -5,8 +5,16 @@ from datetime import datetime
 from typing import Protocol
 from uuid import UUID
 
-from frobi.modules.classrooms.domain import Classroom, Membership
-from frobi.shared.application import AnswerRow, FormatUse, HelpUse, PromptScoreRow
+from frobi.modules.classrooms.domain import Classroom, GuidePlan, Membership
+from frobi.shared.application import (
+    AnswerRow,
+    FormatUse,
+    GuideAdaptation,
+    HelpUse,
+    PromptScoreRow,
+    QuestionResult,
+    TaskAttempt,
+)
 
 
 class ClassRepository(Protocol):
@@ -90,6 +98,29 @@ class ClassMaterials(Protocol):
     async def list_for_class(self, class_id: UUID) -> list[ClassMaterial]: ...
 
 
+class GuidePlanRepository(Protocol):
+    async def get(self, material_id: UUID) -> GuidePlan | None: ...
+
+    async def save(self, plan: GuidePlan) -> None:
+        """Insert or replace the plan and its tasks."""
+        ...
+
+    async def list_for_class(self, class_id: UUID) -> list[GuidePlan]: ...
+
+
+@dataclass(frozen=True, slots=True)
+class GuideActivity:
+    adaptations: list[GuideAdaptation]
+    questions: list[QuestionResult]
+    attempts: list[TaskAttempt]
+
+
+class GuideActivityReader(Protocol):
+    """What the guides' progress is made of, recorded with this ``class_id`` only (RNF16)."""
+
+    async def read(self, class_id: UUID) -> GuideActivity: ...
+
+
 __all__ = [
     "ClassActivity",
     "ClassActivityReader",
@@ -97,6 +128,9 @@ __all__ = [
     "ClassMaterials",
     "ClassRepository",
     "CodeGenerator",
+    "GuideActivity",
+    "GuideActivityReader",
+    "GuidePlanRepository",
     "MembershipRepository",
     "PersonDirectory",
 ]

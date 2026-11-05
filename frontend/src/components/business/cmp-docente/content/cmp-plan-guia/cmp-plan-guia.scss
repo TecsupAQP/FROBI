@@ -1,0 +1,61 @@
+$prefix: cmp-plan-guia;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-16;
+
+  &__modos {
+    display: grid;
+    gap: $esp-12;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__leyenda {
+    @include texto-etiqueta;
+    margin-bottom: $esp-8;
+    color: $texto-principal;
+  }
+
+  &__opcion {
+    display: block;
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__detalle {
+    display: block;
+    color: $texto-secundario;
+  }
+
+  &__tareas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+  }
+
+  &__tarea {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+
+    @include tablet {
+      flex-direction: row;
+      align-items: flex-end;
+    }
+  }
+
+  &__campo {
+    flex: 1;
+  }
+
+  &__agregar {
+    align-self: flex-start;
+  }
+}

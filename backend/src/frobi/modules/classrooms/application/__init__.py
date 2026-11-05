@@ -4,6 +4,16 @@ from .class_content import (
     UploadClassContentHandler,
 )
 from .dashboard import DashboardHandler, Panel, StudentDetail, StudentDetailHandler
+from .guides import (
+    ClassGuide,
+    ClassGuidesProgressHandler,
+    GuideClassProgress,
+    ListClassGuidesHandler,
+    MyGuidesProgressHandler,
+    SaveGuidePlanCommand,
+    SaveGuidePlanHandler,
+    StudentGuideProgress,
+)
 from .manage_class import (
     CreateClassCommand,
     CreateClassHandler,
@@ -24,21 +34,29 @@ from .membership import (
 __all__ = [
     "ActiveClass",
     "ActiveClassHandler",
+    "ClassGuide",
+    "ClassGuidesProgressHandler",
     "CreateClassCommand",
     "CreateClassHandler",
     "DashboardHandler",
     "GetClassHandler",
+    "GuideClassProgress",
     "InviteStudentsHandler",
     "JoinClassHandler",
     "JoinWithCodeHandler",
     "LeaveClassHandler",
     "ListClassContentHandler",
+    "ListClassGuidesHandler",
     "ListMembersHandler",
     "ListMyClassesHandler",
     "MembersView",
+    "MyGuidesProgressHandler",
     "Panel",
+    "SaveGuidePlanCommand",
+    "SaveGuidePlanHandler",
     "StudentDetail",
     "StudentDetailHandler",
+    "StudentGuideProgress",
     "UploadClassContentCommand",
     "UploadClassContentHandler",
 ]

@@ -26,8 +26,9 @@ export const RECORRIDO_ESTUDIANTE: PasoRecorrido[] = [
     objetivo: "guia-actual",
   },
   {
-    titulo: "El material de tu clase",
-    texto: "Si te uniste a una clase, aquí aparece lo que sube tu docente. Elige uno para estudiarlo.",
+    titulo: "Las guías de tu clase",
+    texto:
+      "Aquí aparecen las guías de tu docente con tu avance. Si una tiene tareas, resuélvelas; si es de estudio, al final haz su evaluación.",
     destino: { name: RutaEnum.INICIO },
     ruta: RutaEnum.INICIO,
     objetivo: "material-clase",
@@ -116,13 +117,13 @@ export const RECORRIDO_DOCENTE: PasoRecorrido[] = [
     siFalta: "Cuando crees tu clase, aquí verás su código.",
   },
   {
-    titulo: "Comparte material con tu clase",
+    titulo: "Guías de estudio o con tareas",
     texto:
-      "Sube PDF cuando quieras. Tus alumnos los ven en su Inicio y los estudian en el formato que les sirva.",
+      "Sube cada guía y elige: de estudio (la IA evalúa al final) o con tareas que tú escribes. Aquí ves cuánto avanzó cada alumno.",
     destino: { name: RutaEnum.DOCENTE },
     ruta: RutaEnum.DOCENTE,
     objetivo: "contenido-clase",
-    siFalta: "Cuando tengas una clase, aquí subirás su material.",
+    siFalta: "Cuando tengas una clase, aquí subirás sus guías y verás el avance de tus alumnos.",
   },
   {
     titulo: "Tus clases",

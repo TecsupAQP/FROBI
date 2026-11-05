@@ -54,11 +54,66 @@ $prefix: cmp-contenido-clase;
 
   &__material {
     display: flex;
-    align-items: flex-start;
-    gap: $esp-12;
+    flex-direction: column;
+    gap: $esp-14;
     padding: $esp-14 $esp-16;
     border: $linea-1 solid $borde-suave;
     border-radius: $radio-16;
+  }
+
+  &__fila {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-12;
+
+    > :last-child:not(:first-child) {
+      margin-left: auto;
+    }
+  }
+
+  &__nueva,
+  &__edicion {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-16;
+  }
+
+  &__nueva {
+    padding: $esp-16;
+    border: $linea-1 solid $marca-azul;
+    border-radius: $radio-16;
+    background-color: $marca-azul-claro;
+  }
+
+  &__subtitulo,
+  &__avance-titulo {
+    @include texto-etiqueta;
+    color: $texto-principal;
+  }
+
+  &__archivo,
+  &__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__tareas {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+    margin: 0;
+    padding-left: $esp-24;
+    color: $texto-cuerpo;
+  }
+
+  &__avance {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-8;
+    padding-top: $esp-12;
+    border-top: $linea-1 solid $borde-suave;
   }
 
   &__icono {
@@ -76,7 +131,8 @@ $prefix: cmp-contenido-clase;
   &__textos {
     display: flex;
     flex-direction: column;
-    gap: $esp-2;
+    align-items: flex-start;
+    gap: $esp-4;
     min-width: 0;
   }
 
@@ -84,12 +140,5 @@ $prefix: cmp-contenido-clase;
     @include texto-etiqueta;
     color: $texto-principal;
     overflow-wrap: anywhere;
-  }
-
-  &__vista {
-    overflow: hidden;
-    color: $texto-cuerpo;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }

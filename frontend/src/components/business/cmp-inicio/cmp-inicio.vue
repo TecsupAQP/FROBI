@@ -54,6 +54,8 @@
       :guias="guiasClase"
       :eligiendo="eligiendo"
       @elegir="estudiar"
+      @resolver="resolverTarea"
+      @evaluar="evaluarGuia"
     />
 
     <cmp-mis-guias v-if="propias.length > 1" :guias="propias" :eligiendo="eligiendo" @elegir="estudiar" />

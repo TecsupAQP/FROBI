@@ -15,11 +15,21 @@ from .classroom import (
 )
 from .errors import (
     ClassNotFound,
+    GuideNotFound,
     InvalidClassCode,
     InvalidClassData,
+    InvalidGuidePlan,
     MissingClassContent,
     NotInAClass,
     TeachersOnly,
+)
+from .guide import (
+    MAX_TASKS,
+    GuideMode,
+    GuidePlan,
+    GuideProgress,
+    GuideTask,
+    task_ref_of,
 )
 
 __all__ = [
@@ -28,11 +38,18 @@ __all__ = [
     "DEMO_CLASS_ID",
     "DEMO_STUDENTS",
     "DEMO_TEACHER_ID",
+    "MAX_TASKS",
     "STATUS_LABELS",
     "ClassNotFound",
     "Classroom",
+    "GuideMode",
+    "GuideNotFound",
+    "GuidePlan",
+    "GuideProgress",
+    "GuideTask",
     "InvalidClassCode",
     "InvalidClassData",
+    "InvalidGuidePlan",
     "Membership",
     "MembershipStatus",
     "MissingClassContent",
@@ -42,4 +59,5 @@ __all__ = [
     "normalize_alias",
     "normalize_code",
     "same_alias",
+    "task_ref_of",
 ]

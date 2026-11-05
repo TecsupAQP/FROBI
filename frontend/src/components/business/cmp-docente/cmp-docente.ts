@@ -35,12 +35,15 @@ export default defineComponent({
     const { cargado, grupoId, panel, cambiarGrupo, cargar } = useCmpDocente();
 
     const {
+      avances,
       clase,
       contenido,
       errorContenido,
       subiendo,
+      guardando,
       cargar: cargarClase,
       cargarContenido,
+      guardarPlan,
       subirContenido,
     } = useCmpClase();
 
@@ -57,9 +60,12 @@ export default defineComponent({
       grupoId,
       panel,
       cambiarGrupo,
+      avances,
       clase,
       contenido,
       errorContenido,
+      guardando,
+      guardarPlan,
       subiendo,
       subirContenido,
     };

@@ -1,8 +1,17 @@
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
-import type { Clase, DetalleAlumno, MaterialClase, NuevaClase } from "@/core/shared/domain/view/clase.view";
+import type {
+  AvanceGuiaClase,
+  Clase,
+  DetalleAlumno,
+  MaterialClase,
+  NuevaClase,
+  PlanGuia,
+} from "@/core/shared/domain/view/clase.view";
 import {
+  avanceGuiasClaseService,
   crearClaseService,
+  guardarPlanGuiaService,
   invitarService,
   listarMaterialesClaseService,
   obtenerClaseService,
@@ -20,7 +29,10 @@ export const useCmpClaseStore = defineStore("CmpClaseStore", () => {
   const detalle = ref<DetalleAlumno | null>(null);
   // Contenido ya subido a la clase (lo ven sus alumnos unidos).
   const contenido = ref<MaterialClase[]>([]);
+  // Avance de cada alumno en cada guía (solo el docente).
+  const avances = ref<AvanceGuiaClase[]>([]);
   const subiendo = ref(false);
+  const guardando = ref<string | null>(null);
   const errorContenido = ref<string | null>(null);
   const ocupado = ref(false);
 
@@ -67,21 +79,40 @@ export const useCmpClaseStore = defineStore("CmpClaseStore", () => {
   const cargarContenido = async () => {
     errorContenido.value = null;
     try {
-      contenido.value = await listarMaterialesClaseService();
+      [contenido.value, avances.value] = await Promise.all([
+        listarMaterialesClaseService(),
+        avanceGuiasClaseService().catch(() => []),
+      ]);
     } catch {
       contenido.value = [];
+      avances.value = [];
     }
   };
 
-  const subirContenido = async (archivo: File) => {
+  const subirContenido = async (archivo: File, plan: PlanGuia) => {
     subiendo.value = true;
     errorContenido.value = null;
     try {
-      contenido.value = await subirMaterialClaseService(archivo);
+      contenido.value = await subirMaterialClaseService(archivo, plan);
+      avances.value = await avanceGuiasClaseService().catch(() => avances.value);
     } catch {
       errorContenido.value = "No pudimos subir el archivo. Revisa que sea un PDF con texto, de hasta 10 MB.";
     } finally {
       subiendo.value = false;
+    }
+  };
+
+  // Cambia el tipo de una guía o sus tareas; las tareas sin cambios conservan el avance.
+  const guardarPlan = async (materialId: string, plan: PlanGuia) => {
+    guardando.value = materialId;
+    errorContenido.value = null;
+    try {
+      contenido.value = await guardarPlanGuiaService(materialId, plan);
+      avances.value = await avanceGuiasClaseService().catch(() => avances.value);
+    } catch {
+      errorContenido.value = "No pudimos guardar la guía. Revisa que tenga entre 1 y 20 tareas.";
+    } finally {
+      guardando.value = null;
     }
   };
 
@@ -96,13 +127,16 @@ export const useCmpClaseStore = defineStore("CmpClaseStore", () => {
     pendientes.value = [];
     detalle.value = null;
     contenido.value = [];
+    avances.value = [];
   };
 
   return {
+    avances,
     clase,
     contenido,
     detalle,
     errorContenido,
+    guardando,
     subiendo,
     estoyEnClase,
     materiales,
@@ -113,6 +147,7 @@ export const useCmpClaseStore = defineStore("CmpClaseStore", () => {
     cargarContenido,
     cargarDetalle,
     crear,
+    guardarPlan,
     invitar,
     reiniciar,
     salir,
