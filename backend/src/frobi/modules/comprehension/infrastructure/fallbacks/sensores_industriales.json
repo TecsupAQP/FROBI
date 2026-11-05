@@ -1,0 +1,71 @@
+{
+  "material_id": "00000000-0000-4000-8000-00000000a001",
+  "comprehension": [
+    {
+      "statement": "¿Qué sensor detecta una botella de plástico?",
+      "options": [["a", "Inductivo"], ["b", "Capacitivo"], ["c", "Termopar"]],
+      "correct_option": "b",
+      "feedback_correct": "¡Bien! El capacitivo detecta también plásticos, madera, granos y líquidos.",
+      "feedback_wrong": "El inductivo solo detecta metales y el termopar mide temperatura. Revisa «Sensores capacitivos»."
+    },
+    {
+      "statement": "¿Qué hace un sensor?",
+      "options": [
+        ["a", "Genera la energía que mueve la máquina"],
+        ["b", "Convierte una magnitud física en una señal eléctrica"],
+        ["c", "Decide qué motor se enciende"]
+      ],
+      "correct_option": "b",
+      "feedback_correct": "Exacto: mide algo del mundo y lo convierte en una señal que el controlador lee.",
+      "feedback_wrong": "El sensor no mueve ni decide: mide. Revisa «Qué es un sensor»."
+    },
+    {
+      "statement": "¿Por qué se usa tanto la señal de 4 a 20 mA?",
+      "options": [
+        ["a", "Porque solo tiene dos estados"],
+        ["b", "Porque resiste el ruido y permite detectar un cable cortado"],
+        ["c", "Porque no necesita cables"]
+      ],
+      "correct_option": "b",
+      "feedback_correct": "Así es: si la corriente baja de 4 mA, algo falla, por ejemplo un cable cortado.",
+      "feedback_wrong": "Dos estados es una señal digital. Revisa «Señales analógicas y digitales»."
+    },
+    {
+      "statement": "¿Qué sensor alcanza varios metros de distancia?",
+      "options": [["a", "Fotoeléctrico"], ["b", "Inductivo"], ["c", "Capacitivo"]],
+      "correct_option": "a",
+      "feedback_correct": "¡Bien! Usa un haz de luz y llega más lejos que inductivos y capacitivos.",
+      "feedback_wrong": "Inductivos y capacitivos trabajan a poca distancia. Revisa «Sensores fotoeléctricos»."
+    },
+    {
+      "statement": "¿Cuál es más precisa para medir temperatura en rangos bajos?",
+      "options": [["a", "El termopar"], ["b", "La RTD (Pt100)"], ["c", "El sensor inductivo"]],
+      "correct_option": "b",
+      "feedback_correct": "Correcto: la RTD es más precisa; el termopar aguanta temperaturas más altas.",
+      "feedback_wrong": "El termopar soporta más calor, pero es menos preciso. Revisa «Sensores de temperatura»."
+    }
+  ],
+  "transfer": [
+    {
+      "statement": "En una línea de envasado de jugo, ¿qué sensor usarías para saber si cada botella tiene su tapa metálica?",
+      "options": [["a", "Capacitivo"], ["b", "Inductivo"], ["c", "Transmisor de presión"]],
+      "correct_option": "b",
+      "feedback_correct": "¡Bien pensado! La tapa es metálica y el inductivo detecta metales sin contacto.",
+      "feedback_wrong": "Piensa de qué material es la tapa y qué sensor detecta ese material."
+    },
+    {
+      "statement": "Un horno de cerámica trabaja a 1000 °C. ¿Qué sensor de temperatura elegirías?",
+      "options": [["a", "Termopar"], ["b", "RTD (Pt100)"], ["c", "Fotoeléctrico"]],
+      "correct_option": "a",
+      "feedback_correct": "Exacto: el termopar soporta temperaturas muy altas.",
+      "feedback_wrong": "La RTD es precisa, pero trabaja en rangos más bajos. ¿Cuál soporta más calor?"
+    },
+    {
+      "statement": "Quieres vigilar que la presión de una tubería hidráulica no baje. ¿Qué usarías?",
+      "options": [["a", "Sensor inductivo"], ["b", "Termopar"], ["c", "Transmisor de presión de 4 a 20 mA"]],
+      "correct_option": "c",
+      "feedback_correct": "¡Bien! Y si la señal baja de 4 mA sabrás que algo falla en el cable.",
+      "feedback_wrong": "Busca en tu material qué se usa para vigilar compresores, tuberías y sistemas hidráulicos."
+    }
+  ]
+}

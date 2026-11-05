@@ -239,7 +239,7 @@ Orden según el flujo de la demo; cada paso en TDD (rojo, verde, refactor):
 5. [x] M4 y M5: adaptaciones con receta, aviso, caché y bloqueo en Redis.
 6. [x] M6: máquina de estados de la escalera, con reglas de dominio puras y tests unitarios exhaustivos.
 7. [x] M7: evaluación de las 4 piezas y comparación (sin proveedor: rúbrica y simulación).
-8. [ ] M8: preguntas y respuestas con formato sugerido.
+8. [x] M8: preguntas y respuestas con formato sugerido (incluye la pregunta de transferencia, RF24).
 9. [ ] M9: revisión de afirmaciones con caso guionado.
 10. [ ] M10: recomendación sobre el catálogo fijo.
 11. [ ] Conectar el proveedor real de IA (si ya se decidió) detrás del puerto.
