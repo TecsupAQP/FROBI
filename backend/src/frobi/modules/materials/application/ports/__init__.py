@@ -1,13 +1,15 @@
 from typing import Protocol
 from uuid import UUID
 
-from frobi.modules.materials.domain import Material, Work
+from frobi.modules.materials.domain import Material, MaterialKind, Work
 
 
 class MaterialRepository(Protocol):
     async def add(self, material: Material) -> None: ...
 
     async def get(self, material_id: UUID) -> Material | None: ...
+
+    async def list_for_owner(self, owner_id: UUID, kind: MaterialKind) -> list[Material]: ...
 
 
 class SampleCatalog(Protocol):
@@ -20,6 +22,8 @@ class SampleCatalog(Protocol):
 
 class WorkRepository(Protocol):
     async def add(self, work: Work) -> None: ...
+
+    async def get(self, work_id: UUID) -> Work | None: ...
 
 
 class PdfTextExtractor(Protocol):

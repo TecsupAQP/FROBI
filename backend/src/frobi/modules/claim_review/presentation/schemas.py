@@ -3,16 +3,11 @@
 Closed vocabulary (RNF11, RNF14): there is no "false" status and no AI-percentage anywhere.
 """
 
-from enum import StrEnum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
-class ClaimStatus(StrEnum):
-    SUPPORTED = "supported"
-    UNVERIFIABLE = "unverifiable"
-    CONTRADICTS = "contradicts"
+from frobi.modules.claim_review.domain import Claim, ClaimStatus
 
 
 class ClaimOut(BaseModel):
@@ -34,3 +29,22 @@ class ClaimSection(BaseModel):
 class ClaimReviewOut(BaseModel):
     work_id: UUID
     sections: list[ClaimSection]
+
+    @classmethod
+    def from_claims(cls, work_id: UUID, claims: list[Claim]) -> "ClaimReviewOut":
+        sections: dict[str, list[ClaimOut]] = {}
+        for claim in sorted(claims, key=lambda c: c.position):
+            sections.setdefault(claim.section, []).append(
+                ClaimOut(
+                    id=claim.id,
+                    fragment=claim.fragment,
+                    status=claim.status,
+                    reason=claim.reason,
+                    backing_passage=claim.backing_passage,
+                    no_backing_message=claim.no_backing_message,
+                )
+            )
+        return cls(
+            work_id=work_id,
+            sections=[ClaimSection(section=name, claims=items) for name, items in sections.items()],
+        )

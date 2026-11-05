@@ -7,6 +7,7 @@ from .create_material import (
 from .create_work import CreateWorkCommand, CreateWorkHandler
 from .get_material import GetMaterialHandler
 from .list_samples import ListSamplesHandler
+from .read_work import GuidesHandler, ReadWorkHandler, WorkTexts
 
 __all__ = [
     "CreateMaterialCommand",
@@ -14,7 +15,10 @@ __all__ = [
     "CreateWorkCommand",
     "CreateWorkHandler",
     "GetMaterialHandler",
+    "GuidesHandler",
     "ListSamplesHandler",
+    "ReadWorkHandler",
     "UploadMaterialCommand",
     "UploadMaterialHandler",
+    "WorkTexts",
 ]

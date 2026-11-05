@@ -42,5 +42,19 @@ def keywords(text: str, *, min_length: int = 5, extra_stopwords: Iterable[str] =
     }
 
 
+STEM_LENGTH = 6
+
+
+def stem(word: str) -> str:
+    """Crude root for matching word families: afectados / afectarlos → afecta, preciso / precisa →
+    precis. Only for comparing texts, never shown to anyone."""
+    return singular(fold(word))[:STEM_LENGTH]
+
+
+def stems(text: str, *, min_length: int = 5) -> set[str]:
+    """Roots of the topic words of ``text`` (see ``keywords`` and ``stem``)."""
+    return {w[:STEM_LENGTH] for w in keywords(text, min_length=min_length)}
+
+
 def sentences(text: str) -> list[str]:
     return [s.strip() for s in _SENTENCE.split(text) if s.strip()]
