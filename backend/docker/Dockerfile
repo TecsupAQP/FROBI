@@ -15,5 +15,9 @@ RUN uv sync --frozen --no-dev --no-install-project
 COPY src ./src
 RUN uv sync --frozen --no-dev
 
+COPY alembic.ini ./
+COPY alembic ./alembic
+
 EXPOSE 8000
-CMD ["uvicorn", "frobi.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+# Apply pending migrations, then serve.
+CMD ["sh", "-c", "alembic upgrade head && exec uvicorn frobi.main:create_app --factory --host 0.0.0.0 --port 8000"]

@@ -5,7 +5,7 @@ Stub: returns example data so the front can integrate. The real use cases replac
 
 from fastapi import APIRouter, Depends
 
-from frobi.shared.presentation import AUTH_RESPONSES, AuthToken, require_token
+from frobi.shared.presentation import AUTH_RESPONSES, CurrentPersonId, require_token
 
 from .schemas import (
     AccessibilityProfile,
@@ -79,7 +79,7 @@ def _enabled(profiles: list[AccessibilityProfile]) -> list[AccessibilitySetting]
     summary="Catálogo de perfiles y los ajustes que activa cada uno",
     responses=AUTH_RESPONSES,
 )
-async def list_accessibility_profiles(_: AuthToken) -> list[AccessibilityProfileOut]:
+async def list_accessibility_profiles(_: CurrentPersonId) -> list[AccessibilityProfileOut]:
     return PROFILES
 
 
