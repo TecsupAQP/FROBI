@@ -1,29 +1,11 @@
 """M2 · Primera configuración: contract with the front."""
 
-from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
-
-class AccessibilityProfile(StrEnum):
-    """Profiles offered by the wizard. Pending confirmation against the requirements (RF35)."""
-
-    LOW_VISION = "low_vision"
-    READING = "reading"
-    HEARING = "hearing"
-    ATTENTION = "attention"
-    MOTOR = "motor"
-
-
-class AccessibilitySetting(StrEnum):
-    VOICE = "voice"
-    HIGH_CONTRAST = "high_contrast"
-    LARGE_TEXT = "large_text"
-    SHORT_TEXTS = "short_texts"
-    CAPTIONS = "captions"
-    LARGE_BUTTONS = "large_buttons"
-    KEYBOARD_MODE = "keyboard_mode"
+from frobi.modules.onboarding.application import OnboardingResult
+from frobi.modules.onboarding.domain import AccessibilityProfile, AccessibilitySetting, Profile
 
 
 class AccessibilityProfileOut(BaseModel):
@@ -33,6 +15,17 @@ class AccessibilityProfileOut(BaseModel):
     icon: str = Field(description="Nombre del ícono que usa el front.")
     enables: list[AccessibilitySetting]
     suggested_format: Literal["visual_map", "real_example", "easy_read", "audio"]
+
+    @classmethod
+    def from_domain(cls, profile: Profile) -> "AccessibilityProfileOut":
+        return cls(
+            id=profile.id,
+            name=profile.name,
+            description=profile.description,
+            icon=profile.icon,
+            enables=list(profile.enables),
+            suggested_format=profile.suggested_format,  # type: ignore[arg-type]
+        )
 
 
 class OnboardingRequest(BaseModel):
@@ -51,3 +44,13 @@ class OnboardingOut(BaseModel):
         description="Ajustes que quedaron activos por los perfiles elegidos."
     )
     intro_status: Literal["seen", "skipped", "pending"]
+
+    @classmethod
+    def from_result(cls, result: OnboardingResult) -> "OnboardingOut":
+        return cls(
+            done=result.done,
+            configured_by=result.configured_by.value,
+            profiles=[AccessibilityProfile(p) for p in result.profiles],
+            enabled_settings=[AccessibilitySetting(s) for s in result.enabled_settings],
+            intro_status=result.intro_status,
+        )

@@ -55,6 +55,9 @@ class InMemoryPersons:
     async def get(self, person_id: UUID) -> Person | None:
         return self.items.get(person_id)
 
+    async def save(self, person: Person) -> None:
+        self.items[person.id] = person
+
 
 class InMemorySessions:
     def __init__(self) -> None:

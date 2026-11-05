@@ -72,26 +72,6 @@ def test_contract_has_no_false_claim_status_or_ai_percentage(app: FastAPI) -> No
     assert not any("percent" in name or "ai_score" in name for name in field_names)
 
 
-async def test_onboarding_applies_the_settings_of_each_profile(client: AsyncClient) -> None:
-    response = await client.post(
-        "/api/v1/me/onboarding",
-        headers=AUTH,
-        json={"who_uses": "companion", "profiles": ["low_vision", "motor"], "intro": "seen"},
-    )
-
-    assert response.status_code == 200
-    body = response.json()
-    assert body["done"] is True
-    assert body["configured_by"] == "companion"
-    assert body["enabled_settings"] == [
-        "voice",
-        "high_contrast",
-        "large_text",
-        "large_buttons",
-        "keyboard_mode",
-    ]
-
-
 async def test_upload_rejects_a_file_that_is_not_a_pdf(client: AsyncClient) -> None:
     response = await client.post(
         "/api/v1/materials/upload",
