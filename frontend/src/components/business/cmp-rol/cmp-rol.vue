@@ -31,7 +31,7 @@
             v-model="codigo"
             :class="`${PREFIX}__codigo`"
             etiqueta="Código de clase"
-            placeholder="SENSOR1"
+            placeholder="Ej. ABC123"
             autocompletar="off"
             :error="errorCodigo"
             :ayuda="claseEncontrada ? `Clase: ${claseEncontrada}` : undefined"

@@ -44,9 +44,9 @@ export default defineComponent({
       elegirArchivo,
     } = useCmpInicio();
 
-    const nombre = ref("Sensores industriales · Mecatrónica");
+    const nombre = ref("");
 
-    const primeraTarea = ref("Elegir un sensor para detectar botellas");
+    const primeraTarea = ref("");
 
     const errorNombre = ref<string>();
 

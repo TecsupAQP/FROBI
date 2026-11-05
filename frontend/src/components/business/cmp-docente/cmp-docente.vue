@@ -31,13 +31,13 @@
         </template>
       </cmp-encabezado-pagina>
 
-      <cmp-mi-clase v-if="clase" :clase="clase" />
+      <cmp-mi-clase v-if="clase" data-recorrido="mi-clase" :clase="clase" />
 
       <v-aviso v-if="panel.esEjemplo" :class="`${PREFIX}__ejemplo`" tipo="aviso" icono="info">
         Datos de ejemplo mientras tu clase no tenga actividad. Visible solo para el rol Docente.
       </v-aviso>
 
-      <div :class="`${PREFIX}__tarjetas`">
+      <div data-recorrido="estadisticas" :class="`${PREFIX}__tarjetas`">
         <section :class="`${PREFIX}__tarjeta`" aria-labelledby="docente-formatos">
           <div>
             <h2 id="docente-formatos" :class="`${PREFIX}__titulo`">Formatos más pedidos</h2>

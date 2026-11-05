@@ -8,7 +8,11 @@
 
     <div :class="`${PREFIX}__columnas`">
       <div :class="`${PREFIX}__principal`">
-        <section :class="`${PREFIX}__tarjeta`" aria-labelledby="clase-contenido">
+        <section
+          data-recorrido="material-clase"
+          :class="`${PREFIX}__tarjeta`"
+          aria-labelledby="clase-contenido"
+        >
           <h2 id="clase-contenido" :class="`${PREFIX}__titulo`">Contenido de la clase</h2>
           <p v-if="!materiales.length" :class="`${PREFIX}__vacio`">
             Sube la guía o los PDF de tu clase. FROBI los adapta para cada estudiante.
@@ -38,9 +42,25 @@
         </section>
       </div>
 
-      <form :class="`${PREFIX}__formulario`" novalidate @submit.prevent="crearYSeguir">
-        <v-field id="clase-nombre" v-model="nombre" etiqueta="Nombre de la clase" :error="errorNombre" />
-        <v-field id="clase-tarea" v-model="primeraTarea" etiqueta="Primera tarea" />
+      <form
+        data-recorrido="crear-clase"
+        :class="`${PREFIX}__formulario`"
+        novalidate
+        @submit.prevent="crearYSeguir"
+      >
+        <v-field
+          id="clase-nombre"
+          v-model="nombre"
+          etiqueta="Nombre de la clase"
+          placeholder="Ej. Física 1 · Mecatrónica"
+          :error="errorNombre"
+        />
+        <v-field
+          id="clase-tarea"
+          v-model="primeraTarea"
+          etiqueta="Primera tarea"
+          placeholder="Ej. Resolver los ejercicios del tema 1"
+        />
         <v-button tipo="submit" bloque :deshabilitado="ocupado">
           {{ ocupado ? "Creando clase…" : "Crear clase e invitar alumnos" }}
         </v-button>

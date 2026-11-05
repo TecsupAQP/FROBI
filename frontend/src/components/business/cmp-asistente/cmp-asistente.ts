@@ -38,8 +38,8 @@ export default defineComponent({
     };
 
     const PISTAS_VISTA = [
-      "Revisa en tu guía qué material detecta cada sensor.",
-      "Compara el sensor inductivo y el capacitivo: ¿cuál detecta vidrio?",
+      "Busca en tu guía la parte que habla del tema.",
+      "Compara las dos ideas principales: ¿en qué se diferencian?",
       "Escribe tu intento antes de ver la respuesta.",
       "Compara tu respuesta con tu guía.",
     ];

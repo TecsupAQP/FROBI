@@ -1,3 +1,4 @@
+import { SinGuiaError } from "@/core/shared/application/util/errores.util";
 import { api } from "@/core/shared/infraestructure/http/api.client";
 import type { AdaptacionDto, MaterialResumenDto } from "@/core/shared/infraestructure/http/api.dto";
 
@@ -19,18 +20,31 @@ const escribir = (clave: string, valor: string | null) => {
     if (valor) localStorage.setItem(clave, valor);
     else localStorage.removeItem(clave);
   } catch {
-    // Sin almacenamiento: se vuelve a la guía de ejemplo al recargar.
+    // Sin almacenamiento: al recargar se vuelve a buscar tu guía más reciente.
   }
 };
 
-// Por defecto, la primera guía de ejemplo de la API (sensores industriales).
+// Por defecto, la guía propia más reciente. La de ejemplo nunca se elige sola: solo si la persona
+// la pide («Probar con la guía de ejemplo»).
 export async function materialActualId(): Promise<string> {
   const guardado = leer(CLAVE_MATERIAL);
   if (guardado) return guardado;
-  const [primera] = await api.get<MaterialResumenDto[]>("/materials/samples");
-  if (!primera) throw new Error("La API no tiene guías de ejemplo");
-  escribir(CLAVE_MATERIAL, primera.id);
-  return primera.id;
+  const guias = await api.get<MaterialResumenDto[]>("/materials/guides");
+  const propia = guias.find((guia) => guia.source !== "sample");
+  if (!propia) throw new SinGuiaError();
+  escribir(CLAVE_MATERIAL, propia.id);
+  return propia.id;
+}
+
+// Para las rutas que necesitan una guía (guía, resultado, escalera, verificación…).
+export async function hayGuiaActual(): Promise<boolean> {
+  try {
+    await materialActualId();
+    return true;
+  } catch (error) {
+    if (error instanceof SinGuiaError) return false;
+    throw error;
+  }
 }
 
 export function elegirMaterial(id: string): void {

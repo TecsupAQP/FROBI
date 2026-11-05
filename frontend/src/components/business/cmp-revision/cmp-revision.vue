@@ -5,9 +5,14 @@
       descripcion="Marcamos lo que conviene verificar según tu material. No decimos si lo escribió una IA."
     />
 
-    <div v-if="!revision" :class="`${PREFIX}__cargando`">
-      <v-cargando>Revisando tu trabajo…</v-cargando>
-    </div>
+    <v-estado-vacio
+      v-if="!revision"
+      icono="file"
+      titulo="Todavía no revisamos ningún borrador"
+      texto="Trae la consigna y tu borrador; marcamos lo que conviene verificar según tu material."
+    >
+      <v-button :destino="{ name: RutaEnum.TRAE_TU_TRABAJO }">Trae tu trabajo</v-button>
+    </v-estado-vacio>
 
     <template v-else>
       <ul :class="`${PREFIX}__resumen`" aria-label="Resumen de la revisión">

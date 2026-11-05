@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import type {
   ArchivoLeido,
@@ -7,6 +7,7 @@ import type {
   Material,
 } from "@/core/shared/domain/view/material.view";
 import { tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
+import { SinGuiaError } from "@/core/shared/application/util/errores.util";
 import { useCmpEscaleraStore } from "@/store/business/cmp-escalera/cmp-escalera.store";
 import { useCmpResultadoStore } from "@/store/business/cmp-resultado/cmp-resultado.store";
 import { PdfIlegibleError } from "@/core/material/infraestructure/ports/in/material.port";
@@ -34,10 +35,23 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
   // Mis guías: las que subió o pegó la persona y las de ejemplo.
   const guias = ref<GuiaResumen[]>([]);
 
+  // true cuando la persona aún no subió ni eligió una guía (la de ejemplo no se elige sola).
+  const sinGuia = ref(false);
+
+  // Tus guías; la de ejemplo solo aparece si la estás estudiando.
+  const propias = computed(() => guias.value.filter((item) => item.origen !== "ejemplo" || item.actual));
+  const guiaEjemplo = computed(() => guias.value.find((item) => item.origen === "ejemplo") ?? null);
+
   const cargarGuia = async () => {
-    const [actual, todas] = await Promise.all([obtenerGuiaService(), listarGuiasService()]);
-    guia.value = actual;
-    guias.value = todas;
+    guias.value = await listarGuiasService();
+    try {
+      guia.value = await obtenerGuiaService();
+      sinGuia.value = false;
+    } catch (error) {
+      if (!(error instanceof SinGuiaError)) throw error;
+      guia.value = null;
+      sinGuia.value = true;
+    }
   };
 
   // Cambia la guía que se estudia: la guía, las adaptaciones y la escalera pasan a usarla.
@@ -103,6 +117,9 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
 
   return {
     guias,
+    guiaEjemplo,
+    propias,
+    sinGuia,
     elegirGuia,
     archivo,
     archivoElegido,

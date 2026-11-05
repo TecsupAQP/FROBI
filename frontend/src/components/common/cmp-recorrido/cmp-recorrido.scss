@@ -1,0 +1,121 @@
+$prefix: cmp-recorrido;
+
+// Panel del recorrido: hoja inferior en móvil; tarjeta abajo a la derecha desde tablet.
+.#{$prefix} {
+  position: fixed;
+  right: $esp-12;
+  bottom: $esp-12;
+  left: $esp-12;
+  z-index: $capa-toast;
+  display: flex;
+  flex-direction: column;
+  gap: $esp-12;
+  max-height: 60dvh;
+  overflow-y: auto;
+  padding: $esp-16 $esp-16 $esp-12;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-20;
+  background-color: $fondo-superficie;
+  box-shadow: $sombra-modal;
+
+  @include tablet {
+    right: $esp-24;
+    bottom: $esp-24;
+    left: auto;
+    width: 400px;
+    padding: $esp-20 $esp-24 $esp-16;
+  }
+
+  &__cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-8;
+  }
+
+  &__antetitulo {
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__cerrar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $alto-tactil;
+    height: $alto-tactil;
+    margin: (-$esp-8) (-$esp-8) (-$esp-8) 0;
+    border-radius: $radio-12;
+    color: $texto-principal;
+
+    &:hover {
+      background-color: $fondo-app;
+    }
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: $linea-2 solid $marca-azul;
+      outline-offset: $esp-2;
+    }
+  }
+
+  &__texto {
+    color: $texto-cuerpo;
+  }
+
+  &__nota {
+    padding: $esp-8 $esp-12;
+    border-radius: $radio-12;
+    background-color: $fondo-app;
+    color: $texto-secundario;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-8;
+  }
+
+  &__navegacion {
+    display: flex;
+    gap: $esp-8;
+  }
+
+  // El hueco resaltado: la sombra enorme oscurece todo lo demás.
+  &__foco {
+    position: fixed;
+    z-index: $capa-modal;
+    border: $linea-2 solid $marca-azul;
+    border-radius: $radio-16;
+    box-shadow: 0 0 0 9999px $fondo-oscuro;
+    pointer-events: none;
+    transition:
+      top 0.2s ease,
+      left 0.2s ease,
+      width 0.2s ease,
+      height 0.2s ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  // Sin parte que resaltar, se oscurece toda la pantalla de forma suave.
+  &__velo {
+    position: fixed;
+    inset: 0;
+    z-index: $capa-modal;
+    background-color: $fondo-oscuro;
+    pointer-events: none;
+  }
+}
