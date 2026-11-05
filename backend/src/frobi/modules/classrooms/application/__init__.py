@@ -1,3 +1,4 @@
+from .dashboard import DashboardHandler, Panel, StudentDetail, StudentDetailHandler
 from .manage_class import (
     CreateClassCommand,
     CreateClassHandler,
@@ -19,6 +20,7 @@ __all__ = [
     "ActiveClassHandler",
     "CreateClassCommand",
     "CreateClassHandler",
+    "DashboardHandler",
     "GetClassHandler",
     "InviteStudentsHandler",
     "JoinClassHandler",
@@ -26,4 +28,7 @@ __all__ = [
     "LeaveClassHandler",
     "ListMembersHandler",
     "MembersView",
+    "Panel",
+    "StudentDetail",
+    "StudentDetailHandler",
 ]

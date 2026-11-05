@@ -1,9 +1,11 @@
 """What classrooms needs, in its own words. Adapters live in classrooms/infrastructure."""
 
+from dataclasses import dataclass
 from typing import Protocol
 from uuid import UUID
 
 from frobi.modules.classrooms.domain import Classroom, Membership
+from frobi.shared.application import AnswerRow, FormatUse, HelpUse, PromptScoreRow
 
 
 class ClassRepository(Protocol):
@@ -40,7 +42,28 @@ class CodeGenerator(Protocol):
     def __call__(self) -> str: ...
 
 
+@dataclass(frozen=True, slots=True)
+class ClassActivity:
+    formats: list[FormatUse]
+    help: list[HelpUse]
+    answers: list[AnswerRow]
+    prompt_scores: list[PromptScoreRow]
+
+    @property
+    def empty(self) -> bool:
+        return not (self.formats or self.help or self.answers or self.prompt_scores)
+
+
+class ClassActivityReader(Protocol):
+    """Activity recorded with this ``class_id`` — the argument is mandatory, there is no
+    «all activity» read for the panel (RNF16)."""
+
+    async def read(self, class_id: UUID) -> ClassActivity: ...
+
+
 __all__ = [
+    "ClassActivity",
+    "ClassActivityReader",
     "ClassRepository",
     "CodeGenerator",
     "MembershipRepository",

@@ -4,9 +4,25 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from frobi.modules import identity
+from frobi.modules import adaptations, comprehension, identity, prompt_coach, tutoring
+from frobi.modules.classrooms.application.ports import ClassActivity
 
 from .sqlalchemy_repositories import SqlAlchemyMembershipRepository
+
+
+class ClassActivityReaderAdapter:
+    """Each module's «in this class» read, through its public API (never «all activity»)."""
+
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
+    async def read(self, class_id: UUID) -> ClassActivity:
+        return ClassActivity(
+            formats=await adaptations.format_uses_in_class(self._session, class_id),
+            help=await tutoring.help_in_class(self._session, class_id),
+            answers=await comprehension.answers_in_class(self._session, class_id),
+            prompt_scores=await prompt_coach.scores_in_class(self._session, class_id),
+        )
 
 
 class PersonDirectoryAdapter:
