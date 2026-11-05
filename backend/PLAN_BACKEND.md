@@ -107,6 +107,7 @@ Prioridad: **D** = Debe · **Db** = Debería · **P** = Podría.
 | Método | Ruta | Descripción | RF | Prio |
 | --- | --- | --- | --- | --- |
 | GET | `/materials/samples` | Guías de ejemplo (sensores industriales) | RF01 | D |
+| GET | `/materials/guides` | Mis guías: las propias (más recientes primero) y las de ejemplo, para volver a cualquiera | RF01, RF02 | D |
 | POST | `/materials` | Pegar texto: `{title, kind, text}` | RF02 | D |
 | POST | `/materials/upload` | PDF por multipart (máximo 10 MB). Devuelve el texto extraído para la vista previa; un PDF ilegible da 422 `pdf_unreadable` | RF02, RF31 | D |
 | GET | `/materials/{id}` | Detalle y texto extraído | RF01 | D |

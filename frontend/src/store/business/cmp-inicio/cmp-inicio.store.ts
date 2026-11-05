@@ -1,10 +1,18 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { ArchivoLeido, FaseSubida, Material } from "@/core/shared/domain/view/material.view";
+import type {
+  ArchivoLeido,
+  FaseSubida,
+  GuiaResumen,
+  Material,
+} from "@/core/shared/domain/view/material.view";
 import { tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
+import { useCmpEscaleraStore } from "@/store/business/cmp-escalera/cmp-escalera.store";
+import { useCmpResultadoStore } from "@/store/business/cmp-resultado/cmp-resultado.store";
 import { PdfIlegibleError } from "@/core/material/infraestructure/ports/in/material.port";
 import {
   leerPdfService,
+  listarGuiasService,
   obtenerGuiaService,
   pegarTextoService,
   usarMaterialService,
@@ -23,8 +31,26 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
 
   let subidaActual = 0;
 
+  // Mis guías: las que subió o pegó la persona y las de ejemplo.
+  const guias = ref<GuiaResumen[]>([]);
+
   const cargarGuia = async () => {
-    guia.value = await obtenerGuiaService();
+    const [actual, todas] = await Promise.all([obtenerGuiaService(), listarGuiasService()]);
+    guia.value = actual;
+    guias.value = todas;
+  };
+
+  // Cambia la guía que se estudia: la guía, las adaptaciones y la escalera pasan a usarla.
+  const cambiarMaterial = (id: string) => {
+    usarMaterialService(id);
+    useCmpResultadoStore().olvidarAdaptacion();
+    useCmpEscaleraStore().reiniciar();
+    guia.value = null;
+  };
+
+  const elegirGuia = async (id: string) => {
+    cambiarMaterial(id);
+    await cargarGuia();
   };
 
   const abrirModal = () => {
@@ -64,11 +90,10 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
   const usarGuia = async (textoPegado?: string) => {
     if (textoPegado?.trim()) {
       const titulo = tituloDesdeArchivo(nombreArchivo.value) || "Mi guía";
-      usarMaterialService(await pegarTextoService(titulo, textoPegado.trim()));
+      cambiarMaterial(await pegarTextoService(titulo, textoPegado.trim()));
     } else if (archivo.value) {
-      usarMaterialService(archivo.value.materialId);
+      cambiarMaterial(archivo.value.materialId);
     }
-    guia.value = null;
   };
 
   const cancelarSubida = () => {
@@ -77,6 +102,8 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
   };
 
   return {
+    guias,
+    elegirGuia,
     archivo,
     archivoElegido,
     fase,

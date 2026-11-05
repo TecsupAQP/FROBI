@@ -45,6 +45,13 @@ export const useCmpResultadoStore = defineStore("CmpResultadoStore", () => {
     }
   };
 
+  // Al cambiar de guía, la adaptación anterior ya no sirve.
+  const olvidarAdaptacion = () => {
+    ultimaSolicitud++;
+    adaptacion.value = null;
+    estado.value = EstadoCargaEnum.INICIAL;
+  };
+
   const alternarReceta = () => {
     recetaDesplegada.value = !recetaDesplegada.value;
   };
@@ -58,6 +65,7 @@ export const useCmpResultadoStore = defineStore("CmpResultadoStore", () => {
     usaRespaldo,
 
     alternarReceta,
+    olvidarAdaptacion,
     cargarAdaptacion,
   };
 });

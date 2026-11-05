@@ -1,7 +1,7 @@
 import { PdfIlegibleError, type MaterialPort } from "@/core/material/infraestructure/ports/in/material.port";
-import type { ArchivoLeido, Material, Tema } from "@/core/shared/domain/view/material.view";
+import type { ArchivoLeido, GuiaResumen, Material, Tema } from "@/core/shared/domain/view/material.view";
 import { api, esErrorApi } from "@/core/shared/infraestructure/http/api.client";
-import type { MaterialDto } from "@/core/shared/infraestructure/http/api.dto";
+import type { MaterialDto, MaterialResumenDto } from "@/core/shared/infraestructure/http/api.dto";
 import { elegirMaterial, materialActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
 import { CARRERAS } from "@/constants/carreras.constant";
 import { tituloDeGuia, tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
@@ -61,6 +61,26 @@ export class MaterialUseCase implements MaterialPort {
   async obtenerGuia(): Promise<Material> {
     const dto = await api.get<MaterialDto>(`/materials/${await materialActualId()}`);
     return materialDesdeApi(dto, carreraDeLaSesion());
+  }
+
+  // GET /materials/guides: las propias (más recientes primero) y las de ejemplo.
+  async listarGuias(): Promise<GuiaResumen[]> {
+    const [guias, actual] = await Promise.all([
+      api.get<MaterialResumenDto[]>("/materials/guides"),
+      materialActualId(),
+    ]);
+    const ORIGEN: Record<MaterialResumenDto["source"], GuiaResumen["origen"]> = {
+      sample: "ejemplo",
+      upload: "pdf",
+      paste: "texto",
+    };
+    return guias.map((guia) => ({
+      id: guia.id,
+      titulo: tituloDeGuia(guia.title),
+      origen: ORIGEN[guia.source],
+      vistaPrevia: guia.preview.replace(/##\s*/g, "").trim(),
+      actual: guia.id === actual,
+    }));
   }
 
   async leerPdf(archivo: File, alAvanzar: (porcentaje: number) => void): Promise<ArchivoLeido> {
