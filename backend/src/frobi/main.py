@@ -11,6 +11,7 @@ from frobi.modules.adaptations.presentation.router import router as adaptations_
 from frobi.modules.claim_review.presentation.router import router as claim_review_router
 from frobi.modules.classrooms.presentation.router import router as classrooms_router
 from frobi.modules.comprehension.presentation.router import router as comprehension_router
+from frobi.modules.identity.infrastructure import RedisSessionStore
 from frobi.modules.identity.presentation.router import router as identity_router
 from frobi.modules.materials.presentation.router import router as materials_router
 from frobi.modules.onboarding.presentation.router import me_router as onboarding_me_router
@@ -24,6 +25,7 @@ from frobi.shared.infrastructure import (
     PostgresProbe,
     RedisProbe,
     Settings,
+    SystemClock,
     create_engine,
     create_redis,
     create_session_factory,
@@ -94,6 +96,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.session_factory = create_session_factory(engine)
     app.state.redis = redis
     app.state.health_probes = [PostgresProbe(engine), RedisProbe(redis)]
+    app.state.clock = SystemClock()
+    # Every router authenticates through this resolver (see shared.presentation.auth).
+    app.state.token_resolver = RedisSessionStore(redis)
 
     app.add_middleware(
         CORSMiddleware,

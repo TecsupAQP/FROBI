@@ -1,4 +1,5 @@
 from collections.abc import AsyncIterator
+from uuid import UUID
 
 import pytest
 from fastapi import FastAPI
@@ -8,6 +9,15 @@ from frobi.main import create_app
 from frobi.shared.infrastructure import Settings
 
 FRONT_ORIGIN = "http://front.test"
+EXAMPLE_TOKEN = "example-token"
+EXAMPLE_PERSON_ID = UUID("00000000-0000-4000-8000-000000000001")
+
+
+class AcceptExampleToken:
+    """Token resolver for tests that do not exercise sessions: only `example-token` is valid."""
+
+    async def resolve(self, token: str) -> UUID | None:
+        return EXAMPLE_PERSON_ID if token == EXAMPLE_TOKEN else None
 
 
 @pytest.fixture
@@ -21,7 +31,9 @@ def settings() -> Settings:
 
 @pytest.fixture
 def app(settings: Settings) -> FastAPI:
-    return create_app(settings)
+    app = create_app(settings)
+    app.state.token_resolver = AcceptExampleToken()
+    return app
 
 
 @pytest.fixture

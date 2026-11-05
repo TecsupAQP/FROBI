@@ -72,38 +72,6 @@ def test_contract_has_no_false_claim_status_or_ai_percentage(app: FastAPI) -> No
     assert not any("percent" in name or "ai_score" in name for name in field_names)
 
 
-async def test_enter_without_class(client: AsyncClient) -> None:
-    response = await client.post(
-        "/api/v1/sessions", json={"alias": "Ana", "career": "Mecatrónica", "role": "learner"}
-    )
-
-    assert response.status_code == 201
-    body = response.json()
-    assert body["token"]
-    assert body["person"]["alias"] == "Ana"
-    assert body["membership"] is None
-
-
-async def test_enter_with_the_example_class_code(client: AsyncClient) -> None:
-    response = await client.post(
-        "/api/v1/sessions",
-        json={"alias": "Ana", "career": "Mecatrónica", "role": "learner", "class_code": "sensor1"},
-    )
-
-    assert response.status_code == 201
-    assert response.json()["membership"]["status"] == "joined"
-
-
-async def test_unknown_class_code_is_422_with_stable_code(client: AsyncClient) -> None:
-    response = await client.post(
-        "/api/v1/sessions",
-        json={"alias": "Ana", "career": "Mecatrónica", "role": "learner", "class_code": "NOPE"},
-    )
-
-    assert response.status_code == 422
-    assert response.json()["code"] == "Classrooms.InvalidCode"
-
-
 async def test_onboarding_applies_the_settings_of_each_profile(client: AsyncClient) -> None:
     response = await client.post(
         "/api/v1/me/onboarding",

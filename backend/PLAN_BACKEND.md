@@ -232,7 +232,7 @@ Cada módulo define su propio puerto según su intención, y sus adaptadores usa
 
 Orden según el flujo de la demo; cada paso en TDD (rojo, verde, refactor):
 
-1. [ ] M1: sesiones con alias y token en Redis, `current_person`, código de clase opcional.
+1. [x] M1: sesiones con alias y token en Redis, `current_person`, código de clase opcional (el código usa un adaptador provisional hasta M12).
 2. [ ] M2: onboarding, perfiles y ajustes derivados.
 3. [ ] M3: samples (seed de la guía de sensores), pegado de texto, PDF con `pypdf`, `works`.
 4. [ ] Puerto de IA con adaptadores `Fake` y `Fallback`, y tope de 15 s.
