@@ -5,3 +5,29 @@ class InvalidClassCode(DomainError):
     code = "Classrooms.InvalidCode"
     kind = ErrorKind.VALIDATION
     default_message = "Ese código de clase no existe. Revisa con tu docente."
+
+
+class ClassNotFound(DomainError):
+    """Also for a class that exists but the person may not see (no leaks)."""
+
+    code = "Resource.NotFound"
+    kind = ErrorKind.NOT_FOUND
+    default_message = "No encontramos esa clase."
+
+
+class TeachersOnly(DomainError):
+    code = "Identity.Forbidden"
+    kind = ErrorKind.FORBIDDEN
+    default_message = "Solo un docente puede hacer esto."
+
+
+class InvalidClassData(DomainError):
+    code = "Classrooms.InvalidData"
+    kind = ErrorKind.VALIDATION
+    default_message = "Revisa el nombre, la materia y las tareas de la clase."
+
+
+class NotInAClass(DomainError):
+    code = "Classrooms.NotInAClass"
+    kind = ErrorKind.CONFLICT
+    default_message = "No estás en ninguna clase."

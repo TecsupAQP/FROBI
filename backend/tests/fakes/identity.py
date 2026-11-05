@@ -83,7 +83,7 @@ class FakeClassMembership:
     async def find_by_code(self, code: str) -> ClassRef | None:
         return EXAMPLE_CLASS if code.upper() == self._code else None
 
-    async def join(self, person_id: UUID, class_ref: ClassRef) -> ActiveMembership:
+    async def join(self, person_id: UUID, alias: str, class_ref: ClassRef) -> ActiveMembership:
         self.joined[person_id] = class_ref
         return ActiveMembership(class_id=class_ref.id, class_name=class_ref.name)
 

@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from frobi.modules.identity.domain import Person, Role
 from frobi.modules.identity.infrastructure import (
     SESSION_TTL,
-    ExampleClassMembership,
     RedisSessionStore,
     SqlAlchemyPersonRepository,
 )
@@ -79,17 +78,3 @@ async def test_garbage_in_a_session_key_is_no_session(redis: "Redis") -> None:
     await redis.set("session:broken", "not-a-uuid")
 
     assert await RedisSessionStore(redis).resolve("broken") is None
-
-
-async def test_example_membership_is_remembered_for_me(redis: "Redis") -> None:
-    memberships = ExampleClassMembership(redis)
-    person_id = uuid4()
-    class_ref = await memberships.find_by_code("sensor1")
-    assert class_ref is not None
-
-    await memberships.join(person_id, class_ref)
-
-    active = await memberships.active_for(person_id)
-    assert active is not None
-    assert active.class_id == class_ref.id
-    assert await memberships.active_for(uuid4()) is None
