@@ -7,10 +7,11 @@ Backend for FROBI (Hack4Edu 2026): FastAPI + PostgreSQL + Redis, organized as a 
 >
 > | Real | Still example data (stubs, keep no state) |
 > | --- | --- |
-> | M1: sessions, `/me`, logout | M6–M12 |
+> | M1: sessions, `/me`, logout | M7–M12 |
 > | M2: onboarding wizard, profiles and their switches | M13 except `/me/settings` |
 > | M3: sample guide, paste text, PDF upload, brief + draft (`/works`) | |
 > | M4/M5: formats, adaptations with recipe, 15 s cap, fallback, cache | |
+> | M6: help ladder, own attempt without AI, hints with fallback | |
 > | M13: `GET` and `PATCH /me/settings` | |
 
 ## Authentication

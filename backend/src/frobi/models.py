@@ -7,6 +7,7 @@ from frobi.modules.adaptations.infrastructure import models as adaptations_model
 from frobi.modules.identity.infrastructure import models as identity_models
 from frobi.modules.materials.infrastructure import models as materials_models
 from frobi.modules.settings.infrastructure import models as settings_models
+from frobi.modules.tutoring.infrastructure import models as tutoring_models
 from frobi.shared.infrastructure import Base
 
 metadata = Base.metadata
@@ -17,4 +18,5 @@ __all__ = [
     "materials_models",
     "metadata",
     "settings_models",
+    "tutoring_models",
 ]

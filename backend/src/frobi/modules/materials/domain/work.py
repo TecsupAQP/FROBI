@@ -5,60 +5,21 @@ requirements the draft does not seem to cover yet. It never judges authorship.
 """
 
 import re
-import unicodedata
 from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID, uuid4
 
+from frobi.shared.domain import text
+
 MAX_ITEMS = 12
 _BULLET = re.compile(r"^\s*(?:[-*•·]|\d+[.)]|[a-z][.)])\s+", re.IGNORECASE)
-_SENTENCE = re.compile(r"(?<=[.!?])\s+")
-_WORD = re.compile(r"[a-z0-9]+")
-_STOPWORDS = frozenset(
-    [
-        "como",
-        "cual",
-        "cuales",
-        "cuando",
-        "debe",
-        "deben",
-        "donde",
-        "entre",
-        "esta",
-        "este",
-        "estos",
-        "estas",
-        "para",
-        "pero",
-        "porque",
-        "puede",
-        "pueden",
-        "sobre",
-        "tiene",
-        "tienen",
-        "todo",
-        "todos",
-        "tambien",
-        "trabajo",
-        "hacer",
-        "cada",
-        "desde",
-        "hasta",
-        "segun",
-        "explicar",
-        "explica",
-        "describir",
-        "describe",
-        "incluir",
-        "incluye",
-        "realizar",
-        "indicar",
-        "indica",
-        "mencionar",
-        "presentar",
-        "elaborar",
-    ]
-)
+# Verbs a brief uses to ask for things; they say nothing about whether the draft covers it.
+_BRIEF_VERBS = frozenset(
+    {
+        "explicar", "explica", "describir", "describe", "incluir", "incluye", "realizar",
+        "indicar", "indica", "mencionar", "presentar", "elaborar", "trabajo",
+    }
+)  # fmt: skip
 
 
 @dataclass(frozen=True, slots=True)
@@ -101,13 +62,8 @@ class Work:
         )
 
 
-def _fold(text: str) -> str:
-    decomposed = unicodedata.normalize("NFKD", text.lower())
-    return "".join(char for char in decomposed if not unicodedata.combining(char))
-
-
-def keywords(text: str) -> set[str]:
-    return {w for w in _WORD.findall(_fold(text)) if len(w) >= 5 and w not in _STOPWORDS}
+def keywords(value: str) -> set[str]:
+    return text.keywords(value, extra_stopwords=_BRIEF_VERBS)
 
 
 def _clean(item: str) -> str:
@@ -118,7 +74,7 @@ def requirements_of(brief: str) -> tuple[str, ...]:
     """Bulleted or numbered lines if there are any; otherwise every sentence."""
     lines = [line for line in brief.splitlines() if line.strip()]
     bullets = [_clean(line) for line in lines if _BULLET.match(line)]
-    items = bullets or [_clean(s) for line in lines for s in _SENTENCE.split(line)]
+    items = bullets or [_clean(s) for line in lines for s in text.sentences(line)]
     return tuple(dict.fromkeys(item for item in items if keywords(item)))[:MAX_ITEMS]
 
 
@@ -131,7 +87,7 @@ def topics_of(draft: str) -> tuple[str, ...]:
         if line.startswith("#") or (len(line.split()) <= 8 and not line.endswith((".", ":")))
     ]
     if not headings:
-        headings = [_SENTENCE.split(line)[0].rstrip(".") for line in lines]
+        headings = [text.sentences(line)[0].rstrip(".") for line in lines]
     return tuple(dict.fromkeys(h for h in headings if h))[:MAX_ITEMS]
 
 
