@@ -7,7 +7,8 @@
       <div>
         <h2 :id="`${PREFIX}-titulo`" :class="`${PREFIX}__titulo`">Guía: {{ guia.titulo }}</h2>
         <p :class="`${PREFIX}__meta`">
-          {{ guia.carrera }} · {{ guia.temas.length }} temas · {{ guia.minutosLectura }} min de lectura
+          {{ guia.carrera }} · {{ guia.temas.length }} {{ guia.temas.length === 1 ? "tema" : "temas" }} ·
+          {{ guia.minutosLectura }} min de lectura
         </p>
       </div>
     </div>

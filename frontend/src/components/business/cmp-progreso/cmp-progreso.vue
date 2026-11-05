@@ -47,6 +47,10 @@
           <dt>Autonomía</dt>
           <dd>{{ progreso.autonomia }}</dd>
         </div>
+        <div :class="`${PREFIX}__dato`">
+          <dt>Resueltos sin IA</dt>
+          <dd>{{ progreso.resueltosSinIa }} · cuenta como logro</dd>
+        </div>
       </dl>
 
       <div :class="`${PREFIX}__columnas`">

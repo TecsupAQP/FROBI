@@ -1,16 +1,56 @@
-import type { VerificacionPort } from "@/core/verificacion/infraestructure/ports/in/verificacion.port";
+import type {
+  RespuestaRevisada,
+  VerificacionPort,
+} from "@/core/verificacion/infraestructure/ports/in/verificacion.port";
 import type { Verificacion } from "@/core/shared/domain/view/pregunta.view";
-import { respuestaSimulada } from "@/core/shared/application/util/simulacion.util";
-import { VERIFICACION_MOCK } from "@/mocks/verificacion.mock";
+import { api } from "@/core/shared/infraestructure/http/api.client";
+import type {
+  AdaptacionDto,
+  PreguntaDto,
+  RespuestaPreguntaDto,
+} from "@/core/shared/infraestructure/http/api.dto";
+import { formatoDesdeApi } from "@/core/shared/infraestructure/http/api.mapper";
+import { adaptacionActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
 
-// Implementación mock. Para conectar el backend, reemplazar solo este archivo.
+const LETRAS = ["A", "B", "C", "D", "E"];
+
+// POST /adaptations/{id}/questions y POST /questions/{id}/answers.
 export class VerificacionUseCase implements VerificacionPort {
-  obtenerVerificacion(_temaId: string): Promise<Verificacion> {
-    return respuestaSimulada(VERIFICACION_MOCK);
+  async obtenerVerificacion(): Promise<Verificacion> {
+    const adaptacionId = await adaptacionActualId();
+    const [adaptacion, preguntas] = await Promise.all([
+      api.get<AdaptacionDto>(`/adaptations/${adaptacionId}`),
+      api.post<PreguntaDto[]>(`/adaptations/${adaptacionId}/questions`),
+    ]);
+    const formato = formatoDesdeApi(adaptacion.format);
+    return {
+      ruta: [adaptacion.content.title, "Comprueba lo que aprendiste"],
+      // La respuesta correcta y la explicación llegan al responder.
+      preguntas: preguntas.map((pregunta) => ({
+        id: pregunta.id,
+        enunciado: pregunta.statement,
+        opciones: pregunta.options.map((opcion, indice) => ({
+          id: opcion.id,
+          letra: LETRAS[indice] ?? opcion.id.toUpperCase(),
+          texto: opcion.text,
+        })),
+        correcta: "",
+        explicacionAcierto: "",
+        explicacionError: "",
+        formatoSugerido: formato,
+      })),
+    };
   }
 
-  comprobarRespuesta(preguntaId: string, opcionId: string): Promise<boolean> {
-    const pregunta = VERIFICACION_MOCK.preguntas.find((item) => item.id === preguntaId);
-    return respuestaSimulada(pregunta?.correcta === opcionId, 800);
+  async comprobarRespuesta(preguntaId: string, opcionId: string): Promise<RespuestaRevisada> {
+    const respuesta = await api.post<RespuestaPreguntaDto>(`/questions/${preguntaId}/answers`, {
+      option: opcionId,
+    });
+    return {
+      correcta: respuesta.is_correct,
+      opcionCorrecta: respuesta.correct_option,
+      explicacion: respuesta.feedback,
+      formatoSugerido: respuesta.suggested_format ? formatoDesdeApi(respuesta.suggested_format) : null,
+    };
   }
 }

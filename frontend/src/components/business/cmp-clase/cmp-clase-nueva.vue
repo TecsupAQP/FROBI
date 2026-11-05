@@ -3,25 +3,28 @@
     <v-chip tono="marino">Paso 3 · Docente</v-chip>
     <cmp-encabezado-pagina
       :titulo="`Nueva clase: ${nombreCorto || 'sin nombre'}`"
-      descripcion="Prof. Marisol Quispe · Mecatrónica · ciclo 1 (nombres de ejemplo)"
+      :descripcion="`${estudiante?.alias ?? 'Docente'} · Mecatrónica · ciclo 1`"
     />
 
     <div :class="`${PREFIX}__columnas`">
       <div :class="`${PREFIX}__principal`">
         <section :class="`${PREFIX}__tarjeta`" aria-labelledby="clase-contenido">
           <h2 id="clase-contenido" :class="`${PREFIX}__titulo`">Contenido de la clase</h2>
-          <ul :class="`${PREFIX}__materiales`">
+          <p v-if="!materiales.length" :class="`${PREFIX}__vacio`">
+            Sube la guía o los PDF de tu clase. FROBI los adapta para cada estudiante.
+          </p>
+          <ul v-else :class="`${PREFIX}__materiales`">
             <li v-for="material in materiales" :key="material" :class="`${PREFIX}__material`">
               <v-icon nombre="file" />
               <div :class="`${PREFIX}__material-textos`">
                 <p :class="`${PREFIX}__material-nombre`">{{ material }}</p>
-                <v-chip tono="exito" icono="check">Listo para adaptar</v-chip>
+                <v-chip tono="exito" icono="check">Se sube al crear la clase</v-chip>
               </div>
             </li>
           </ul>
-          <v-button variante="secundario" bloque aria-haspopup="dialog" @click="abrirModal"
-            >Subir otro archivo</v-button
-          >
+          <v-button variante="secundario" bloque aria-haspopup="dialog" @click="abrirModal">{{
+            materiales.length ? "Subir otro archivo" : "Subir un archivo"
+          }}</v-button>
         </section>
 
         <section :class="`${PREFIX}__tarjeta`" aria-labelledby="clase-ia">
@@ -51,7 +54,7 @@
       :nombre-archivo="nombreArchivo"
       :tamano-archivo-mb="tamanoArchivoMb"
       :archivo="archivo"
-      @elegir="elegirArchivo('hoja-tecnica-sensor-optico.pdf', 1.1)"
+      @elegir="elegirArchivo"
       @cancelar="cancelarSubida"
       @usar="agregarMaterial"
     />

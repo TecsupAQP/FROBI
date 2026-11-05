@@ -35,7 +35,7 @@
           :class="`${PREFIX}__reproducir`"
           :aria-label="reproduciendo ? 'Pausar' : 'Reproducir'"
           :aria-pressed="reproduciendo"
-          @click="reproduciendo = !reproduciendo"
+          @click="alternar"
         >
           <v-icon v-if="reproduciendo" nombre="pause" :tamano="30" />
           <v-icon v-else nombre="play" :tamano="30" />
@@ -60,13 +60,17 @@
       </div>
     </div>
 
+    <p v-if="!vozDisponible" :class="`${PREFIX}__aviso`" role="status">
+      Tu navegador no tiene voz. Puedes leer el texto aquí abajo.
+    </p>
+
     <section :class="`${PREFIX}__texto`" :aria-labelledby="`${PREFIX}-texto`">
       <h3 :id="`${PREFIX}-texto`" :class="`${PREFIX}__subtitulo`">Lo que escuchas</h3>
       <p
         v-for="(frase, indice) in contenido.frases"
         :key="frase"
-        :class="[`${PREFIX}__frase`, { [`${PREFIX}__frase--actual`]: indice === contenido.fraseActual }]"
-        :aria-current="indice === contenido.fraseActual ? 'true' : undefined"
+        :class="[`${PREFIX}__frase`, { [`${PREFIX}__frase--actual`]: indice === fraseActual }]"
+        :aria-current="indice === fraseActual ? 'true' : undefined"
       >
         {{ frase }}
       </p>

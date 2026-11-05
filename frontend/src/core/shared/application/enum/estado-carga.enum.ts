@@ -1,4 +1,4 @@
-// Estados de uso (Figma · 13). Se simulan desde el mock con ?estado=...
+// Estados de uso de cada pantalla (Figma · 13).
 export enum EstadoCargaEnum {
   INICIAL = "inicial",
   CARGANDO = "cargando",

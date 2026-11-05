@@ -33,7 +33,7 @@ export default defineComponent({
 
     const { perfil, cargar, elegirModo, guardar, validarCodigo } = useCmpPerfil();
 
-    const { estudiante, iniciarSesion } = useCmpSesion();
+    const { estudiante, actualizarClase, cambiarRol } = useCmpSesion();
 
     const codigo = ref("");
 
@@ -44,10 +44,18 @@ export default defineComponent({
     const ocupado = ref(false);
 
     const continuar = async () => {
-      if (!perfil.value.modo) return;
+      const modo = perfil.value.modo;
+      if (!modo) return;
       ocupado.value = true;
       try {
-        if (perfil.value.modo === "estudiante-clase") {
+        // El rol se fija al entrar: elegir otro abre una sesión nueva con el mismo alias.
+        const rol = modo === "docente" ? "docente" : "estudiante";
+        if (estudiante.value && estudiante.value.rol !== rol) {
+          await cambiarRol(rol);
+          await cargar();
+          elegirModo(modo);
+        }
+        if (modo === "estudiante-clase") {
           const resultado = await validarCodigo(codigo.value);
           if (!resultado.valido) {
             errorCodigo.value = resultado.mensaje;
@@ -56,18 +64,18 @@ export default defineComponent({
           }
           errorCodigo.value = undefined;
           claseEncontrada.value = resultado.nombreClase;
+          if (resultado.claseId) {
+            actualizarClase({ id: resultado.claseId, nombre: resultado.nombreClase ?? "" });
+          }
         }
         await guardar();
-        if (estudiante.value) {
-          iniciarSesion({
-            ...estudiante.value,
-            rol: perfil.value.modo === "docente" ? "docente" : "estudiante",
-          });
-        }
-        router.push({
-          name: perfil.value.vioIntro ? RutaEnum.ASISTENTE : RutaEnum.INTRO,
-          params: { paso: 1 },
-        });
+        router.push(
+          perfil.value.vioIntro
+            ? { name: RutaEnum.ASISTENTE, params: { paso: 1 } }
+            : { name: RutaEnum.INTRO },
+        );
+      } catch {
+        errorCodigo.value = "No pudimos continuar. Revisa tu conexión e inténtalo de nuevo.";
       } finally {
         ocupado.value = false;
       }

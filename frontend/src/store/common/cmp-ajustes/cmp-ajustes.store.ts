@@ -6,7 +6,7 @@ import {
   obtenerAjustesService,
   obtenerIdiomasService,
 } from "@/core/perfil/infraestructure/adapters/in/service/perfil.service";
-import { AJUSTES_INICIALES } from "@/mocks/perfil.mock";
+import { AJUSTES_INICIALES } from "@/constants/perfil.constant";
 
 // Ajustes de accesibilidad e idioma (Figma · 24). Se aplican en <html> con useAplicarAjustes.
 export const useCmpAjustesStore = defineStore("CmpAjustesStore", () => {
@@ -22,7 +22,18 @@ export const useCmpAjustesStore = defineStore("CmpAjustesStore", () => {
     cargado.value = true;
   };
 
-  const guardar = () => guardarAjustesService(ajustes.value);
+  // Vuelve a leer de la API (por ejemplo, después del asistente, que aplica los ajustes de cada perfil).
+  const recargar = async () => {
+    cargado.value = false;
+    await cargar();
+  };
+
+  const reiniciar = () => {
+    ajustes.value = structuredClone(AJUSTES_INICIALES);
+    cargado.value = false;
+  };
+
+  const guardar = () => guardarAjustesService(JSON.parse(JSON.stringify(ajustes.value)) as Ajustes);
 
   const alternar = (id: AjusteId) => {
     ajustes.value.activos[id] = !ajustes.value.activos[id];
@@ -38,5 +49,5 @@ export const useCmpAjustesStore = defineStore("CmpAjustesStore", () => {
     guardar();
   };
 
-  return { ajustes, cargado, idiomas, activarVarios, alternar, cargar };
+  return { ajustes, cargado, idiomas, activarVarios, alternar, cargar, recargar, reiniciar };
 });

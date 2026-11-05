@@ -3,7 +3,7 @@
     <cmp-encabezado-pagina
       v-if="guia"
       :titulo="guia.titulo"
-      :descripcion="`Guía de ${guia.carrera} · ${guia.temas.length} temas`"
+      :descripcion="`Guía de ${guia.carrera} · ${guia.temas.length} ${guia.temas.length === 1 ? 'tema' : 'temas'}`"
     />
 
     <div v-if="!guia" :class="`${PREFIX}__cargando`">

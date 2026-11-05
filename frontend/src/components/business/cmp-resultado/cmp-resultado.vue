@@ -14,7 +14,12 @@
       </span>
       <div :class="`${PREFIX}__respaldo-textos`">
         <h2 :class="`${PREFIX}__respaldo-titulo`">Mostramos una versión guardada de esta guía</h2>
-        <p>La IA no respondió a tiempo. Puedes seguir estudiando con esta versión o intentar de nuevo.</p>
+        <p>
+          {{
+            adaptacion.aviso ||
+            "La IA no respondió a tiempo. Puedes seguir estudiando con esta versión o intentar de nuevo."
+          }}
+        </p>
       </div>
       <v-button variante="secundario" @click="cargarAdaptacion(temaId, formato, true)"
         >Reintentar con la IA</v-button

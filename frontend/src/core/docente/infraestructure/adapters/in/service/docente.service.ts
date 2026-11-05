@@ -3,4 +3,4 @@ import { DocenteUseCase } from "@/core/docente/application/use-case/docente.use-
 
 const docentePort: DocentePort = new DocenteUseCase();
 
-export const obtenerPanelDocenteService = (grupoId: string) => docentePort.obtenerPanel(grupoId);
+export const obtenerPanelDocenteService = () => docentePort.obtenerPanel();

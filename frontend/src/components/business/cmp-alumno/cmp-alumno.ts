@@ -27,7 +27,7 @@ export default defineComponent({
 
     const completa = ref(false);
 
-    // En la maqueta la conversación completa es la misma lista: el resumen muestra los primeros mensajes.
+    // El resumen muestra los primeros mensajes; la API hoy no comparte conversaciones con el docente.
     const mensajesVisibles = computed(() =>
       completa.value
         ? (detalle.value?.conversacion ?? [])
@@ -35,8 +35,13 @@ export default defineComponent({
     );
 
     onMounted(async () => {
-      await cargarDetalle(props.alias);
-      cargando.value = false;
+      try {
+        await cargarDetalle(props.alias);
+      } catch {
+        // Sin permiso o sin conexión: se muestra el estado "No encontramos a este alumno".
+      } finally {
+        cargando.value = false;
+      }
     });
 
     return { RutaEnum, PREFIX, detalle, cargando, completa, mensajesVisibles };

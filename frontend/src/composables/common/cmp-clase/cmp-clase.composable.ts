@@ -12,9 +12,9 @@ function useCmpClase() {
     materiales,
     ocupado,
 
+    agregarMaterial: store.agregarMaterial,
     cargar: store.cargar,
     cargarDetalle: store.cargarDetalle,
-    cargarMateriales: store.cargarMateriales,
     crear: store.crear,
     invitar: store.invitar,
     salir: store.salir,

@@ -17,12 +17,14 @@
       <v-chip tono="marino">Paso 9 · Docente</v-chip>
       <cmp-encabezado-pagina
         :titulo="detalle.alumno.nombre"
-        :descripcion="`${detalle.clase} · último acceso ${detalle.ultimoAcceso}`"
+        :descripcion="
+          detalle.ultimoAcceso ? `${detalle.clase} · último acceso ${detalle.ultimoAcceso}` : detalle.clase
+        "
         :volver="{ texto: 'Volver al panel', destino: { name: RutaEnum.DOCENTE } }"
       />
       <v-aviso tipo="aviso" icono="info">
-        Datos de ejemplo. Solo ves la actividad de {{ detalle.alumno.nombre.split(" ")[0] }} dentro de esta
-        clase.
+        <template v-if="detalle.esEjemplo">Datos de ejemplo. </template>Solo ves la actividad de
+        {{ detalle.alumno.nombre.split(" ")[0] }} dentro de esta clase.
       </v-aviso>
 
       <div :class="`${PREFIX}__columnas`">
@@ -61,7 +63,11 @@
         </div>
 
         <div :class="`${PREFIX}__lateral`">
-          <section :class="`${PREFIX}__tarjeta`" aria-labelledby="alumno-conversacion">
+          <section
+            v-if="detalle.conversacion.length"
+            :class="`${PREFIX}__tarjeta`"
+            aria-labelledby="alumno-conversacion"
+          >
             <h2 id="alumno-conversacion" :class="`${PREFIX}__titulo`">Conversación (resumen)</h2>
             <ol :class="`${PREFIX}__mensajes`">
               <li
@@ -76,6 +82,14 @@
             <v-button variante="secundario" bloque :aria-expanded="completa" @click="completa = !completa">
               {{ completa ? "Ver solo el resumen" : "Ver conversación completa" }}
             </v-button>
+          </section>
+
+          <section v-else :class="`${PREFIX}__tarjeta`" aria-labelledby="alumno-privado">
+            <h2 id="alumno-privado" :class="`${PREFIX}__titulo`">Lo que no ves</h2>
+            <p>
+              <v-icon nombre="lock" :tamano="20" />
+              Sus conversaciones con FROBI, sus borradores y lo que hace fuera de la clase.
+            </p>
           </section>
 
           <section :class="`${PREFIX}__sugerencia`" aria-labelledby="alumno-sugerencia">

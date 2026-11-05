@@ -40,8 +40,10 @@ export default defineComponent({
       router.push({ name: RutaEnum.REVISION });
     };
 
-    const usarPdf = () => {
-      if (archivo.value) borrador.value = archivo.value.vistaPrevia.texto;
+    // El PDF (o el texto pegado si no se pudo leer) pasa a ser el borrador.
+    const usarPdf = (textoPegado?: string) => {
+      if (textoPegado?.trim()) borrador.value = textoPegado.trim();
+      else if (archivo.value) borrador.value = archivo.value.texto;
       cerrarModal();
     };
 

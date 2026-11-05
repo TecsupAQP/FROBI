@@ -39,17 +39,19 @@
                 {{ criterio }}
               </v-casilla>
             </fieldset>
-            <v-button bloque :deshabilitado="!progreso.respuestaSinIa.trim()" @click="comparar">
-              Comparar con mi guía
+            <v-button bloque :deshabilitado="!progreso.respuestaSinIa.trim() || probando" @click="comparar">
+              {{ probando ? "Comparando con tu guía…" : "Comparar con mi guía" }}
             </v-button>
-            <div v-if="progreso.resueltoSinIa" :class="`${PREFIX}__guia`" role="status">
+            <div v-if="comparado" :class="`${PREFIX}__guia`" role="status">
               <p :class="`${PREFIX}__guia-titulo`">Tu guía dice</p>
-              <p>
-                «Un sensor capacitivo detecta metales, plásticos y líquidos por el cambio en su campo
-                eléctrico.»
+              <p v-for="pasaje in progreso.pasajesGuia" :key="pasaje">«{{ pasaje }}»</p>
+              <p v-if="!progreso.pasajesGuia.length">
+                No encontramos en tu guía una parte que hable de lo que escribiste. Vuelve a leerla y revisa
+                tu respuesta.
               </p>
               <p :class="`${PREFIX}__secundario`">Compara con lo que escribiste y corrige si hace falta.</p>
             </div>
+            <p v-if="error" :class="`${PREFIX}__secundario`" role="alert">{{ error }}</p>
           </section>
         </div>
 

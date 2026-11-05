@@ -1,44 +1,53 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import type { Clase, DetalleAlumno, NuevaClase } from "@/core/shared/domain/view/clase.view";
 import {
   crearClaseService,
-  invitarPorCorreoService,
+  invitarService,
   obtenerClaseService,
   obtenerDetalleAlumnoService,
-  obtenerMaterialesClaseService,
   salirDeClaseService,
 } from "@/core/clase/infraestructure/adapters/in/service/clase.service";
 
 // Puerta de clase: el docente solo ve la actividad que ocurre dentro de su clase.
 export const useCmpClaseStore = defineStore("CmpClaseStore", () => {
   const clase = ref<Clase | null>(null);
-  const materiales = ref<string[]>([]);
+  const cargada = ref(false);
+  // PDFs elegidos antes de crear la clase: se suben cuando la clase existe.
+  const pendientes = ref<File[]>([]);
   const detalle = ref<DetalleAlumno | null>(null);
   const ocupado = ref(false);
-  const estoyEnClase = ref(true);
 
-  const cargar = async () => {
-    if (!clase.value) clase.value = await obtenerClaseService();
+  const materiales = computed(() => pendientes.value.map((archivo) => archivo.name));
+  const estoyEnClase = computed(() => clase.value !== null);
+
+  const cargar = async (forzar = false) => {
+    if (cargada.value && !forzar) return;
+    clase.value = await obtenerClaseService();
+    cargada.value = true;
   };
 
-  const cargarMateriales = async () => {
-    materiales.value = await obtenerMaterialesClaseService();
+  const agregarMaterial = (archivo: File) => {
+    if (!pendientes.value.some((item) => item.name === archivo.name)) {
+      pendientes.value = [...pendientes.value, archivo];
+    }
   };
 
-  const crear = async (datos: NuevaClase) => {
+  const crear = async (datos: Omit<NuevaClase, "archivos">) => {
     ocupado.value = true;
     try {
-      clase.value = await crearClaseService(datos);
+      clase.value = await crearClaseService({ ...datos, archivos: pendientes.value });
+      cargada.value = true;
+      pendientes.value = [];
     } finally {
       ocupado.value = false;
     }
   };
 
-  const invitar = async (correo: string) => {
+  const invitar = async (aliasOCorreo: string) => {
     ocupado.value = true;
     try {
-      clase.value = await invitarPorCorreoService(correo);
+      clase.value = await invitarService(aliasOCorreo);
     } finally {
       ocupado.value = false;
     }
@@ -51,7 +60,14 @@ export const useCmpClaseStore = defineStore("CmpClaseStore", () => {
 
   const salir = async () => {
     await salirDeClaseService();
-    estoyEnClase.value = false;
+    clase.value = null;
+  };
+
+  const reiniciar = () => {
+    clase.value = null;
+    cargada.value = false;
+    pendientes.value = [];
+    detalle.value = null;
   };
 
   return {
@@ -61,11 +77,12 @@ export const useCmpClaseStore = defineStore("CmpClaseStore", () => {
     materiales,
     ocupado,
 
+    agregarMaterial,
     cargar,
     cargarDetalle,
-    cargarMateriales,
     crear,
     invitar,
+    reiniciar,
     salir,
   };
 });

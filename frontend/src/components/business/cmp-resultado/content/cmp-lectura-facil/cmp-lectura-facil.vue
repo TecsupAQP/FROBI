@@ -6,7 +6,11 @@
         <li v-for="frase in contenido.frases" :key="frase" :class="`${PREFIX}__frase`">{{ frase }}</li>
       </ul>
     </section>
-    <section :class="`${PREFIX}__glosario`" :aria-labelledby="`${PREFIX}-glosario`">
+    <section
+      v-if="contenido.glosario.length"
+      :class="`${PREFIX}__glosario`"
+      :aria-labelledby="`${PREFIX}-glosario`"
+    >
       <h3 :id="`${PREFIX}-glosario`" :class="`${PREFIX}__titulo`">Glosario</h3>
       <dl :class="`${PREFIX}__terminos`">
         <div v-for="item in contenido.glosario" :key="item.termino">

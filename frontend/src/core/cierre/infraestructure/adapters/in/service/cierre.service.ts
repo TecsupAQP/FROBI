@@ -3,4 +3,4 @@ import { CierreUseCase } from "@/core/cierre/application/use-case/cierre.use-cas
 
 const cierrePort: CierrePort = new CierreUseCase();
 
-export const obtenerResumenCierreService = (temaId: string) => cierrePort.obtenerResumen(temaId);
+export const obtenerResumenCierreService = () => cierrePort.obtenerResumen();

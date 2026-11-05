@@ -7,7 +7,7 @@ export const useCmpCierreStore = defineStore("CmpCierreStore", () => {
   const resumen = ref<ResumenCierre | null>(null);
 
   const cargar = async () => {
-    resumen.value = await obtenerResumenCierreService("tema-1");
+    resumen.value = await obtenerResumenCierreService();
   };
 
   return { resumen, cargar };

@@ -5,8 +5,7 @@ import type { NuevaClase } from "@/core/shared/domain/view/clase.view";
 const clasePort: ClasePort = new ClaseUseCase();
 
 export const obtenerClaseService = () => clasePort.obtenerClase();
-export const obtenerMaterialesClaseService = () => clasePort.obtenerMateriales();
 export const crearClaseService = (datos: NuevaClase) => clasePort.crearClase(datos);
-export const invitarPorCorreoService = (correo: string) => clasePort.invitarPorCorreo(correo);
+export const invitarService = (aliasOCorreo: string) => clasePort.invitar(aliasOCorreo);
 export const obtenerDetalleAlumnoService = (alias: string) => clasePort.obtenerDetalleAlumno(alias);
 export const salirDeClaseService = () => clasePort.salirDeClase();

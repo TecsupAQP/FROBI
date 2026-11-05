@@ -2,7 +2,7 @@ import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import type { Adaptation, FormatoId } from "@/core/shared/domain/view/adaptation.view";
 import { EstadoCargaEnum } from "@/core/shared/application/enum/estado-carga.enum";
-import { SinConexionError } from "@/core/shared/application/util/simulacion.util";
+import { SinConexionError } from "@/core/shared/application/util/errores.util";
 import { obtenerAdaptacionService } from "@/core/adaptacion/infraestructure/adapters/in/service/adaptacion.service";
 
 export const useCmpResultadoStore = defineStore("CmpResultadoStore", () => {

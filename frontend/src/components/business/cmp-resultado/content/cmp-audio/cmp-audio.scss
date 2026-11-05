@@ -102,4 +102,8 @@ $prefix: cmp-audio;
       background-color: $marca-azul-claro;
     }
   }
+
+  &__aviso {
+    color: $texto-secundario;
+  }
 }

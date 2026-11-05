@@ -5,16 +5,20 @@ import { obtenerPanelDocenteService } from "@/core/docente/infraestructure/adapt
 
 export const useCmpDocenteStore = defineStore("CmpDocenteStore", () => {
   const panel = ref<PanelDocente | null>(null);
-  const grupoId = ref("meca-1");
+  const cargado = ref(false);
+  const grupoId = ref("");
 
   const cargar = async () => {
-    panel.value = await obtenerPanelDocenteService(grupoId.value);
+    panel.value = await obtenerPanelDocenteService();
+    grupoId.value = panel.value?.grupo.id ?? "";
+    cargado.value = true;
   };
 
+  // Hoy el docente tiene una sola clase; el selector queda listo para varias.
   const cambiarGrupo = async (id: string) => {
     grupoId.value = id;
     await cargar();
   };
 
-  return { grupoId, panel, cambiarGrupo, cargar };
+  return { cargado, grupoId, panel, cambiarGrupo, cargar };
 });

@@ -24,7 +24,7 @@
         <p>Parece una imagen escaneada. Prueba con un PDF con texto seleccionable o pega el texto aquí.</p>
       </div>
       <div :class="`${PREFIX}__acciones-error`">
-        <v-button @click="$emit('elegir')">Elegir otro PDF</v-button>
+        <v-button @click="abrirSelector">Elegir otro PDF</v-button>
         <v-button variante="secundario" @click="pegando = true">Pegar el texto</v-button>
       </div>
     </template>
@@ -44,11 +44,16 @@
       <p :class="`${PREFIX}__intro`">
         Elige el PDF de tu curso. Te mostramos el texto que leímos para que lo revises.
       </p>
-      <div :class="`${PREFIX}__zona`">
+      <div
+        :class="[`${PREFIX}__zona`, { [`${PREFIX}__zona--encima`]: arrastrando }]"
+        @dragover.prevent="arrastrando = true"
+        @dragleave="arrastrando = false"
+        @drop.prevent="soltar"
+      >
         <v-icon :class="`${PREFIX}__zona-icono`" nombre="upload" :tamano="32" />
         <p :class="`${PREFIX}__zona-texto`">Arrastra tu PDF aquí</p>
         <p :class="`${PREFIX}__zona-o`" aria-hidden="true">o</p>
-        <v-button variante="secundario" @click="$emit('elegir')">
+        <v-button variante="secundario" @click="abrirSelector">
           {{ archivo ? "Elegir otro archivo" : "Elegir archivo" }}
         </v-button>
       </div>
@@ -56,7 +61,9 @@
         <div :class="`${PREFIX}__exito`">
           <v-icon nombre="check-circle" />
           <div>
-            <p :class="`${PREFIX}__exito-nombre`">{{ archivo.nombre }} · {{ archivo.paginas }} páginas</p>
+            <p :class="`${PREFIX}__exito-nombre`">
+              {{ archivo.nombre }}<template v-if="archivo.paginas"> · {{ archivo.paginas }} páginas</template>
+            </p>
             <p :class="`${PREFIX}__exito-detalle`">Texto extraído correctamente</p>
           </div>
         </div>
@@ -73,10 +80,22 @@
 
     <template v-if="(fase === 'listo' && archivo) || pegando" #pie>
       <v-button variante="secundario" @click="cancelar">Cancelar</v-button>
-      <v-button :deshabilitado="pegando && !textoPegado.trim()" @click="$emit('usar')">
+      <v-button
+        :deshabilitado="pegando && !textoPegado.trim()"
+        @click="$emit('usar', pegando ? textoPegado : undefined)"
+      >
         {{ pegando ? "Usar este texto" : "Usar esta guía" }}
       </v-button>
     </template>
+    <input
+      ref="selector"
+      class="solo-lector"
+      type="file"
+      accept="application/pdf,.pdf"
+      tabindex="-1"
+      aria-hidden="true"
+      @change="alElegir"
+    />
   </v-modal>
 </template>
 

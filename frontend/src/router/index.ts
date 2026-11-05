@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router"
 import { RutaEnum, SeccionNavEnum } from "@/enums/ruta.enum";
 import { esFormatoValido } from "@/constants/formatos.constant";
 import { useCmpSesionStore } from "@/store/common/cmp-sesion/cmp-sesion.store";
-import { ESTUDIANTE_DEMO } from "@/mocks/sesion.mock";
+import { registrarAlPerderSesion } from "@/core/shared/infraestructure/http/api.client";
 
 declare module "vue-router" {
   interface RouteMeta {
@@ -170,12 +170,25 @@ const router = createRouter({
   scrollBehavior: (_to, _from, guardada) => guardada ?? { top: 0 },
 });
 
-// Maqueta navegable: si se entra directo a una pantalla sin pasar por el login,
-// se usa un estudiante de ejemplo para que la barra superior tenga datos.
+// Pantallas que se ven sin entrar: el login y las de presentación (Figma · 21 y 23).
+const RUTAS_PUBLICAS: string[] = [RutaEnum.LOGIN, RutaEnum.COMO_SE_USA, RutaEnum.PERSONAS];
+
 router.beforeEach((to) => {
   const sesion = useCmpSesionStore();
-  if (to.name !== RutaEnum.LOGIN && !sesion.haIniciado) {
-    sesion.iniciarSesion(ESTUDIANTE_DEMO);
+  if (!RUTAS_PUBLICAS.includes(to.name as string) && !sesion.haIniciado) {
+    return { name: RutaEnum.LOGIN, query: { volver: to.fullPath } };
+  }
+  if (to.name === RutaEnum.LOGIN && sesion.haIniciado) {
+    return { name: RutaEnum.INICIO };
+  }
+});
+
+// Si la API responde 401 (token vencido o cerrado), se vuelve a "Entrar".
+registrarAlPerderSesion(() => {
+  useCmpSesionStore().olvidarSesion();
+  const actual = router.currentRoute.value;
+  if (!RUTAS_PUBLICAS.includes(actual.name as string)) {
+    router.push({ name: RutaEnum.LOGIN, query: { volver: actual.fullPath } });
   }
 });
 

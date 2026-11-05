@@ -1,12 +1,7 @@
-import type { Carrera, Student } from "@/core/shared/domain/view/student.view";
+import type { Carrera } from "@/core/shared/domain/view/student.view";
 
-export const ESTUDIANTE_DEMO: Student = {
-  alias: "mecatronico_01",
-  carrera: "mecatronica",
-  rol: "estudiante",
-};
-
-export const CARRERAS_MOCK: Carrera[] = [
+// Carreras que se ofrecen al entrar. La API guarda el nombre tal cual.
+export const CARRERAS: Carrera[] = [
   { id: "mecatronica", nombre: "Mecatrónica" },
   { id: "electronica", nombre: "Electrónica" },
   { id: "diseno-industrial", nombre: "Diseño industrial" },

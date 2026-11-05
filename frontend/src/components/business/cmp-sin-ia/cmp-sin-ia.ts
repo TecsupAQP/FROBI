@@ -1,4 +1,4 @@
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import VButton from "@/components/base/v-button/v-button.vue";
 import VCargando from "@/components/base/v-cargando/v-cargando.vue";
 import VCasilla from "@/components/base/v-casilla/v-casilla.vue";
@@ -20,6 +20,8 @@ export default defineComponent({
 
     const {
       criterios,
+      error,
+      probando,
       progreso,
       tarea,
       alternarCriterio,
@@ -30,9 +32,14 @@ export default defineComponent({
 
     const { mostrarAviso } = useCmpAvisos();
 
-    const comparar = () => {
-      marcarResueltoSinIa();
-      mostrarAviso("Resuelto sin IA", "Cuenta como logro en tu progreso.");
+    const comparado = ref(false);
+
+    const comparar = async () => {
+      const logro = await marcarResueltoSinIa();
+      if (error.value) return;
+      comparado.value = true;
+      if (logro) mostrarAviso("Resuelto sin IA", "Cuenta como logro en tu progreso.");
+      else mostrarAviso("Comparado con tu guía", "Revisa tu respuesta con lo que dice tu guía.");
     };
 
     onMounted(() => cargar(props.tareaId));
@@ -41,8 +48,11 @@ export default defineComponent({
       RutaEnum,
       PREFIX,
       criterios,
+      error,
+      probando,
       progreso,
       tarea,
+      comparado,
       alternarCriterio,
       escribirRespuestaSinIa,
       comparar,

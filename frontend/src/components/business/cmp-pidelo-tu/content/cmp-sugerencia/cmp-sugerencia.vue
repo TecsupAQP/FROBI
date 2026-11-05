@@ -4,7 +4,10 @@
       <v-icon nombre="bulb" />
       Sugerencia
     </h2>
-    <p>{{ sugerencia.texto }} Por ejemplo: «{{ sugerencia.ejemplo }}»</p>
+    <p>
+      {{ sugerencia.texto
+      }}<template v-if="sugerencia.ejemplo"> Por ejemplo: «{{ sugerencia.ejemplo }}»</template>
+    </p>
     <v-cargando v-if="ocupado">Mejorando tu instrucción…</v-cargando>
     <div v-else :class="`${PREFIX}__acciones`">
       <v-button @click="$emit('mejorar')">Mejorar mi instrucción</v-button>

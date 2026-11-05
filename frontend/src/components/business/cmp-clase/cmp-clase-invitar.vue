@@ -3,7 +3,7 @@
     <v-chip tono="marino">Paso 4 · Docente</v-chip>
     <cmp-encabezado-pagina
       titulo="Invita a tus alumnos"
-      descripcion="Comparte el código o el enlace. También puedes escribir su correo."
+      descripcion="Comparte el código o el enlace. También puedes invitar por alias."
     />
 
     <div v-if="!clase" :class="`${PREFIX}__cargando`">
@@ -24,8 +24,8 @@
           <v-field
             id="invitar-correo"
             v-model="correo"
-            etiqueta="O invita por correo"
-            placeholder="ana@ejemplo.pe"
+            etiqueta="O invita por alias"
+            placeholder="ana_mecatronica"
             autocompletar="email"
             :error="errorCorreo"
           />

@@ -3,9 +3,11 @@
     <cmp-encabezado-pagina
       titulo="Cómo verificar este dato"
       :descripcion="
-        recomendacion
-          ? `Para comprobar «${recomendacion.afirmacion}» te recomendamos esta herramienta.`
-          : 'Buscando la herramienta adecuada…'
+        !recomendacion
+          ? 'Buscando la herramienta adecuada…'
+          : recomendacion.afirmacion
+            ? `Para comprobar «${recomendacion.afirmacion}» te recomendamos esta herramienta.`
+            : 'Te recomendamos esta herramienta para verificar tus datos.'
       "
     />
 
