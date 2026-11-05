@@ -1,24 +1,11 @@
 """M6 · Tutor con escalera de ayuda: contract with the front."""
 
-from enum import StrEnum
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
-class HelpStep(StrEnum):
-    HINT_1 = "hint_1"
-    HINT_2 = "hint_2"
-    STEP_BY_STEP = "step_by_step"
-    FINAL = "final"
-
-
-class ReachedStep(StrEnum):
-    NONE = "none"
-    HINT_1 = "hint_1"
-    HINT_2 = "hint_2"
-    STEP_BY_STEP = "step_by_step"
-    FINAL = "final"
+from frobi.modules.tutoring.application import OwnAnswerResult, StepResult
+from frobi.modules.tutoring.domain import HelpAttempt, HelpStep, ReachedStep
 
 
 class OpenAttemptRequest(BaseModel):
@@ -49,6 +36,21 @@ class HelpAttemptOut(BaseModel):
     help_level: int = Field(ge=0, le=4)
     help_label: str = Field(examples=["Nivel 2, con pistas"])
 
+    @classmethod
+    def from_domain(cls, attempt: HelpAttempt) -> "HelpAttemptOut":
+        return cls(
+            id=attempt.id,
+            adaptation_id=attempt.adaptation_id,
+            task_ref=attempt.task_ref,
+            max_step=attempt.max_step,
+            next_step=attempt.next_step,
+            final_unlocked=attempt.final_unlocked,
+            own_answer_submitted=attempt.own_answer is not None,
+            solved_without_ai=attempt.solved_without_ai,
+            help_level=attempt.help_level,
+            help_label=attempt.help_label,
+        )
+
 
 class StepOut(BaseModel):
     attempt: HelpAttemptOut
@@ -56,10 +58,19 @@ class StepOut(BaseModel):
     content: str
     fallback: bool
 
+    @classmethod
+    def from_result(cls, result: StepResult) -> "StepOut":
+        return cls(
+            attempt=HelpAttemptOut.from_domain(result.attempt),
+            step=result.step,
+            content=result.content,
+            fallback=result.fallback,
+        )
+
 
 class GuidePassage(BaseModel):
     text: str
-    location: str = Field(examples=["Guía de sensores, párrafo 2"])
+    location: str = Field(examples=["«Guía de sensores», Sensores inductivos, párrafo 1"])
 
 
 class OwnAnswerOut(BaseModel):
@@ -67,3 +78,12 @@ class OwnAnswerOut(BaseModel):
     matching_passages: list[GuidePassage] = Field(
         description="Pasajes de la guía que coinciden con tu respuesta. Se buscan sin IA."
     )
+
+    @classmethod
+    def from_result(cls, result: OwnAnswerResult) -> "OwnAnswerOut":
+        return cls(
+            attempt=HelpAttemptOut.from_domain(result.attempt),
+            matching_passages=[
+                GuidePassage(text=p.text, location=p.location) for p in result.matching_passages
+            ],
+        )
