@@ -231,6 +231,15 @@ export interface ClaseDto {
   created_at: string;
 }
 
+export interface MaterialClaseDto {
+  id: string;
+  class_id: string;
+  kind: "class_content";
+  title: string;
+  preview: string;
+  created_at: string;
+}
+
 export interface MiembroDto {
   alias: string;
   person_id: string | null;

@@ -3,32 +3,25 @@
     <cmp-encabezado-pagina
       v-if="guia"
       :titulo="guia.titulo"
-      :descripcion="`Guía de ${guia.carrera} · ${guia.temas.length} ${guia.temas.length === 1 ? 'tema' : 'temas'}`"
+      :descripcion="guia.tieneArchivo ? `Guía de ${guia.carrera} · PDF` : `Guía de ${guia.carrera}`"
     />
 
     <div v-if="!guia" :class="`${PREFIX}__cargando`">
       <v-cargando>Cargando la guía…</v-cargando>
     </div>
 
-    <cmp-documento-original
-      v-if="guia?.tieneArchivo"
-      :titulo="guia.titulo"
-      :abierto="documentoAbierto"
-      :url="documentoUrl"
-      :error="documentoError"
-      @alternar="alternarDocumento"
-    />
-
+    <!-- Si la guía es un PDF, se ve tal como se subió; el resto del material se estudia en los formatos. -->
     <div v-if="guia" :class="`${PREFIX}__columnas`">
-      <div data-recorrido="temas" :class="`${PREFIX}__temas`">
-        <cmp-tema
-          v-for="tema in guia.temas"
-          :key="tema.id"
-          :tema="tema"
-          :abierto="tema.id === temaAbierto"
-          @alternar="alternarTema"
-        />
-      </div>
+      <cmp-documento-original
+        v-if="guia.tieneArchivo"
+        data-recorrido="documento"
+        :class="`${PREFIX}__documento`"
+        :titulo="guia.titulo"
+        :abierto="documentoAbierto"
+        :url="documentoUrl"
+        :error="documentoError"
+        @alternar="alternarDocumento"
+      />
 
       <section
         data-recorrido="formatos"
@@ -52,8 +45,7 @@
               {{ tardaMucho ? "Usando una respuesta de ejemplo" : "Adaptando tu guía…" }}
             </span>
             <span :class="`${PREFIX}__adaptando-detalle`">
-              Tema {{ temaActual?.numero }} · {{ nombreFormato(formatoAdaptando) }}. Tarda menos de 15
-              segundos.
+              {{ guia.titulo }} · {{ nombreFormato(formatoAdaptando) }}. Tarda menos de 15 segundos.
             </span>
           </v-cargando>
         </div>

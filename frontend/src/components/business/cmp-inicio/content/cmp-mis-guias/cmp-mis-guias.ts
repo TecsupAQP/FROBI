@@ -12,6 +12,13 @@ export default defineComponent({
     guias: { type: Array as PropType<GuiaResumen[]>, required: true },
     // Id de la guía que se está abriendo, para deshabilitar los botones mientras tanto.
     eligiendo: { type: String as PropType<string | null>, default: null },
+    titulo: { type: String, default: "Mis guías" },
+    descripcion: {
+      type: String,
+      default: "Todas las que subiste quedan guardadas. Elige con cuál estudiar.",
+    },
+    // Para los ids de los títulos cuando hay más de una lista en la página.
+    prefijoId: { type: String, default: "mis-guias" },
   },
   emits: {
     elegir: (_id: string) => true,
@@ -23,12 +30,14 @@ export default defineComponent({
       ejemplo: "book",
       pdf: "file",
       texto: "type",
+      clase: "users",
     };
 
     const ORIGENES: Record<GuiaResumen["origen"], string> = {
       ejemplo: "Guía de ejemplo",
       pdf: "PDF que subiste",
       texto: "Texto que pegaste",
+      clase: "Lo subió tu docente",
     };
 
     return { PREFIX, ICONOS, ORIGENES };

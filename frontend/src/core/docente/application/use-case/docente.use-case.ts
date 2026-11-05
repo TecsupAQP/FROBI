@@ -12,9 +12,10 @@ export class DocenteUseCase implements DocentePort {
   async obtenerPanel(): Promise<PanelDocente | null> {
     const id = await claseActualId();
     if (!id) return null;
-    const [clase, panel] = await Promise.all([
+    const [clase, panel, clases] = await Promise.all([
       api.get<ClaseDto>(`/classes/${id}`),
       api.get<PanelDto>(`/classes/${id}/dashboard`),
+      api.get<ClaseDto[]>("/classes"),
     ]);
 
     const totalFormatos = panel.top_formats.reduce((suma, dato) => suma + dato.count, 0);
@@ -34,7 +35,10 @@ export class DocenteUseCase implements DocentePort {
     const grupo = { id: clase.id, nombre: clase.name, estudiantes: alumnos };
     return {
       grupo,
-      grupos: [grupo],
+      // Todas las clases del docente, para elegir cuál ver.
+      grupos: clases.map((item) =>
+        item.id === clase.id ? grupo : { id: item.id, nombre: item.name, estudiantes: 0 },
+      ),
       formatosPedidos,
       preguntasFalladas,
       // La API agrupa las trabas por alumno: se muestran como "dónde se traban".

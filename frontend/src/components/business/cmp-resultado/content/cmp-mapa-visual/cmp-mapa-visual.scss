@@ -1,125 +1,135 @@
 $prefix: cmp-mapa-visual;
-$alto-conector: 22px;
-$alto-tronco: 24px;
 
 .#{$prefix} {
   display: flex;
   flex-direction: column;
   gap: $esp-16;
 
-  &__diagrama {
+  &__figura {
     display: flex;
     flex-direction: column;
-    padding: $esp-8 0;
+    gap: $esp-8;
+    margin: 0;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-16;
+    background-color: $fondo-superficie;
+    overflow: hidden;
+  }
+
+  &__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-8;
+    padding: $esp-10 $esp-12;
+    border-bottom: $linea-1 solid $borde-suave;
+    background-color: $fondo-app;
+  }
+
+  &__ayuda {
+    color: $texto-secundario;
+  }
+
+  &__botones {
+    display: flex;
+    gap: $esp-6;
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: $alto-tactil;
+    height: $alto-tactil;
+    padding: 0 $esp-10;
+    border: $linea-1 solid $borde-campo;
+    border-radius: $radio-12;
+    background-color: $fondo-superficie;
+    @include texto-subtitulo;
+    color: $texto-principal;
+
+    &:hover {
+      border-color: $marca-azul;
+      color: $marca-azul;
+    }
+
+    &--texto {
+      @include texto-etiqueta;
+    }
+  }
+
+  // Markmap dibuja dentro del SVG; las variables ajustan su letra y colores a los de FROBI.
+  &__lienzo {
+    display: block;
+    width: 100%;
+    height: 420px;
+
+    --markmap-font: 400 16px/22px Inter, system-ui, sans-serif;
+    --markmap-text-color: var(--texto-principal);
+    --markmap-circle-open-bg: var(--fondo-superficie);
+    --markmap-highlight-node-bg: var(--marca-azul-claro);
 
     @include tablet {
-      align-items: center;
+      height: 480px;
     }
+
+    @include escritorio {
+      height: 540px;
+    }
+  }
+
+  &__lista {
+    padding: $esp-12 $esp-16;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-16;
+    background-color: $fondo-superficie;
+  }
+
+  &__resumen {
+    display: flex;
+    align-items: center;
+    gap: $esp-8;
+    min-height: $alto-tactil;
+    @include texto-etiqueta;
+    color: $marca-azul;
+    cursor: pointer;
   }
 
   &__central {
-    align-self: flex-start;
-    padding: $esp-14 $esp-24;
-    border-radius: $radio-16;
-    background-color: $marca-azul;
+    margin-top: $esp-8;
     @include texto-subtitulo;
-    color: $texto-inverso;
-
-    @include tablet {
-      align-self: center;
-    }
+    color: $texto-principal;
   }
 
-  // Móvil: árbol vertical con una línea a la izquierda.
   &__ramas {
     display: flex;
     flex-direction: column;
     gap: $esp-12;
-    margin-left: $esp-28;
-    padding: $esp-16 0 0 $esp-12;
-    border-left: $linea-2 solid $marca-azul;
-
-    // Tablet y escritorio: árbol horizontal con conectores.
-    @include tablet {
-      position: relative;
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 0;
-      width: 100%;
-      margin: $alto-tronco 0 0;
-      padding: 0;
-      border-left: 0;
-
-      &::before {
-        content: "";
-        position: absolute;
-        top: -$alto-tronco;
-        left: 50%;
-        width: $linea-2;
-        height: $alto-tronco;
-        background-color: $marca-azul;
-        transform: translateX(-50%);
-      }
-    }
+    margin-top: $esp-12;
   }
 
   &__rama {
-    @include tablet {
-      position: relative;
-      flex: 1 1 0;
-      min-width: 0;
-      padding: $alto-conector $esp-8 0;
-
-      // Tramo horizontal: de borde a borde, recortado a la mitad en la primera y la última rama.
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: $linea-2;
-        background-color: $marca-azul;
-      }
-
-      &:first-child::before {
-        left: 50%;
-      }
-
-      &:last-child::before {
-        right: 50%;
-      }
-
-      // Tramo vertical hacia el nodo.
-      &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 50%;
-        width: $linea-2;
-        height: $alto-conector;
-        background-color: $marca-azul;
-        transform: translateX(-50%);
-      }
-    }
+    padding-left: $esp-12;
+    border-left: $linea-2 solid $marca-azul;
   }
 
-  &__nodo {
-    display: flex;
-    flex-direction: column;
-    gap: $esp-4;
-    padding: $esp-12;
-    border: $linea-15 solid $marca-azul;
-    border-radius: $radio-12;
-    background-color: $marca-azul-claro;
-    overflow-wrap: anywhere;
-  }
-
-  &__nodo-titulo {
+  &__rama-titulo {
     @include texto-etiqueta;
     color: $texto-principal;
   }
 
-  &__nodo-detalle {
+  &__rama-detalle {
+    color: $texto-cuerpo;
+  }
+
+  &__puntos {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-4;
+    margin-top: $esp-4;
+    padding-left: $esp-20;
+    list-style: disc;
     color: $texto-cuerpo;
   }
 }

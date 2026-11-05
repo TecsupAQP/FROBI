@@ -2,7 +2,9 @@ import type { ClasePort } from "@/core/clase/infraestructure/ports/in/clase.port
 import type {
   AlumnoClase,
   Clase,
+  ClaseResumen,
   DetalleAlumno,
+  MaterialClase,
   EstadoAlumno,
   NuevaClase,
 } from "@/core/shared/domain/view/clase.view";
@@ -11,13 +13,15 @@ import type {
   ClaseDto,
   DetalleEstudianteDto,
   EscalonApi,
+  MaterialClaseDto,
   MiembroDto,
   MiembrosDto,
   PanelDto,
   YoDto,
 } from "@/core/shared/infraestructure/http/api.dto";
 import { formatoDesdeApi, nombreFormato } from "@/core/shared/infraestructure/http/api.mapper";
-import { claseActualId, guardarClaseId, leerClaseId } from "@/core/shared/infraestructure/http/clase-actual";
+import { claseActualId, guardarClaseId } from "@/core/shared/infraestructure/http/clase-actual";
+import { tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
 
 const ESTADOS: Record<MiembroDto["status"], EstadoAlumno> = {
   invited: "invitado",
@@ -104,7 +108,7 @@ export class ClaseUseCase implements ClasePort {
     guardarClaseId(clase.id);
     for (const archivo of datos.archivos) {
       const formulario = new FormData();
-      formulario.append("title", archivo.name.replace(/\.pdf$/i, ""));
+      formulario.append("title", tituloDesdeArchivo(archivo.name));
       formulario.append("file", archivo);
       await api.enviarFormulario(`/classes/${clase.id}/materials`, formulario);
     }
@@ -112,7 +116,7 @@ export class ClaseUseCase implements ClasePort {
   }
 
   async invitar(aliasOCorreo: string): Promise<Clase> {
-    const id = leerClaseId();
+    const id = await claseActualId();
     if (!id) throw new Error("Primero crea tu clase");
     const alias = (aliasOCorreo.split("@")[0] ?? aliasOCorreo).trim();
     await api.post<MiembroDto[]>(`/classes/${id}/invitations`, { aliases: [alias] });
@@ -127,6 +131,38 @@ export class ClaseUseCase implements ClasePort {
     if (!clase || !alumno?.personaId) return null;
     const dto = await api.get<DetalleEstudianteDto>(`/classes/${clase.id}/students/${alumno.personaId}`);
     return detalleDesdeApi(dto, alumno, clase);
+  }
+
+  async listarClases(): Promise<ClaseResumen[]> {
+    const clases = await api.get<ClaseDto[]>("/classes");
+    return clases.map((clase) => ({ id: clase.id, nombre: clase.name, codigo: clase.invite_code }));
+  }
+
+  elegirClase(claseId: string): void {
+    guardarClaseId(claseId);
+  }
+
+  // GET /classes/{id}/materials: el docente de la clase y sus estudiantes unidos.
+  async listarMateriales(): Promise<MaterialClase[]> {
+    const id = await claseActualId();
+    if (!id) return [];
+    const materiales = await api.get<MaterialClaseDto[]>(`/classes/${id}/materials`);
+    return materiales.map((material) => ({
+      id: material.id,
+      titulo: material.title,
+      vistaPrevia: material.preview.replace(/##\s*/g, "").trim(),
+      fecha: material.created_at,
+    }));
+  }
+
+  async subirMaterial(archivo: File): Promise<MaterialClase[]> {
+    const id = await claseActualId();
+    if (!id) throw new Error("Primero crea tu clase");
+    const formulario = new FormData();
+    formulario.append("title", tituloDesdeArchivo(archivo.name));
+    formulario.append("file", archivo);
+    await api.enviarFormulario(`/classes/${id}/materials`, formulario);
+    return this.listarMateriales();
   }
 
   async salirDeClase(): Promise<void> {

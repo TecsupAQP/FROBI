@@ -36,7 +36,7 @@ export type FaseSubida = "elegir" | "subiendo" | "listo" | "error";
 export interface GuiaResumen {
   id: string;
   titulo: string;
-  origen: "ejemplo" | "pdf" | "texto";
+  origen: "ejemplo" | "pdf" | "texto" | "clase";
   vistaPrevia: string;
   // La que se está estudiando ahora.
   actual: boolean;
