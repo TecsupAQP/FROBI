@@ -34,7 +34,8 @@ from frobi.modules.classrooms.infrastructure import (
 )
 from frobi.shared.domain import Clock
 from frobi.shared.infrastructure import SqlAlchemyUnitOfWork
-from frobi.shared.presentation import get_clock, get_db_session
+from frobi.shared.infrastructure.llm import PdfTranscriber
+from frobi.shared.presentation import get_clock, get_db_session, get_pdf_transcriber
 
 DbSession = Annotated[AsyncSession, Depends(get_db_session)]
 AppClock = Annotated[Clock, Depends(get_clock)]
@@ -95,8 +96,13 @@ def get_join_class(db: DbSession, clock: AppClock) -> JoinWithCodeHandler:
     return JoinWithCodeHandler(join, PersonDirectoryAdapter(db))
 
 
-def get_upload_class_content(db: DbSession) -> UploadClassContentHandler:
-    return UploadClassContentHandler(SqlAlchemyClassRepository(db), ClassMaterialsAdapter(db))
+def get_upload_class_content(
+    db: DbSession,
+    transcriber: Annotated[PdfTranscriber, Depends(get_pdf_transcriber)],
+) -> UploadClassContentHandler:
+    return UploadClassContentHandler(
+        SqlAlchemyClassRepository(db), ClassMaterialsAdapter(db, transcriber)
+    )
 
 
 def get_list_class_content(db: DbSession) -> ListClassContentHandler:

@@ -95,8 +95,12 @@ export const useCmpClaseStore = defineStore("CmpClaseStore", () => {
     try {
       contenido.value = await subirMaterialClaseService(archivo, plan);
       avances.value = await avanceGuiasClaseService().catch(() => avances.value);
-    } catch {
-      errorContenido.value = "No pudimos subir el archivo. Revisa que sea un PDF con texto, de hasta 10 MB.";
+    } catch (error) {
+      // La API explica el motivo (sin texto, escaneo de más de 20 páginas, más de 10 MB…).
+      errorContenido.value =
+        error instanceof Error && error.message
+          ? error.message
+          : "No pudimos subir el archivo. Revisa que sea un PDF de hasta 10 MB.";
     } finally {
       subiendo.value = false;
     }

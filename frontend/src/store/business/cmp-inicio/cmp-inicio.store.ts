@@ -35,6 +35,8 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
   const archivoElegido = ref<File | null>(null);
   const nombreArchivo = ref("");
   const tamanoArchivoMb = ref(0);
+  // Por qué no se pudo leer el PDF, en palabras de la API.
+  const motivoError = ref("");
 
   let subidaActual = 0;
 
@@ -143,6 +145,7 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
       fase.value = "listo";
     } catch (error) {
       if (subida !== subidaActual) return;
+      if (error instanceof PdfIlegibleError) motivoError.value = error.message;
       fase.value = error instanceof PdfIlegibleError ? "error" : "elegir";
     }
   };
@@ -163,6 +166,7 @@ export const useCmpInicioStore = defineStore("CmpInicioStore", () => {
   };
 
   return {
+    motivoError,
     guias,
     guiasClase,
     nombreClase,

@@ -24,7 +24,13 @@ from frobi.modules.materials.infrastructure import (
 )
 from frobi.shared.domain import Clock
 from frobi.shared.infrastructure import Settings, SqlAlchemyUnitOfWork
-from frobi.shared.presentation import get_clock, get_db_session, get_settings
+from frobi.shared.infrastructure.llm import PdfTranscriber
+from frobi.shared.presentation import (
+    get_clock,
+    get_db_session,
+    get_pdf_transcriber,
+    get_settings,
+)
 
 DbSession = Annotated[AsyncSession, Depends(get_db_session)]
 AppClock = Annotated[Clock, Depends(get_clock)]
@@ -71,12 +77,15 @@ def get_material_file(
 
 
 def get_upload_material(
-    db: DbSession, clock: AppClock, storage: FileStorageDep
+    db: DbSession,
+    clock: AppClock,
+    storage: FileStorageDep,
+    transcriber: Annotated[PdfTranscriber, Depends(get_pdf_transcriber)],
 ) -> UploadMaterialHandler:
     return UploadMaterialHandler(
         SqlAlchemyUnitOfWork(db),
         SqlAlchemyMaterialRepository(db),
-        PypdfTextExtractor(),
+        PypdfTextExtractor(transcriber),
         clock,
         storage,
     )

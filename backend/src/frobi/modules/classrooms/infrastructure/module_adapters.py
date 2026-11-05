@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from frobi.modules import adaptations, comprehension, identity, materials, prompt_coach, tutoring
 from frobi.modules.classrooms.application.ports import ClassActivity, ClassMaterial, GuideActivity
+from frobi.shared.infrastructure.llm import PdfTranscriber
 
 from .sqlalchemy_repositories import SqlAlchemyMembershipRepository
 
@@ -83,8 +84,9 @@ def _class_material(material: materials.Material) -> ClassMaterial:
 
 
 class ClassMaterialsAdapter:
-    def __init__(self, session: AsyncSession) -> None:
-        self._content = materials.class_content_handler(session)
+    def __init__(self, session: AsyncSession, transcriber: PdfTranscriber | None = None) -> None:
+        """``transcriber`` reads scanned PDFs; only the upload needs it."""
+        self._content = materials.class_content_handler(session, transcriber)
 
     async def add_text(
         self, teacher_id: UUID, class_id: UUID, title: str, text: str
