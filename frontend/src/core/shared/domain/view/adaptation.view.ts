@@ -5,6 +5,8 @@ export type FormatoId = "mapa-visual" | "ejemplo-real" | "lectura-facil" | "audi
 export interface NodoConcepto {
   titulo: string;
   detalle: string;
+  // Ideas que cuelgan de esta rama en el mapa ("Inductivo → solo metales").
+  puntos: string[];
 }
 
 export interface ContenidoMapaVisual {
