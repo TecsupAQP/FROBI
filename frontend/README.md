@@ -29,8 +29,9 @@ La URL de la API se cambia con `VITE_API_URL` (ver [`.env.example`](./.env.examp
 ## Cómo entrar
 
 - `/login`: alias, carrera y rol. Sin correo ni contraseña (`POST /sessions`).
-- **Código de clase (opcional):** hoy la API solo acepta `SENSOR1`. Cualquier otro muestra
-  «No encontramos esa clase» y no deja entrar.
+- **Código de clase (opcional):** el que genera la API al crear una clase (Crear clase → Invitar), o
+  `SENSOR1`, la clase de ejemplo que trae la base. Un código que no existe muestra «No encontramos esa
+  clase» y no deja entrar.
 - El token se guarda en `localStorage` (`frobi-token`). Si la API responde 401, el front vuelve a `/login`
   y, al entrar, regresa a la pantalla donde estabas.
 - Sin sesión solo se ven `/login`, `/como-se-usa` y `/demo/personas`.
