@@ -198,6 +198,18 @@
           },
           "recipe": {
             "$ref": "#/components/schemas/Recipe"
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Tema adaptado (`topics[].position`).",
+            "title": "Topic"
           }
         },
         "required": [
@@ -757,6 +769,19 @@
         "properties": {
           "format": {
             "$ref": "#/components/schemas/Format"
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Tema del material (`topics[].position`). Sin él, el primero. La IA solo lee ese tema, así un PDF largo cuesta lo mismo por petición que uno corto.",
+            "title": "Topic"
           }
         },
         "required": [
@@ -1612,6 +1637,14 @@
           "title": {
             "title": "Title",
             "type": "string"
+          },
+          "topics": {
+            "description": "Temas del material, de un tamaño que la IA procesa en una sola petición.",
+            "items": {
+              "$ref": "#/components/schemas/TopicOut"
+            },
+            "title": "Topics",
+            "type": "array"
           }
         },
         "required": [
@@ -2895,6 +2928,55 @@
           "avoid_for"
         ],
         "title": "ToolOut",
+        "type": "object"
+      },
+      "TopicOut": {
+        "properties": {
+          "page_end": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Página donde termina (PDF).",
+            "title": "Page End"
+          },
+          "page_start": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Página donde empieza (PDF).",
+            "title": "Page Start"
+          },
+          "position": {
+            "description": "Número del tema (desde 1); se usa en `topic` al adaptar.",
+            "title": "Position",
+            "type": "integer"
+          },
+          "text": {
+            "description": "Texto original del tema.",
+            "title": "Text",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "title",
+          "text"
+        ],
+        "title": "TopicOut",
         "type": "object"
       },
       "WorkOut": {

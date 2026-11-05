@@ -114,7 +114,19 @@ class FakeStudyData:
 
     async def guide(self, person_id: UUID, material_id: UUID) -> JsonObject | None:
         if person_id == self.ana and material_id == self.guide_id:
-            return {"id": str(material_id), "title": "Sensores", "text": self.guide_text}
+            return {
+                "id": str(material_id),
+                "title": "Sensores",
+                "topics": [
+                    {"topic": 1, "title": "Inductivos", "pages": "1-2", "text": self.guide_text},
+                    {
+                        "topic": 2,
+                        "title": "Capacitivos",
+                        "pages": "3-4",
+                        "text": "Detectan líquidos.",
+                    },
+                ],
+            }
         return None
 
     async def progress(self, person_id: UUID) -> JsonObject:

@@ -1,7 +1,8 @@
 from frobi.shared.domain import DomainError, ErrorKind
 
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
-MAX_TEXT_CHARS = 200_000
+# 200 pages of dense text: the page cap (MAX_PAGES) is what limits a PDF, not this.
+MAX_TEXT_CHARS = 600_000
 
 
 class PdfUnreadable(DomainError):

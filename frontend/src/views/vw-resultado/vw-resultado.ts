@@ -6,6 +6,7 @@ import CmpResultado from "@/components/business/cmp-resultado/cmp-resultado.vue"
 import { esFormatoValido } from "@/constants/formatos.constant";
 import type { FormatoId } from "@/core/shared/domain/view/adaptation.view";
 import { RutaEnum } from "@/enums/ruta.enum";
+import useCmpGuia from "@/composables/business/cmp-guia/cmp-guia.composable";
 
 export default defineComponent({
   name: "VwResultado",
@@ -21,6 +22,14 @@ export default defineComponent({
       esFormatoValido(route.params.formato) ? route.params.formato : "mapa-visual",
     );
 
-    return { RutaEnum, PREFIX, reintentos, formato };
+    // El tema elegido en la guía (?tema=N lo conserva al recargar): la IA solo lee ese tema.
+    const { temaAbierto } = useCmpGuia();
+    const temaId = computed(() => {
+      const enUrl = Number(route.query.tema);
+      if (Number.isInteger(enUrl) && enUrl > 0) return `tema-${enUrl}`;
+      return temaAbierto.value ?? "tema-1";
+    });
+
+    return { RutaEnum, PREFIX, reintentos, formato, temaId };
   },
 });

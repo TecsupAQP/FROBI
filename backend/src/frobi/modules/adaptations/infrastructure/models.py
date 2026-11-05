@@ -4,7 +4,16 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, String, Uuid
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Index,
+    SmallInteger,
+    String,
+    Uuid,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -32,3 +41,5 @@ class AdaptationModel(Base):
     recipe: Mapped[dict[str, Any]] = mapped_column(JSONB)
     fallback: Mapped[bool] = mapped_column(Boolean)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    # Topic of the material it adapts (from 1); NULL for adaptations of the whole material.
+    topic: Mapped[int | None] = mapped_column(SmallInteger)

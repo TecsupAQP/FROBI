@@ -1,0 +1,92 @@
+$prefix: cmp-elegir-tema;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-14;
+  padding: $esp-16;
+  border: $linea-15 solid $marca-azul;
+  border-radius: $radio-16;
+  background: radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.1), transparent 55%), $fondo-superficie;
+
+  @include tablet {
+    padding: $esp-20;
+  }
+
+  &__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $esp-8;
+  }
+
+  &__contador {
+    padding: $esp-2 $esp-12;
+    border-radius: $radio-pildora;
+    background-color: $marca-azul-claro;
+    @include texto-etiqueta;
+    color: $marca-azul;
+  }
+
+  &__paginas {
+    display: inline-flex;
+    align-items: center;
+    gap: $esp-4;
+    @include texto-cuerpo;
+    color: $texto-secundario;
+  }
+
+  &__actual {
+    display: flex;
+    align-items: center;
+    gap: $esp-12;
+  }
+
+  &__texto {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: $esp-4;
+    min-width: 0;
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__resumen {
+    @include texto-cuerpo;
+    color: $texto-secundario;
+  }
+
+  &__paso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $alto-tactil;
+    height: $alto-tactil;
+    flex-shrink: 0;
+    border: $linea-15 solid $borde-suave;
+    border-radius: $radio-pildora;
+    background-color: $fondo-superficie;
+    color: $marca-azul;
+    transition:
+      border-color $duracion-rapida,
+      transform $duracion-rapida;
+
+    &:hover:not(:disabled) {
+      border-color: $marca-azul;
+      transform: scale(1.05);
+    }
+
+    @include foco-visible;
+
+    &:disabled {
+      color: $texto-secundario;
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+}

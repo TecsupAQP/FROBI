@@ -54,7 +54,19 @@ class StudyDataAdapter:
         material = await materials.get_material_handler(self._session).find(person_id, material_id)
         if material is None:
             return None
-        return {"id": str(material.id), "title": material.title, "text": material.text}
+        return {
+            "id": str(material.id),
+            "title": material.title,
+            "topics": [
+                {
+                    "topic": t.position,
+                    "title": t.title,
+                    "pages": None if t.page_start is None else f"{t.page_start}-{t.page_end}",
+                    "text": t.text,
+                }
+                for t in material.topics()
+            ],
+        }
 
     async def progress(self, person_id: UUID) -> JsonObject:
         now = await progress.progress_handler(self._session).handle(person_id)

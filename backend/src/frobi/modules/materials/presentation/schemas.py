@@ -27,6 +27,14 @@ class MaterialSummaryOut(BaseModel):
         )
 
 
+class TopicOut(BaseModel):
+    position: int = Field(description="Número del tema (desde 1); se usa en `topic` al adaptar.")
+    title: str
+    text: str = Field(description="Texto original del tema.")
+    page_start: int | None = Field(default=None, description="Página donde empieza (PDF).")
+    page_end: int | None = Field(default=None, description="Página donde termina (PDF).")
+
+
 class MaterialOut(BaseModel):
     id: UUID
     title: str
@@ -38,6 +46,10 @@ class MaterialOut(BaseModel):
     has_file: bool = Field(
         default=False,
         description="Hay un PDF original para la vista previa (`GET /materials/{id}/file`).",
+    )
+    topics: list[TopicOut] = Field(
+        default_factory=list,
+        description="Temas del material, de un tamaño que la IA procesa en una sola petición.",
     )
 
     @classmethod
@@ -51,6 +63,16 @@ class MaterialOut(BaseModel):
             extracted_text=material.text,
             created_at=material.created_at,
             has_file=material.has_file,
+            topics=[
+                TopicOut(
+                    position=t.position,
+                    title=t.title,
+                    text=t.text,
+                    page_start=t.page_start,
+                    page_end=t.page_end,
+                )
+                for t in material.topics()
+            ],
         )
 
 

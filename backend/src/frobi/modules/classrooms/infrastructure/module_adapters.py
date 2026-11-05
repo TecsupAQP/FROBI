@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from frobi.modules import adaptations, comprehension, identity, materials, prompt_coach, tutoring
 from frobi.modules.classrooms.application.ports import ClassActivity, ClassMaterial
+from frobi.shared.infrastructure.llm import LlmClient
 
 from .sqlalchemy_repositories import SqlAlchemyMembershipRepository
 
@@ -66,8 +67,10 @@ def _class_material(material: materials.Material) -> ClassMaterial:
 
 
 class ClassMaterialsAdapter:
-    def __init__(self, session: AsyncSession) -> None:
-        self._content = materials.class_content_handler(session)
+    def __init__(
+        self, session: AsyncSession, llm: LlmClient | None = None, timeout_seconds: float = 15.0
+    ) -> None:
+        self._content = materials.class_content_handler(session, llm, timeout_seconds)
 
     async def add_text(
         self, teacher_id: UUID, class_id: UUID, title: str, text: str

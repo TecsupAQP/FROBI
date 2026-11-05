@@ -4,6 +4,7 @@ import VCardFormato from "@/components/base/v-card-formato/v-card-formato.vue";
 import VCargando from "@/components/base/v-cargando/v-cargando.vue";
 import CmpEncabezadoPagina from "@/components/common/cmp-encabezado-pagina/cmp-encabezado-pagina.vue";
 import CmpDocumentoOriginal from "@/components/business/cmp-guia/content/cmp-documento-original/cmp-documento-original.vue";
+import CmpElegirTema from "@/components/business/cmp-guia/content/cmp-elegir-tema/cmp-elegir-tema.vue";
 import useCmpGuia from "@/composables/business/cmp-guia/cmp-guia.composable";
 import { FORMATOS } from "@/constants/formatos.constant";
 import type { FormatoId } from "@/core/shared/domain/view/adaptation.view";
@@ -11,7 +12,7 @@ import { RutaEnum } from "@/enums/ruta.enum";
 
 export default defineComponent({
   name: "CmpGuia",
-  components: { VCardFormato, VCargando, CmpDocumentoOriginal, CmpEncabezadoPagina },
+  components: { VCardFormato, VCargando, CmpDocumentoOriginal, CmpElegirTema, CmpEncabezadoPagina },
   setup() {
     const PREFIX = "cmp-guia";
 
@@ -24,17 +25,23 @@ export default defineComponent({
       formatoAdaptando,
       guia,
       tardaMucho,
+      temaElegido,
       adaptar,
       alternarDocumento,
       cargarGuia,
+      elegirTema,
     } = useCmpGuia();
 
     const nombreFormato = (id: FormatoId) => FORMATOS.find((formato) => formato.id === id)?.nombre ?? "";
 
     const elegirFormato = async (formato: FormatoId) => {
       if (formatoAdaptando.value) return;
-      await adaptar(formato);
-      router.push({ name: RutaEnum.RESULTADO, params: { formato } });
+      const temaId = await adaptar(formato);
+      router.push({
+        name: RutaEnum.RESULTADO,
+        params: { formato },
+        query: { tema: temaId.replace(/^tema-/, "") },
+      });
     };
 
     // Un PDF se muestra abierto: es el material tal como lo subió la persona.
@@ -53,6 +60,8 @@ export default defineComponent({
       formatoAdaptando,
       guia,
       tardaMucho,
+      temaElegido,
+      elegirTema,
       nombreFormato,
       elegirFormato,
     };

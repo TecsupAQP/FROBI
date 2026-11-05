@@ -1,7 +1,12 @@
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from uuid import UUID
 
-from frobi.modules.materials.application.ports import FileStorageUnavailable
+from frobi.modules.materials.application.ports import (
+    FileStorageUnavailable,
+    OutlineEntry,
+    PdfContent,
+)
 from frobi.modules.materials.domain import (
     Material,
     MaterialKind,
@@ -63,12 +68,27 @@ class InMemoryWorks:
 
 
 class FakeExtractor:
-    """Returns the bytes as text; ``b"%BROKEN"`` behaves like an unreadable PDF."""
+    """Each ``\f`` in the bytes starts a page; ``b"%BROKEN"`` behaves like an unreadable PDF."""
 
-    async def extract(self, data: bytes) -> str:
+    def __init__(self, outline: tuple[OutlineEntry, ...] = ()) -> None:
+        self.outline = outline
+
+    async def extract(self, data: bytes) -> PdfContent:
         if data.startswith(b"%BROKEN"):
             raise PdfUnreadable()
-        return data.decode("utf-8")
+        return PdfContent(pages=tuple(data.decode("utf-8").split("\f")), outline=self.outline)
+
+
+class ScriptedSegmenter:
+    """``TopicSegmenter`` that answers with fixed starts and remembers what it read."""
+
+    def __init__(self, starts: list[tuple[int, str]] | None) -> None:
+        self.starts = starts
+        self.blocks: list[str] = []
+
+    async def segment(self, title: str, blocks: Sequence[str]) -> list[tuple[int, str]] | None:
+        self.blocks = list(blocks)
+        return self.starts
 
 
 class FixedClassContext:

@@ -28,6 +28,8 @@ class MaterialModel(Base):
     source: Mapped[str] = mapped_column(String(8))
     extracted_text: Mapped[str] = mapped_column(Text)
     file_key: Mapped[str | None] = mapped_column(String(255))
+    # [{"title", "start", "end", "page_start", "page_end"}]: offsets of each topic in the text.
+    topics: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 

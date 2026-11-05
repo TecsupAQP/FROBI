@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import type { Material } from "@/core/shared/domain/view/material.view";
 import type { FormatoId } from "@/core/shared/domain/view/adaptation.view";
@@ -25,6 +25,19 @@ export const useCmpGuiaStore = defineStore("CmpGuiaStore", () => {
     documentoAbierto.value = false;
     documentoUrl.value = null;
     guia.value = await obtenerGuiaService();
+    // Otra guía: se vuelve a su primer tema.
+    if (!guia.value.temas.some((tema) => tema.id === temaAbierto.value)) {
+      temaAbierto.value = guia.value.temas[0]?.id ?? "tema-1";
+    }
+  };
+
+  // Cada formato se pide para un tema: la IA solo lee ese tema, no todo el PDF.
+  const temaElegido = computed(
+    () => guia.value?.temas.find((tema) => tema.id === temaAbierto.value) ?? guia.value?.temas[0] ?? null,
+  );
+
+  const elegirTema = (temaId: string) => {
+    temaAbierto.value = temaId;
   };
 
   const alternarDocumento = async () => {
@@ -66,9 +79,11 @@ export const useCmpGuiaStore = defineStore("CmpGuiaStore", () => {
     guia,
     tardaMucho,
     temaAbierto,
+    temaElegido,
     adaptar,
     alternarDocumento,
     alternarTema,
+    elegirTema,
     cargarGuia,
   };
 });

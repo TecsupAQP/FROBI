@@ -12,13 +12,13 @@ import {
   olvidarMaterial,
 } from "@/core/shared/infraestructure/http/contexto-estudio";
 import { CARRERAS } from "@/constants/carreras.constant";
-import { temasDesdeTexto, tituloDeGuia, tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
+import { temasDeMaterial, tituloDeGuia, tituloDesdeArchivo } from "@/core/shared/application/util/texto.util";
 
 const PALABRAS_POR_MINUTO = 180;
 const LARGO_VISTA_PREVIA = 420;
 
 export function materialDesdeApi(dto: MaterialDto, carrera: string): Material {
-  const temas = temasDesdeTexto(dto.extracted_text);
+  const temas = temasDeMaterial(dto);
   const palabras = dto.extracted_text.split(/\s+/).length;
   return {
     id: dto.id,
@@ -91,7 +91,7 @@ export class MaterialUseCase implements MaterialPort {
     try {
       const dto = await api.enviarFormulario<MaterialDto>("/materials/upload", formulario);
       alAvanzar(100);
-      const [primerTema] = temasDesdeTexto(dto.extracted_text);
+      const [primerTema] = temasDeMaterial(dto);
       return {
         materialId: dto.id,
         nombre: archivo.name,
@@ -99,11 +99,7 @@ export class MaterialUseCase implements MaterialPort {
         texto: dto.extracted_text.replace(/^##\s+/gm, "").trim(),
         vistaPrevia: {
           titulo: primerTema?.titulo ?? dto.title,
-          texto: dto.extracted_text
-            .replace(/^##\s+.*$/gm, "")
-            .replace(/\s+/g, " ")
-            .trim()
-            .slice(0, LARGO_VISTA_PREVIA),
+          texto: (primerTema?.textoOriginal ?? dto.extracted_text).slice(0, LARGO_VISTA_PREVIA),
         },
       };
     } catch (error) {

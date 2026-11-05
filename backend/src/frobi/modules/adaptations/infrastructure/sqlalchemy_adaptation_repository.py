@@ -24,6 +24,7 @@ class SqlAlchemyAdaptationRepository:
                 recipe=recipe_to_json(adaptation.recipe),
                 fallback=adaptation.fallback,
                 created_at=adaptation.created_at,
+                topic=adaptation.topic,
             )
         )
 
@@ -46,4 +47,5 @@ class SqlAlchemyAdaptationRepository:
             ),
             fallback=row.fallback,
             created_at=row.created_at,
+            topic=row.topic,
         )

@@ -9,6 +9,7 @@ import {
   recetaDesdeApi,
 } from "@/core/shared/infraestructure/http/api.mapper";
 import { materialActualId, recordarAdaptacion } from "@/core/shared/infraestructure/http/contexto-estudio";
+import { numeroDeTema } from "@/core/shared/application/util/texto.util";
 
 const PALABRAS_POR_SEGUNDO = 2.5;
 
@@ -75,8 +76,10 @@ function contenidoDesdeApi(formato: FormatoId, dto: AdaptacionDto): ContenidoAda
 export class ObtenerAdaptacionUseCase implements ObtenerAdaptacionPort {
   async obtenerAdaptacion(temaId: string, formato: FormatoId): Promise<Adaptation> {
     const materialId = await materialActualId();
+    // La IA solo lee este tema: un PDF largo cuesta lo mismo por petición que uno corto.
     const dto = await api.post<AdaptacionDto>(`/materials/${materialId}/adaptations`, {
       format: formatoHaciaApi(formato),
+      topic: numeroDeTema(temaId),
     });
     // La escalera de ayuda y las preguntas se piden sobre esta adaptación.
     recordarAdaptacion(dto.id);

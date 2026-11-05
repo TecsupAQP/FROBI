@@ -37,7 +37,10 @@ async def _enter(client: AsyncClient, alias: str) -> dict[str, str]:
 
 
 async def test_pypdf_reads_the_text_of_a_real_pdf() -> None:
-    text = await PypdfTextExtractor().extract(make_pdf("Sensores inductivos", "Detectan metales"))
+    content = await PypdfTextExtractor().extract(
+        make_pdf("Sensores inductivos", "Detectan metales")
+    )
+    text = "\n".join(content.pages)
 
     assert "Sensores inductivos" in text
     assert "Detectan metales" in text

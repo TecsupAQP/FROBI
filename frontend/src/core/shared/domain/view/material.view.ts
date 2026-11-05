@@ -3,6 +3,10 @@ export interface Tema {
   numero: number;
   titulo: string;
   textoOriginal: string;
+  // «Págs. 4–9» en un PDF; sin páginas en texto pegado.
+  paginas?: string;
+  // Página del PDF donde empieza, para abrir el documento original ahí.
+  paginaInicio?: number;
 }
 
 export interface Material {

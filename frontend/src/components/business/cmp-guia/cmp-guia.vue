@@ -20,6 +20,7 @@
         :abierto="documentoAbierto"
         :url="documentoUrl"
         :error="documentoError"
+        :pagina="temaElegido?.paginaInicio ?? null"
         @alternar="alternarDocumento"
       />
 
@@ -28,6 +29,13 @@
         :class="`${PREFIX}__formatos`"
         :aria-labelledby="`${PREFIX}-formatos`"
       >
+        <cmp-elegir-tema
+          v-if="guia.temas.length > 1 && temaElegido"
+          data-recorrido="temas"
+          :temas="guia.temas"
+          :elegido="temaElegido"
+          @elegir="elegirTema"
+        />
         <h2 :id="`${PREFIX}-formatos`" :class="`${PREFIX}__subtitulo`">¿Cómo quieres aprender este tema?</h2>
         <ul :class="`${PREFIX}__lista`">
           <li v-for="formato in FORMATOS" :key="formato.id">
@@ -45,7 +53,8 @@
               {{ tardaMucho ? "Usando una respuesta de ejemplo" : "Adaptando tu guía…" }}
             </span>
             <span :class="`${PREFIX}__adaptando-detalle`">
-              {{ guia.titulo }} · {{ nombreFormato(formatoAdaptando) }}. Tarda menos de 15 segundos.
+              {{ temaElegido && guia.temas.length > 1 ? temaElegido.titulo : guia.titulo }} ·
+              {{ nombreFormato(formatoAdaptando) }}. Tarda menos de 15 segundos.
             </span>
           </v-cargando>
         </div>

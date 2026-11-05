@@ -20,9 +20,12 @@ class TutoringContextReaderAdapter:
         material = await self._materials.find(person_id, adaptation.material_id)
         if material is None:
             return None
+        # A task may be about any topic of the guide: the whole guide goes, one «##» section per
+        # topic, so the local search finds the right one. Only that section reaches the AI.
+        material_text = "\n\n".join(f"## {t.title}\n{t.text}" for t in material.topics())
         return TutoringContext(
             adaptation_id=adaptation.id,
             material_title=material.title,
-            material_text=material.text,
+            material_text=material_text,
             adapted_text=adaptation.content.plain_text(),
         )

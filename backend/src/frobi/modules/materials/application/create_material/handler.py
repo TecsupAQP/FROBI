@@ -9,6 +9,7 @@ from frobi.modules.materials.application.ports import (
     MaterialRepository,
     PdfTextExtractor,
 )
+from frobi.modules.materials.application.topic_finder import TopicFinder
 from frobi.modules.materials.domain import (
     MAX_UPLOAD_BYTES,
     EmptyText,
@@ -16,6 +17,9 @@ from frobi.modules.materials.domain import (
     Material,
     MaterialSource,
     PdfUnreadable,
+    assemble_pages,
+    normalize_text,
+    normalize_title,
 )
 from frobi.shared.application import UnitOfWork
 from frobi.shared.domain import Clock
@@ -26,20 +30,29 @@ logger = logging.getLogger(__name__)
 
 
 class CreateMaterialHandler:
-    def __init__(self, uow: UnitOfWork, materials: MaterialRepository, clock: Clock) -> None:
+    def __init__(
+        self,
+        uow: UnitOfWork,
+        materials: MaterialRepository,
+        clock: Clock,
+        topics: TopicFinder | None = None,
+    ) -> None:
         self._uow = uow
         self._materials = materials
         self._clock = clock
+        self._topics = topics or TopicFinder()
 
     async def handle(self, command: CreateMaterialCommand) -> Material:
+        text = normalize_text(command.text)
         material = Material.create(
             owner_id=command.owner_id,
             title=command.title,
             kind=command.kind,
             source=MaterialSource.PASTE,
-            text=command.text,
+            text=text,
             now=self._clock.now(),
             class_id=command.class_id,
+            topic_spans=await self._topics.find(normalize_title(command.title), text),
         )
         async with self._uow:
             await self._materials.add(material)
@@ -55,6 +68,7 @@ class UploadMaterialHandler:
         extractor: PdfTextExtractor,
         clock: Clock,
         storage: FileStorage | None = None,
+        topics: TopicFinder | None = None,
     ) -> None:
         """Without ``storage`` only the extracted text is kept (no preview of the original)."""
         self._uow = uow
@@ -62,11 +76,23 @@ class UploadMaterialHandler:
         self._extractor = extractor
         self._clock = clock
         self._storage = storage
+        self._topics = topics or TopicFinder()
 
     async def handle(self, command: UploadMaterialCommand) -> Material:
         if len(command.data) > MAX_UPLOAD_BYTES:
             raise FileTooLarge()
-        text = await self._extractor.extract(command.data)
+        pdf = await self._extractor.extract(command.data)
+        text, page_offsets = assemble_pages(list(pdf.pages))
+        if not text:
+            # A scanned PDF without a text layer reads as empty: tell the person it is unreadable.
+            raise PdfUnreadable()
+        spans = await self._topics.find(
+            normalize_title(command.title),
+            text,
+            page_offsets=page_offsets,
+            outline=pdf.outline,
+            headings=pdf.headings,
+        )
         try:
             material = Material.create(
                 owner_id=command.owner_id,
@@ -76,9 +102,9 @@ class UploadMaterialHandler:
                 text=text,
                 now=self._clock.now(),
                 class_id=command.class_id,
+                topic_spans=spans,
             )
         except EmptyText as error:
-            # A scanned PDF without a text layer reads as empty: tell the person it is unreadable.
             raise PdfUnreadable() from error
         material = await self._store_original(material, command.data)
         try:

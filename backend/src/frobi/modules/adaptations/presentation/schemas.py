@@ -30,6 +30,12 @@ class FormatOut(BaseModel):
 
 class CreateAdaptationRequest(BaseModel):
     format: Format
+    topic: int | None = Field(
+        default=None,
+        ge=1,
+        description="Tema del material (`topics[].position`). Sin él, el primero. La IA solo "
+        "lee ese tema, así un PDF largo cuesta lo mismo por petición que uno corto.",
+    )
 
 
 class ContentSection(BaseModel):
@@ -69,6 +75,7 @@ class AdaptationOut(BaseModel):
     ai_notice: str = Field(description="Aviso de límites de la IA (RF30).")
     fallback: bool = Field(description="`true` si se usó la respuesta de respaldo (RF29).")
     created_at: datetime
+    topic: int | None = Field(default=None, description="Tema adaptado (`topics[].position`).")
 
     @classmethod
     def from_domain(cls, adaptation: Adaptation) -> "AdaptationOut":
@@ -89,4 +96,5 @@ class AdaptationOut(BaseModel):
             ai_notice=adaptation.ai_notice,
             fallback=adaptation.fallback,
             created_at=adaptation.created_at,
+            topic=adaptation.topic,
         )

@@ -69,6 +69,17 @@ export interface MaterialDto {
   created_at: string;
   // Hay un PDF original guardado (vista previa con GET /materials/{id}/file).
   has_file?: boolean;
+  // Temas que arma la API (índice del PDF, títulos o la IA), de un tamaño que la IA procesa
+  // en una sola petición. Cada formato se pide para un tema (`topic`).
+  topics?: TemaDto[];
+}
+
+export interface TemaDto {
+  position: number;
+  title: string;
+  text: string;
+  page_start: number | null;
+  page_end: number | null;
 }
 
 export interface MaterialArchivoDto {

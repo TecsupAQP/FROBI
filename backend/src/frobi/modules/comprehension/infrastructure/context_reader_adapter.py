@@ -20,10 +20,14 @@ class QuizContextReaderAdapter:
         material = await self._materials.find(person_id, adaptation.material_id)
         if material is None:
             return None
+        # Hints and questions read the same topic the adaptation was made from, not the whole
+        # material: a long PDF costs the same per request as a short one.
+        topic = material.topic(adaptation.topic)
+        material_text = material.text if topic is None else topic.text
         return QuizContext(
             adaptation_id=adaptation.id,
             material_id=material.id,
             material_title=material.title,
-            material_text=material.text,
+            material_text=material_text,
             format=adaptation.format.value,
         )

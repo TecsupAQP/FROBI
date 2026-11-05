@@ -9,15 +9,22 @@ from frobi.modules.adaptations.domain import Adaptation, AdaptedContent, Recipe
 
 @dataclass(frozen=True, slots=True)
 class SourceMaterial:
+    """One topic of a material: all the AI reads for an adaptation."""
+
     id: UUID
     title: str
     text: str
+    topic: int | None = None
 
 
 class MaterialReader(Protocol):
     """Over the public API of materials: only materials the person may see."""
 
-    async def find(self, person_id: UUID, material_id: UUID) -> SourceMaterial | None: ...
+    async def find(
+        self, person_id: UUID, material_id: UUID, topic: int | None = None
+    ) -> SourceMaterial | None:
+        """Topic ``topic`` (the first one when None); None if the material or topic is not there."""
+        ...
 
 
 @dataclass(frozen=True, slots=True)

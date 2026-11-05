@@ -8,6 +8,7 @@ from frobi.modules.materials.domain import (
     MaterialKind,
     MaterialSource,
     OrganizedWork,
+    TopicSpan,
     Work,
 )
 
@@ -27,6 +28,16 @@ def _material(row: MaterialModel) -> Material:
         text=row.extracted_text,
         created_at=row.created_at,
         file_key=row.file_key,
+        topic_spans=tuple(
+            TopicSpan(
+                title=t["title"],
+                start=t["start"],
+                end=t["end"],
+                page_start=t.get("page_start"),
+                page_end=t.get("page_end"),
+            )
+            for t in row.topics or ()
+        ),
     )
 
 
@@ -47,6 +58,16 @@ class SqlAlchemyMaterialRepository:
                 source=material.source.value,
                 extracted_text=material.text,
                 file_key=material.file_key,
+                topics=[
+                    {
+                        "title": t.title,
+                        "start": t.start,
+                        "end": t.end,
+                        "page_start": t.page_start,
+                        "page_end": t.page_end,
+                    }
+                    for t in material.topic_spans
+                ],
                 created_at=material.created_at,
             )
         )

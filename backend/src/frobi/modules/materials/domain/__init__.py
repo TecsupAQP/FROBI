@@ -8,11 +8,33 @@ from .errors import (
     PdfUnreadable,
     WrongKind,
 )
-from .material import Material, MaterialKind, MaterialSource, normalize_text, normalize_title
+from .material import (
+    Material,
+    MaterialKind,
+    MaterialSource,
+    assemble_pages,
+    normalize_text,
+    normalize_title,
+    tidy_text,
+)
+from .topics import (
+    MAX_TOPIC_CHARS,
+    MIN_TOPIC_CHARS,
+    Boundary,
+    Topic,
+    TopicSpan,
+    locate_titles,
+    skeleton,
+    spans_from_boundaries,
+    text_heading_boundaries,
+)
 from .work import OrganizedWork, Work, organize
 
 __all__ = [
+    "MAX_TOPIC_CHARS",
     "MAX_UPLOAD_BYTES",
+    "MIN_TOPIC_CHARS",
+    "Boundary",
     "EmptyText",
     "FileTooLarge",
     "InvalidTitle",
@@ -23,9 +45,17 @@ __all__ = [
     "MaterialSource",
     "OrganizedWork",
     "PdfUnreadable",
+    "Topic",
+    "TopicSpan",
     "Work",
     "WrongKind",
+    "assemble_pages",
+    "locate_titles",
     "normalize_text",
     "normalize_title",
     "organize",
+    "skeleton",
+    "spans_from_boundaries",
+    "text_heading_boundaries",
+    "tidy_text",
 ]

@@ -12,11 +12,13 @@ from frobi.modules.materials.application import (
     GetMaterialHandler,
     GuidesHandler,
     ListSamplesHandler,
+    TopicFinder,
     UploadMaterialHandler,
 )
 from frobi.modules.materials.infrastructure import (
     ClassroomsActiveClass,
     FileSampleCatalog,
+    LlmTopicSegmenter,
     PypdfTextExtractor,
     R2FileStorage,
     SqlAlchemyMaterialRepository,
@@ -24,11 +26,21 @@ from frobi.modules.materials.infrastructure import (
 )
 from frobi.shared.domain import Clock
 from frobi.shared.infrastructure import Settings, SqlAlchemyUnitOfWork
-from frobi.shared.presentation import get_clock, get_db_session, get_settings
+from frobi.shared.infrastructure.llm import LlmClient
+from frobi.shared.presentation import get_clock, get_db_session, get_llm, get_settings
 
 DbSession = Annotated[AsyncSession, Depends(get_db_session)]
 AppClock = Annotated[Clock, Depends(get_clock)]
 AppSettings = Annotated[Settings, Depends(get_settings)]
+Llm = Annotated[LlmClient, Depends(get_llm)]
+
+
+def get_topic_finder(llm: Llm, settings: AppSettings) -> TopicFinder:
+    """Structure first; the AI only reads the skeleton of long texts with no structure."""
+    return TopicFinder(LlmTopicSegmenter(llm, settings.llm_timeout_seconds))
+
+
+Topics = Annotated[TopicFinder, Depends(get_topic_finder)]
 
 
 def get_file_storage(settings: AppSettings) -> R2FileStorage | None:
@@ -60,8 +72,10 @@ def get_get_material(db: DbSession) -> GetMaterialHandler:
     )
 
 
-def get_create_material(db: DbSession, clock: AppClock) -> CreateMaterialHandler:
-    return CreateMaterialHandler(SqlAlchemyUnitOfWork(db), SqlAlchemyMaterialRepository(db), clock)
+def get_create_material(db: DbSession, clock: AppClock, topics: Topics) -> CreateMaterialHandler:
+    return CreateMaterialHandler(
+        SqlAlchemyUnitOfWork(db), SqlAlchemyMaterialRepository(db), clock, topics
+    )
 
 
 def get_material_file(
@@ -71,7 +85,7 @@ def get_material_file(
 
 
 def get_upload_material(
-    db: DbSession, clock: AppClock, storage: FileStorageDep
+    db: DbSession, clock: AppClock, storage: FileStorageDep, topics: Topics
 ) -> UploadMaterialHandler:
     return UploadMaterialHandler(
         SqlAlchemyUnitOfWork(db),
@@ -79,6 +93,7 @@ def get_upload_material(
         PypdfTextExtractor(),
         clock,
         storage,
+        topics,
     )
 
 

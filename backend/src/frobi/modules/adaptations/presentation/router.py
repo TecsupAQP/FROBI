@@ -47,7 +47,11 @@ async def create_adaptation(
 ) -> AdaptationOut:
     adaptation = await handler.handle(
         CreateAdaptationCommand(
-            person_id=person_id, class_id=class_id, material_id=material_id, format=body.format
+            person_id=person_id,
+            class_id=class_id,
+            material_id=material_id,
+            format=body.format,
+            topic=body.topic,
         )
     )
     return AdaptationOut.from_domain(adaptation)

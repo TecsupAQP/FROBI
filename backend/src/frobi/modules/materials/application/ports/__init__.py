@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+from dataclasses import dataclass
 from typing import Protocol
 from uuid import UUID
 
@@ -30,9 +32,34 @@ class WorkRepository(Protocol):
     async def get(self, work_id: UUID) -> Work | None: ...
 
 
+@dataclass(frozen=True, slots=True)
+class OutlineEntry:
+    """A bookmark of the PDF: its title, the page it opens (from 0) and its depth (0 = top)."""
+
+    title: str
+    page: int
+    level: int
+
+
+@dataclass(frozen=True, slots=True)
+class PdfContent:
+    pages: tuple[str, ...]
+    outline: tuple[OutlineEntry, ...] = ()
+    # (page, line) written clearly bigger than the body text: likely headings.
+    headings: tuple[tuple[int, str], ...] = ()
+
+
 class PdfTextExtractor(Protocol):
-    async def extract(self, data: bytes) -> str:
-        """Plain text of the PDF. Raises PdfUnreadable when there is none to get."""
+    async def extract(self, data: bytes) -> PdfContent:
+        """Text of each page plus its structure. Raises PdfUnreadable when there is none."""
+        ...
+
+
+class TopicSegmenter(Protocol):
+    """Finds topics in a long text with no structure, reading only its skeleton."""
+
+    async def segment(self, title: str, blocks: Sequence[str]) -> list[tuple[int, str]] | None:
+        """(block index, topic title) where each topic starts; None when it cannot tell."""
         ...
 
 
@@ -56,7 +83,10 @@ __all__ = [
     "FileStorage",
     "FileStorageUnavailable",
     "MaterialRepository",
+    "OutlineEntry",
+    "PdfContent",
     "PdfTextExtractor",
     "SampleCatalog",
+    "TopicSegmenter",
     "WorkRepository",
 ]

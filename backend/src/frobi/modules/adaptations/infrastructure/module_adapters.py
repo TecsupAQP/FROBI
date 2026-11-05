@@ -12,11 +12,20 @@ class MaterialReaderAdapter:
     def __init__(self, session: AsyncSession) -> None:
         self._get = materials.get_material_handler(session)
 
-    async def find(self, person_id: UUID, material_id: UUID) -> SourceMaterial | None:
+    async def find(
+        self, person_id: UUID, material_id: UUID, topic: int | None = None
+    ) -> SourceMaterial | None:
         material = await self._get.find(person_id, material_id)
-        if material is None:
+        found = None if material is None else material.topic(topic)
+        if material is None or found is None:
             return None
-        return SourceMaterial(id=material.id, title=material.title, text=material.text)
+        several = len(material.topics()) > 1
+        return SourceMaterial(
+            id=material.id,
+            title=f"{material.title} · {found.title}" if several else material.title,
+            text=found.text,
+            topic=found.position,
+        )
 
 
 class ProfileReaderAdapter:

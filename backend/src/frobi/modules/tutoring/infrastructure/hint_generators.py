@@ -17,7 +17,9 @@ from frobi.shared.infrastructure.llm import (
     call_with_fallback,
 )
 
-MAX_MATERIAL_CHARS = 20_000
+# One section is already small (materials keeps topics under ~6 000 characters); this only
+# guards older materials that are a single long section.
+MAX_MATERIAL_CHARS = 8_000
 STEP_RULES: dict[HelpStep, str] = {
     HelpStep.HINT_1: "Da una sola pista que oriente hacia dónde mirar. No des la respuesta.",
     HelpStep.HINT_2: "Da una pista más concreta, con una idea clave del material. No des la "
@@ -76,12 +78,20 @@ class HintJson(BaseModel):
     text: str = Field(min_length=1, max_length=2000)
 
 
+def relevant_text(context: TutoringContext, task_ref: str) -> str:
+    """The section of the guide the task is about: all the AI needs to read for a hint."""
+    section = most_relevant_section(task_ref, context.material_text)
+    if section is None:
+        return context.material_text[:MAX_MATERIAL_CHARS]
+    return f"## {section.heading}\n" + "\n".join(section.paragraphs)[:MAX_MATERIAL_CHARS]
+
+
 def build_prompt(context: TutoringContext, task_ref: str, step: HelpStep) -> str:
     return (
         f"Tarea: {task_ref}\n"
         f"Escalón de ayuda: {step.value}. {STEP_RULES[step]}\n\n"
-        f"Material «{context.material_title}»:\n<<<\n"
-        f"{context.material_text[:MAX_MATERIAL_CHARS]}\n>>>\n\n"
+        f"Parte del material «{context.material_title}» que trata la tarea:\n<<<\n"
+        f"{relevant_text(context, task_ref)}\n>>>\n\n"
         'Responde con este JSON: {"text": str}.'
     )
 

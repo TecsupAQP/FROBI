@@ -25,8 +25,10 @@ class StaticMaterials:
         self._owner = owner
         self._material = material
 
-    async def find(self, person_id: UUID, material_id: UUID) -> SourceMaterial | None:
-        if person_id == self._owner and material_id == self._material.id:
+    async def find(
+        self, person_id: UUID, material_id: UUID, topic: int | None = None
+    ) -> SourceMaterial | None:
+        if person_id == self._owner and material_id == self._material.id and topic in (None, 1):
             return self._material
         return None
 

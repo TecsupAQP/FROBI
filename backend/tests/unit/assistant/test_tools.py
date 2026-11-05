@@ -47,10 +47,24 @@ async def test_progress_is_always_the_askers_own(data: FakeStudyData) -> None:
     assert result["owner"] == str(ANA)
 
 
-async def test_read_guide_defaults_to_the_open_guide(data: FakeStudyData) -> None:
+async def test_read_guide_starts_with_the_table_of_contents(data: FakeStudyData) -> None:
     tool = next(t for t in learner_tools(data, ANA, GUIDE) if t.name == "read_guide")
 
-    assert (await tool.run({}))["text"] == data.guide_text
+    contents = await tool.run({})
+
+    assert [t["title"] for t in contents["topics"]] == ["Inductivos", "Capacitivos"]
+    assert all("text" not in t for t in contents["topics"])
+
+
+async def test_read_guide_reads_one_topic_of_the_open_guide(data: FakeStudyData) -> None:
+    tool = next(t for t in learner_tools(data, ANA, GUIDE) if t.name == "read_guide")
+
+    topic = await tool.run({"topic": 1})
+
+    assert topic["text"] == data.guide_text
+    assert topic["pages"] == "1-2"
+    with pytest.raises(ToolFailed, match="tema 9"):
+        await tool.run({"topic": 9})
 
 
 async def test_read_guide_without_an_open_guide_explains_what_to_do(data: FakeStudyData) -> None:
@@ -67,11 +81,11 @@ async def test_someone_elses_guide_is_not_found(data: FakeStudyData) -> None:
         await tool.run({"material_id": str(uuid4())})
 
 
-async def test_long_guides_are_cut_and_say_so(data: FakeStudyData) -> None:
+async def test_long_topics_are_cut_and_say_so(data: FakeStudyData) -> None:
     data.guide_text = "x" * (MAX_GUIDE_CHARS + 10)
     tool = next(t for t in learner_tools(data, ANA, GUIDE) if t.name == "read_guide")
 
-    result = await tool.run({})
+    result = await tool.run({"topic": "1"})
 
     assert len(result["text"]) == MAX_GUIDE_CHARS
     assert "recortado" in result["note"]

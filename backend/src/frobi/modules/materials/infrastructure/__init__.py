@@ -1,4 +1,5 @@
 from .class_context_adapter import ClassroomsActiveClass
+from .llm_topic_segmenter import LlmTopicSegmenter
 from .models import MaterialModel, WorkModel
 from .pypdf_extractor import PypdfTextExtractor
 from .r2_file_storage import R2FileStorage
@@ -9,6 +10,7 @@ __all__ = [
     "SAMPLE_IDS",
     "ClassroomsActiveClass",
     "FileSampleCatalog",
+    "LlmTopicSegmenter",
     "MaterialModel",
     "PypdfTextExtractor",
     "R2FileStorage",

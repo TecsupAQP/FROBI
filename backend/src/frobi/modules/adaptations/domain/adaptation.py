@@ -48,6 +48,8 @@ class Adaptation:
     recipe: Recipe
     fallback: bool
     created_at: datetime
+    # The material's topic it adapts (from 1); hints and questions read that same topic.
+    topic: int | None = None
 
     @classmethod
     def create(
@@ -60,6 +62,7 @@ class Adaptation:
         recipe: Recipe,
         fallback: bool,
         now: datetime,
+        topic: int | None = None,
     ) -> "Adaptation":
         return cls(
             id=uuid4(),
@@ -71,6 +74,7 @@ class Adaptation:
             recipe=recipe,
             fallback=fallback,
             created_at=now,
+            topic=topic,
         )
 
     @property

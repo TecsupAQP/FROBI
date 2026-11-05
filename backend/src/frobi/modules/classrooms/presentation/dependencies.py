@@ -27,8 +27,9 @@ from frobi.modules.classrooms.infrastructure import (
     SqlAlchemyMembershipRepository,
 )
 from frobi.shared.domain import Clock
-from frobi.shared.infrastructure import SqlAlchemyUnitOfWork
-from frobi.shared.presentation import get_clock, get_db_session
+from frobi.shared.infrastructure import Settings, SqlAlchemyUnitOfWork
+from frobi.shared.infrastructure.llm import LlmClient
+from frobi.shared.presentation import get_clock, get_db_session, get_llm, get_settings
 
 DbSession = Annotated[AsyncSession, Depends(get_db_session)]
 AppClock = Annotated[Clock, Depends(get_clock)]
@@ -89,8 +90,15 @@ def get_join_class(db: DbSession, clock: AppClock) -> JoinWithCodeHandler:
     return JoinWithCodeHandler(join, PersonDirectoryAdapter(db))
 
 
-def get_upload_class_content(db: DbSession) -> UploadClassContentHandler:
-    return UploadClassContentHandler(SqlAlchemyClassRepository(db), ClassMaterialsAdapter(db))
+def get_upload_class_content(
+    db: DbSession,
+    llm: Annotated[LlmClient, Depends(get_llm)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> UploadClassContentHandler:
+    return UploadClassContentHandler(
+        SqlAlchemyClassRepository(db),
+        ClassMaterialsAdapter(db, llm, settings.llm_timeout_seconds),
+    )
 
 
 def get_list_class_content(db: DbSession) -> ListClassContentHandler:

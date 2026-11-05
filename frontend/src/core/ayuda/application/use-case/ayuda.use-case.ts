@@ -14,7 +14,7 @@ import type {
 } from "@/core/shared/infraestructure/http/api.dto";
 import type { MaterialDto } from "@/core/shared/infraestructure/http/api.dto";
 import { adaptacionActualId, materialActualId } from "@/core/shared/infraestructure/http/contexto-estudio";
-import { temasDesdeTexto, tituloDeGuia } from "@/core/shared/application/util/texto.util";
+import { temasDeMaterial, tituloDeGuia } from "@/core/shared/application/util/texto.util";
 import { CRITERIOS_SIN_IA, ESCALONES_AYUDA } from "@/constants/tareas.constant";
 
 const ESCALONES: Record<EscalonId, EscalonApi> = {
@@ -48,12 +48,14 @@ export class AyudaUseCase implements AyudaPort {
   // La tarea es explicar un tema de la guía actual (tareaId = "tema-N").
   async abrirIntento(tareaId: string): Promise<IntentoAbierto | null> {
     const material = await api.get<MaterialDto>(`/materials/${await materialActualId()}`);
-    const temas = temasDesdeTexto(material.extracted_text);
+    const temas = temasDeMaterial(material);
     const tema = temas.find((item) => item.id === tareaId);
     if (!tema) return null;
     const intento = await api.post<IntentoAyudaDto>("/help-attempts", {
       adaptation_id: await adaptacionActualId(),
-      task_ref: tareaId,
+      // Con el título, la API encuentra en la guía la parte que trata la tarea y solo esa
+      // llega a la IA.
+      task_ref: `${tareaId} · ${tema.titulo}`.slice(0, 120),
     });
     // Una guía sin secciones tiene un solo tema: se nombra con el título de la guía.
     const nombre = temas.length === 1 ? tituloDeGuia(material.title) : tema.titulo;

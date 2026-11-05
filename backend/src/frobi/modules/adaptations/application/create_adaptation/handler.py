@@ -52,7 +52,7 @@ class CreateAdaptationHandler:
         self._lock_poll = lock_poll_seconds
 
     async def handle(self, command: CreateAdaptationCommand) -> Adaptation:
-        material = await self._materials.find(command.person_id, command.material_id)
+        material = await self._materials.find(command.person_id, command.material_id, command.topic)
         if material is None:
             raise MaterialNotAvailable()
         profile = await self._profiles.for_person(command.person_id)
@@ -89,6 +89,7 @@ class CreateAdaptationHandler:
             recipe=recipe,
             fallback=fallback,
             now=self._clock.now(),
+            topic=material.topic,
         )
         async with self._uow:
             await self._adaptations.add(adaptation)

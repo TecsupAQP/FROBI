@@ -25,7 +25,7 @@
         <v-cargando>Abriendo el documento…</v-cargando>
       </div>
       <template v-else>
-        <iframe :class="`${PREFIX}__visor`" :src="url" :title="`Documento original: ${titulo}`" />
+        <iframe :class="`${PREFIX}__visor`" :src="fuente" :title="`Documento original: ${titulo}`" />
         <a :class="`${PREFIX}__enlace`" :href="url" target="_blank" rel="noopener noreferrer">
           Abrir en otra pestaña<span class="solo-lector"> (se abre en una pestaña nueva)</span>
         </a>

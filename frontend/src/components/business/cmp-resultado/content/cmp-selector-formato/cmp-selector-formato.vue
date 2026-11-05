@@ -4,7 +4,7 @@
     <ul :class="`${PREFIX}__opciones`">
       <li v-for="formato in FORMATOS" :key="formato.id">
         <router-link
-          :to="{ name: RutaEnum.RESULTADO, params: { formato: formato.id } }"
+          :to="{ name: RutaEnum.RESULTADO, params: { formato: formato.id }, query: $route.query }"
           :class="[`${PREFIX}__opcion`, { [`${PREFIX}__opcion--activa`]: formato.id === activo }]"
           :aria-current="formato.id === activo ? 'page' : undefined"
         >

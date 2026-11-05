@@ -10,8 +10,9 @@ from frobi.modules.assistant.application.ports import (
 )
 
 NO_INPUT: JsonObject = {"type": "object", "properties": {}, "additionalProperties": False}
-# A whole guide can be 200 000 characters; past this the model gets the start and is told so.
-MAX_GUIDE_CHARS = 60_000
+# Topics are already small (materials keeps them under ~6 000 characters); this only guards
+# older materials whose single topic is the whole text.
+MAX_GUIDE_CHARS = 30_000
 
 
 def _uuid(arguments: JsonObject, name: str) -> UUID:
@@ -22,6 +23,13 @@ def _uuid(arguments: JsonObject, name: str) -> UUID:
         return UUID(value)
     except ValueError as error:
         raise ToolFailed(f"`{name}` no es un id válido.") from error
+
+
+def _topic(arguments: JsonObject) -> int:
+    try:
+        return int(arguments["topic"])
+    except (TypeError, ValueError) as error:
+        raise ToolFailed("`topic` debe ser el número del tema.") from error
 
 
 def _guide_tools(data: StudyData, person_id: UUID, open_guide: UUID | None) -> list[AssistantTool]:
@@ -35,15 +43,27 @@ def _guide_tools(data: StudyData, person_id: UUID, open_guide: UUID | None) -> l
         guide = await data.guide(person_id, material_id)
         if guide is None:
             raise ToolFailed("No existe esa guía o la persona no puede verla.")
-        text = str(guide.get("text", ""))
-        if len(text) > MAX_GUIDE_CHARS:
-            guide = {
-                **guide,
-                "text": text[:MAX_GUIDE_CHARS],
-                "note": f"Texto recortado: van los primeros {MAX_GUIDE_CHARS} de {len(text)} "
-                "caracteres. Si la respuesta puede estar más adelante, dilo.",
+        topics: list[JsonObject] = list(guide.get("topics", []))
+        if "topic" not in arguments and len(topics) > 1:
+            # The table of contents first: reading one topic costs far fewer tokens than all.
+            return {
+                "id": guide["id"],
+                "title": guide["title"],
+                "topics": [{k: v for k, v in t.items() if k != "text"} for t in topics],
+                "note": "Pide el tema que necesites con read_guide y topic.",
             }
-        return guide
+        wanted = _topic(arguments) if "topic" in arguments else 1
+        topic = next((t for t in topics if t.get("topic") == wanted), None)
+        if topic is None:
+            raise ToolFailed(f"La guía no tiene el tema {wanted}.")
+        text = str(topic.get("text", ""))
+        result: JsonObject = {"id": guide["id"], "title": guide["title"], **topic}
+        if len(text) > MAX_GUIDE_CHARS:
+            result["text"] = text[:MAX_GUIDE_CHARS]
+            result["note"] = (
+                f"Texto recortado: van los primeros {MAX_GUIDE_CHARS} de {len(text)} caracteres."
+            )
+        return result
 
     return [
         AssistantTool(
@@ -56,16 +76,21 @@ def _guide_tools(data: StudyData, person_id: UUID, open_guide: UUID | None) -> l
         ),
         AssistantTool(
             name="read_guide",
-            description="Reads the full text of one guide. Without material_id it reads the "
-            "guide the person has open right now. Use it to answer questions about the "
-            "content of their material, quoting it.",
+            description="Reads a guide. Without topic it returns its table of contents (topics "
+            "with number, title and pages); with topic, the text of that topic. Without "
+            "material_id it uses the guide the person has open. Read only the topics you need "
+            "to answer, and quote them.",
             input_schema={
                 "type": "object",
                 "properties": {
                     "material_id": {
                         "type": "string",
                         "description": "Guide id from list_my_guides. Omit for the open guide.",
-                    }
+                    },
+                    "topic": {
+                        "type": "integer",
+                        "description": "Topic number from the table of contents.",
+                    },
                 },
                 "additionalProperties": False,
             },

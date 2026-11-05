@@ -55,7 +55,7 @@ async def _run(tool: AssistantTool | None, block: Any) -> dict[str, Any]:
         return {**result, "is_error": True, "content": f"Unknown tool {block.name}."}
     arguments = block.input
     if not isinstance(arguments, dict) or any(
-        not isinstance(value, str) for value in arguments.values()
+        isinstance(value, bool) or not isinstance(value, str | int) for value in arguments.values()
     ):
         # Eager input streaming skips server-side validation: check the shape here.
         return {**result, "is_error": True, "content": json.dumps({"INVALID_JSON": arguments})}

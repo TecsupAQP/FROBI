@@ -3,6 +3,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from frobi.shared.infrastructure import SqlAlchemyUnitOfWork, SystemClock
+from frobi.shared.infrastructure.llm import LlmClient
 
 from .application import (
     ClassContentHandler,
@@ -13,7 +14,7 @@ from .application import (
     UploadMaterialHandler,
     WorkTexts,
 )
-from .domain import Material, MaterialKind, MaterialSource
+from .domain import Material, MaterialKind, MaterialSource, Topic
 
 
 def get_material_handler(session: AsyncSession) -> GetMaterialHandler:
@@ -50,16 +51,26 @@ def guides_handler(session: AsyncSession) -> GuidesHandler:
     )
 
 
-def class_content_handler(session: AsyncSession) -> ClassContentHandler:
-    """Stores and lists ``class_content``. Classrooms checks who may do it before calling."""
-    from .infrastructure import PypdfTextExtractor, SqlAlchemyMaterialRepository
+def class_content_handler(
+    session: AsyncSession, llm: LlmClient | None = None, timeout_seconds: float = 15.0
+) -> ClassContentHandler:
+    """Stores and lists ``class_content``. Classrooms checks who may do it before calling.
+
+    With ``llm``, long texts with no headings are split into topics by the AI."""
+    from .application import TopicFinder
+    from .infrastructure import (
+        LlmTopicSegmenter,
+        PypdfTextExtractor,
+        SqlAlchemyMaterialRepository,
+    )
 
     repository = SqlAlchemyMaterialRepository(session)
     uow = SqlAlchemyUnitOfWork(session)
     clock = SystemClock()
+    topics = TopicFinder(None if llm is None else LlmTopicSegmenter(llm, timeout_seconds))
     return ClassContentHandler(
-        CreateMaterialHandler(uow, repository, clock),
-        UploadMaterialHandler(uow, repository, PypdfTextExtractor(), clock),
+        CreateMaterialHandler(uow, repository, clock, topics),
+        UploadMaterialHandler(uow, repository, PypdfTextExtractor(), clock, topics=topics),
         repository,
     )
 
@@ -72,6 +83,7 @@ __all__ = [
     "MaterialKind",
     "MaterialSource",
     "ReadWorkHandler",
+    "Topic",
     "WorkTexts",
     "class_content_handler",
     "get_material_handler",
