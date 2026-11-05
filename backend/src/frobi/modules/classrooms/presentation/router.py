@@ -1,24 +1,38 @@
 """M12 · Clase del docente.
 
-Stub: returns example data so the front can integrate. The real use cases replace each body.
-Teacher-only routes document the 403 but the stub does not check the role yet.
+Real: create a class, join with a code, see the class, invite by alias, list members.
+Still stubs (example data): class materials and the student detail (phase 3).
 """
 
-from datetime import UTC, datetime
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 
-from frobi.modules.classrooms.domain.errors import InvalidClassCode
+from frobi.modules.classrooms.application import (
+    CreateClassCommand,
+    CreateClassHandler,
+    GetClassHandler,
+    InviteStudentsHandler,
+    JoinWithCodeHandler,
+    ListMembersHandler,
+)
+from frobi.modules.classrooms.domain import Classroom, Membership
 from frobi.shared.presentation import (
     AUTH_RESPONSES,
     NOT_FOUND_RESPONSES,
     TEACHER_RESPONSES,
+    CurrentPersonId,
     problem,
-    require_token,
 )
 
+from .dependencies import (
+    get_create_class,
+    get_get_class,
+    get_invite_students,
+    get_join_class,
+    get_list_members,
+)
 from .schemas import (
     AiUsage,
     Alert,
@@ -33,50 +47,36 @@ from .schemas import (
     JoinClassOut,
     JoinClassRequest,
     MemberOut,
-    MembershipStatus,
     MembersOut,
     StudentDetailOut,
     StudentRow,
 )
 
-router = APIRouter(
-    prefix="/classes",
-    tags=["M12 · Clase del docente"],
-    dependencies=[Depends(require_token)],
-    responses=AUTH_RESPONSES,
-)
+router = APIRouter(prefix="/classes", tags=["M12 · Clase del docente"], responses=AUTH_RESPONSES)
 
-EXAMPLE_CLASS_ID = UUID("00000000-0000-4000-8000-0000000000c1")
-EXAMPLE_CODE = "SENSOR1"
+TEACHER_ONLY = {**TEACHER_RESPONSES, **NOT_FOUND_RESPONSES}
 STUDENT_1 = UUID("00000000-0000-4000-8000-000000000001")
 STUDENT_2 = UUID("00000000-0000-4000-8000-000000000002")
-CREATED_AT = datetime(2026, 11, 4, 9, 0, tzinfo=UTC)
-_LABELS = {
-    MembershipStatus.INVITED: "Invitación pendiente",
-    MembershipStatus.JOINED: "Se unió",
-    MembershipStatus.LEFT: "Salió de la clase",
-}
-TEACHER_ONLY = {**TEACHER_RESPONSES, **NOT_FOUND_RESPONSES}
 
 
-def _class(class_id: UUID, name: str, subject: str, tasks: list[str]) -> ClassOut:
+def _class_out(classroom: Classroom) -> ClassOut:
     return ClassOut(
-        id=class_id,
-        name=name,
-        subject=subject,
-        tasks=tasks,
-        invite_code=EXAMPLE_CODE,
-        created_at=CREATED_AT,
+        id=classroom.id,
+        name=classroom.name,
+        subject=classroom.subject,
+        tasks=list(classroom.tasks),
+        invite_code=classroom.invite_code,
+        created_at=classroom.created_at,
     )
 
 
-def _member(alias: str, person_id: UUID | None, member_status: MembershipStatus) -> MemberOut:
+def _member_out(membership: Membership) -> MemberOut:
     return MemberOut(
-        alias=alias,
-        person_id=person_id,
-        status=member_status,
-        status_label=_LABELS[member_status],
-        joined_at=CREATED_AT if member_status is MembershipStatus.JOINED else None,
+        alias=membership.alias,
+        person_id=membership.person_id,
+        status=membership.status,
+        status_label=membership.status_label,
+        joined_at=membership.joined_at,
     )
 
 
@@ -84,10 +84,19 @@ def _member(alias: str, person_id: UUID | None, member_status: MembershipStatus)
     "",
     status_code=status.HTTP_201_CREATED,
     summary="Crear una clase y su código de invitación",
-    responses=TEACHER_RESPONSES,
+    responses={**TEACHER_RESPONSES, 422: problem("Datos de la clase inválidos.")},
 )
-async def create_class(body: CreateClassRequest) -> ClassOut:
-    return _class(EXAMPLE_CLASS_ID, body.name, body.subject, body.tasks)
+async def create_class(
+    body: CreateClassRequest,
+    person_id: CurrentPersonId,
+    handler: Annotated[CreateClassHandler, Depends(get_create_class)],
+) -> ClassOut:
+    classroom = await handler.handle(
+        CreateClassCommand(
+            teacher_id=person_id, name=body.name, subject=body.subject, tasks=body.tasks
+        )
+    )
+    return _class_out(classroom)
 
 
 @router.post(
@@ -95,17 +104,22 @@ async def create_class(body: CreateClassRequest) -> ClassOut:
     summary="Unirse a una clase con su código (estudiante)",
     responses={422: problem("Código inexistente (`Classrooms.InvalidCode`).")},
 )
-async def join_class(body: JoinClassRequest) -> JoinClassOut:
-    if body.code.strip().upper() != EXAMPLE_CODE:
-        raise InvalidClassCode()
-    return JoinClassOut(class_id=EXAMPLE_CLASS_ID, class_name="Sensores 2026-II")
+async def join_class(
+    body: JoinClassRequest,
+    person_id: CurrentPersonId,
+    handler: Annotated[JoinWithCodeHandler, Depends(get_join_class)],
+) -> JoinClassOut:
+    joined = await handler.handle(person_id, body.code)
+    return JoinClassOut(class_id=joined.class_id, class_name=joined.class_name)
 
 
 @router.get("/{class_id}", summary="Detalle de la clase", responses=NOT_FOUND_RESPONSES)
-async def get_class(class_id: UUID) -> ClassOut:
-    return _class(
-        class_id, "Sensores 2026-II", "Instrumentación", ["Leer la guía", "Entregar el informe"]
-    )
+async def get_class(
+    class_id: UUID,
+    person_id: CurrentPersonId,
+    handler: Annotated[GetClassHandler, Depends(get_get_class)],
+) -> ClassOut:
+    return _class_out(await handler.handle(person_id, class_id))
 
 
 @router.post(
@@ -116,6 +130,7 @@ async def get_class(class_id: UUID) -> ClassOut:
 )
 async def upload_class_material(
     class_id: UUID,
+    _: CurrentPersonId,
     title: Annotated[str, Form(min_length=1, max_length=120)],
     text: Annotated[str | None, Form(max_length=100_000)] = None,
     file: Annotated[UploadFile | None, File(description="PDF de hasta 10 MB.")] = None,
@@ -134,8 +149,14 @@ async def upload_class_material(
     summary="Invitar estudiantes por alias",
     responses=TEACHER_ONLY,
 )
-async def invite_students(class_id: UUID, body: InvitationsRequest) -> list[MemberOut]:
-    return [_member(alias, None, MembershipStatus.INVITED) for alias in body.aliases]
+async def invite_students(
+    class_id: UUID,
+    body: InvitationsRequest,
+    person_id: CurrentPersonId,
+    handler: Annotated[InviteStudentsHandler, Depends(get_invite_students)],
+) -> list[MemberOut]:
+    invited = await handler.handle(person_id, class_id, body.aliases)
+    return [_member_out(m) for m in invited]
 
 
 @router.get(
@@ -143,19 +164,17 @@ async def invite_students(class_id: UUID, body: InvitationsRequest) -> list[Memb
     summary="Código y lista de miembros con su estado",
     responses=TEACHER_ONLY,
 )
-async def list_members(class_id: UUID) -> MembersOut:
-    return MembersOut(
-        invite_code=EXAMPLE_CODE,
-        members=[
-            _member("Ana", STUDENT_1, MembershipStatus.JOINED),
-            _member("Luis", STUDENT_2, MembershipStatus.JOINED),
-            _member("Rosa", None, MembershipStatus.INVITED),
-        ],
-    )
+async def list_members(
+    class_id: UUID,
+    person_id: CurrentPersonId,
+    handler: Annotated[ListMembersHandler, Depends(get_list_members)],
+) -> MembersOut:
+    view = await handler.handle(person_id, class_id)
+    return MembersOut(invite_code=view.invite_code, members=[_member_out(m) for m in view.members])
 
 
 @router.get("/{class_id}/dashboard", summary="Panel docente", responses=TEACHER_ONLY)
-async def get_dashboard(class_id: UUID) -> DashboardOut:
+async def get_dashboard(class_id: UUID, _: CurrentPersonId) -> DashboardOut:
     return DashboardOut(
         class_id=class_id,
         sample_data=True,
@@ -184,7 +203,7 @@ async def get_dashboard(class_id: UUID) -> DashboardOut:
     summary="Detalle de un estudiante (solo actividad de esta clase)",
     responses=TEACHER_ONLY,
 )
-async def get_student(class_id: UUID, person_id: UUID) -> StudentDetailOut:
+async def get_student(class_id: UUID, person_id: UUID, _: CurrentPersonId) -> StudentDetailOut:
     return StudentDetailOut(
         person_id=person_id,
         alias="Luis",

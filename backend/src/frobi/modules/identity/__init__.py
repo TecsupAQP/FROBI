@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from frobi.shared.infrastructure import SqlAlchemyUnitOfWork
 
-from .application import ConfigurePersonHandler
-from .domain import ConfiguredBy
+from .application import ConfigurePersonHandler, ReadPersonHandler
+from .domain import ConfiguredBy, Person, Role
 
 
 def configure_person_handler(session: AsyncSession) -> ConfigurePersonHandler:
@@ -16,4 +16,18 @@ def configure_person_handler(session: AsyncSession) -> ConfigurePersonHandler:
     )
 
 
-__all__ = ["ConfigurePersonHandler", "ConfiguredBy", "configure_person_handler"]
+def read_person_handler(session: AsyncSession) -> ReadPersonHandler:
+    from .infrastructure import SqlAlchemyPersonRepository
+
+    return ReadPersonHandler(SqlAlchemyPersonRepository(session))
+
+
+__all__ = [
+    "ConfigurePersonHandler",
+    "ConfiguredBy",
+    "Person",
+    "ReadPersonHandler",
+    "Role",
+    "configure_person_handler",
+    "read_person_handler",
+]

@@ -3108,7 +3108,7 @@
                 }
               }
             },
-            "description": "Datos inválidos (`Validation.Invalid`)."
+            "description": "Datos de la clase inválidos."
           }
         },
         "security": [
