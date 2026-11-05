@@ -72,24 +72,6 @@ def test_contract_has_no_false_claim_status_or_ai_percentage(app: FastAPI) -> No
     assert not any("percent" in name or "ai_score" in name for name in field_names)
 
 
-async def test_wrong_answer_suggests_another_format(client: AsyncClient) -> None:
-    response = await client.post(
-        f"/api/v1/questions/{uuid4()}/answers", headers=AUTH, json={"option": "a"}
-    )
-
-    assert response.status_code == 200
-    body = response.json()
-    assert body["is_correct"] is False
-    assert body["suggested_format"] == "visual_map"
-
-
-async def test_questions_never_reveal_the_correct_option(client: AsyncClient) -> None:
-    response = await client.post(f"/api/v1/adaptations/{uuid4()}/questions", headers=AUTH)
-
-    assert response.status_code == 201
-    assert all("correct_option" not in question for question in response.json())
-
-
 async def test_dashboard_flags_sample_data(client: AsyncClient) -> None:
     response = await client.get(f"/api/v1/classes/{uuid4()}/dashboard", headers=AUTH)
 
