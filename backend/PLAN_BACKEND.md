@@ -237,7 +237,7 @@ Orden según el flujo de la demo; cada paso en TDD (rojo, verde, refactor):
 3. [x] M3: samples (seed de la guía de sensores), pegado de texto, PDF con `pypdf`, `works`.
 4. [x] Puerto de IA con adaptadores `Fake` y `Fallback`, y tope de 15 s (sin proveedor: todo usa el respaldo).
 5. [x] M4 y M5: adaptaciones con receta, aviso, caché y bloqueo en Redis.
-6. [ ] M6: máquina de estados de la escalera, con reglas de dominio puras y tests unitarios exhaustivos.
+6. [x] M6: máquina de estados de la escalera, con reglas de dominio puras y tests unitarios exhaustivos.
 7. [ ] M7: evaluación de las 4 piezas y comparación.
 8. [ ] M8: preguntas y respuestas con formato sugerido.
 9. [ ] M9: revisión de afirmaciones con caso guionado.
