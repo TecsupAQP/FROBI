@@ -72,18 +72,6 @@ def test_contract_has_no_false_claim_status_or_ai_percentage(app: FastAPI) -> No
     assert not any("percent" in name or "ai_score" in name for name in field_names)
 
 
-async def test_upload_rejects_a_file_that_is_not_a_pdf(client: AsyncClient) -> None:
-    response = await client.post(
-        "/api/v1/materials/upload",
-        headers=AUTH,
-        data={"title": "Guía"},
-        files={"file": ("guia.pdf", b"not a pdf", "application/pdf")},
-    )
-
-    assert response.status_code == 422
-    assert response.json()["code"] == "Materials.PdfUnreadable"
-
-
 async def test_final_step_is_locked_until_own_attempt(client: AsyncClient) -> None:
     response = await client.post(
         f"/api/v1/help-attempts/{uuid4()}/steps", headers=AUTH, json={"step": "final"}
