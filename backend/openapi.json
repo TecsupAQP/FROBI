@@ -5481,7 +5481,7 @@
                 }
               }
             },
-            "description": "Datos inválidos (`Validation.Invalid`)."
+            "description": "Borrador sin frases (`ClaimReview.NothingToReview`)."
           }
         },
         "security": [
