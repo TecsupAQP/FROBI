@@ -30,7 +30,7 @@
         :aria-label="`${estudiante.alias}, abrir ajustes`"
       >
         <span :class="`${PREFIX}__avatar`" aria-hidden="true">{{ inicial }}</span>
-        <span>{{ estudiante.alias }}</span>
+        <span :class="`${PREFIX}__alias-texto`">{{ estudiante.alias }}</span>
       </router-link>
     </div>
   </header>

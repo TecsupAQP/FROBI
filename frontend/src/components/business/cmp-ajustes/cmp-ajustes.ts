@@ -31,7 +31,7 @@ export default defineComponent({
 
     const { reiniciarAsistente } = useCmpPerfil();
 
-    const { estudiante, cambiarAlias, actualizarClase } = useCmpSesion();
+    const { estudiante, cambiarAlias, actualizarClase, cerrarSesion } = useCmpSesion();
 
     const { mostrarAviso } = useCmpAvisos();
 
@@ -55,6 +55,15 @@ export default defineComponent({
       } catch {
         alias.value = estudiante.value.alias;
         mostrarAviso("No pudimos cambiar tu alias", "Inténtalo de nuevo en un momento.");
+      }
+    };
+
+    // Cierra la sesión en la API y vuelve a "Entrar".
+    const salirDeFrobi = async () => {
+      try {
+        await cerrarSesion();
+      } finally {
+        router.push({ name: RutaEnum.LOGIN });
       }
     };
 
@@ -88,6 +97,7 @@ export default defineComponent({
       cambiar,
       guardarAlias,
       salirDeClase,
+      salirDeFrobi,
       rehacerAsistente,
     };
   },

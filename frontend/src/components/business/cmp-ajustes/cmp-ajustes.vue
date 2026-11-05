@@ -72,6 +72,7 @@
             <v-button variante="secundario" bloque @click="salirDeClase">Salir de la clase</v-button>
           </template>
           <p v-else :class="`${PREFIX}__secundario`">No estás en ninguna clase. Aprendes por tu cuenta.</p>
+          <v-button variante="texto" bloque icono="back" @click="salirDeFrobi">Cerrar sesión</v-button>
         </section>
 
         <section :class="`${PREFIX}__tarjeta`" aria-labelledby="ajustes-docente">
