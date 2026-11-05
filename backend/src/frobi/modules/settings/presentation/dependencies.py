@@ -5,8 +5,18 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from frobi.modules.settings.application import GetSettingsHandler, UpdateSettingsHandler
-from frobi.modules.settings.infrastructure import SqlAlchemySettingsRepository
+from frobi.modules.settings.application import (
+    GetSettingsHandler,
+    LeaveClassHandler,
+    PrivacyHandler,
+    RenameHandler,
+    UpdateSettingsHandler,
+)
+from frobi.modules.settings.infrastructure import (
+    AccountAdapter,
+    ClassMembershipAdapter,
+    SqlAlchemySettingsRepository,
+)
 from frobi.shared.infrastructure import SqlAlchemyUnitOfWork
 from frobi.shared.presentation import get_db_session
 
@@ -19,3 +29,15 @@ def get_get_settings(db: DbSession) -> GetSettingsHandler:
 
 def get_update_settings(db: DbSession) -> UpdateSettingsHandler:
     return UpdateSettingsHandler(SqlAlchemyUnitOfWork(db), SqlAlchemySettingsRepository(db))
+
+
+def get_rename(db: DbSession) -> RenameHandler:
+    return RenameHandler(AccountAdapter(db))
+
+
+def get_leave_class(db: DbSession) -> LeaveClassHandler:
+    return LeaveClassHandler(ClassMembershipAdapter(db))
+
+
+def get_privacy_handler(db: DbSession) -> PrivacyHandler:
+    return PrivacyHandler(ClassMembershipAdapter(db))

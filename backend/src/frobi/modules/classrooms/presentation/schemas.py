@@ -1,17 +1,12 @@
 """M12 · Clase del docente: contract with the front."""
 
 from datetime import datetime
-from enum import StrEnum
 from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
-class MembershipStatus(StrEnum):
-    INVITED = "invited"
-    JOINED = "joined"
-    LEFT = "left"
+from frobi.modules.classrooms.domain import MembershipStatus
 
 
 class CreateClassRequest(BaseModel):

@@ -47,6 +47,6 @@ class StartSessionHandler:
 
         membership = None
         if class_ref is not None:
-            membership = await self._memberships.join(person.id, class_ref)
+            membership = await self._memberships.join(person.id, person.alias, class_ref)
         token = await self._sessions.create(person.id)
         return StartSessionResult(token=token, person=person, membership=membership)

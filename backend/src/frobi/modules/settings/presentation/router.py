@@ -1,22 +1,30 @@
 """M13 · Ajustes y privacidad.
 
-Real: GET and PATCH /me/settings. The rest are stubs that return example data until phase 2.
+Ajustes, alias, salir de la clase, «Qué ve tu docente» e idiomas (`es` disponible).
 """
 
 from typing import Annotated
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
 from frobi.modules.settings.application import (
     GetSettingsHandler,
+    LeaveClassHandler,
+    PrivacyHandler,
+    RenameHandler,
     UpdateSettingsCommand,
     UpdateSettingsHandler,
 )
 from frobi.modules.settings.domain import TOGGLES, Language
 from frobi.shared.presentation import AUTH_RESPONSES, CurrentPersonId, problem, require_token
 
-from .dependencies import get_get_settings, get_update_settings
+from .dependencies import (
+    get_get_settings,
+    get_leave_class,
+    get_privacy_handler,
+    get_rename,
+    get_update_settings,
+)
 from .schemas import (
     AccountOut,
     AliasPatch,
@@ -32,8 +40,6 @@ router = APIRouter(
     dependencies=[Depends(require_token)],
     responses=AUTH_RESPONSES,
 )
-
-EXAMPLE_PERSON_ID = UUID("00000000-0000-4000-8000-000000000001")
 
 
 @router.get("/me/settings", summary="Ajustes actuales")
@@ -65,34 +71,53 @@ async def update_settings(
     return SettingsOut.from_domain(updated)
 
 
-@router.patch("/me", summary="Cambiar el alias")
-async def update_alias(body: AliasPatch) -> AccountOut:
-    return AccountOut(id=EXAMPLE_PERSON_ID, alias=body.alias, career="Mecatrónica", role="learner")
+@router.patch(
+    "/me",
+    summary="Cambiar el alias",
+    responses={422: problem("Alias vacío o de más de 40 caracteres.")},
+)
+async def update_alias(
+    body: AliasPatch,
+    person_id: CurrentPersonId,
+    handler: Annotated[RenameHandler, Depends(get_rename)],
+) -> AccountOut:
+    account = await handler.handle(person_id, body.alias)
+    return AccountOut(
+        id=account.id,
+        alias=account.alias,
+        career=account.career,
+        role=account.role,  # type: ignore[arg-type]
+    )
 
 
 @router.delete(
     "/me/membership",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Salir de la clase (lo que hagas después queda fuera de la clase)",
+    responses={409: problem("No estás en ninguna clase (`Classrooms.NotInAClass`).")},
 )
-async def leave_class() -> None:
-    return None
+async def leave_class(
+    person_id: CurrentPersonId,
+    handler: Annotated[LeaveClassHandler, Depends(get_leave_class)],
+) -> None:
+    await handler.handle(person_id)
 
 
 @router.get("/me/privacy", summary="Qué ve tu docente")
-async def get_privacy() -> PrivacyOut:
+async def get_privacy(
+    person_id: CurrentPersonId,
+    handler: Annotated[PrivacyHandler, Depends(get_privacy_handler)],
+) -> PrivacyOut:
+    view = await handler.handle(person_id)
     return PrivacyOut(
-        in_class=True,
-        class_name="Sensores 2026-II",
+        in_class=view.in_class,
+        class_name=view.class_name,
         shared_with_teacher=[
-            PrivacyItem(category="formats", description="Qué formatos usaste en la clase."),
-            PrivacyItem(category="answers", description="Aciertos en las preguntas de la clase."),
-            PrivacyItem(category="help", description="Hasta qué escalón de ayuda llegaste."),
+            PrivacyItem(category=i.category, description=i.description)
+            for i in view.shared_with_teacher
         ],
         never_shared=[
-            PrivacyItem(category="outside_class", description="Lo que haces fuera de la clase."),
-            PrivacyItem(category="drafts", description="El texto de tus borradores."),
-            PrivacyItem(category="profiles", description="Tus perfiles de accesibilidad."),
+            PrivacyItem(category=i.category, description=i.description) for i in view.never_shared
         ],
     )
 
