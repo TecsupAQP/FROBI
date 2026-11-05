@@ -4153,7 +4153,7 @@
                 }
               }
             },
-            "description": "Datos inválidos (`Validation.Invalid`)."
+            "description": "Título o texto vacío (`Materials.InvalidTitle`, `EmptyText`)."
           }
         },
         "security": [
@@ -4259,7 +4259,7 @@
                 }
               }
             },
-            "description": "PDF ilegible (`Materials.PdfUnreadable`) o más de 10 MB."
+            "description": "PDF ilegible o sin texto (`Materials.PdfUnreadable`) o más de 10 MB (`Materials.FileTooLarge`)."
           }
         },
         "security": [
@@ -5403,7 +5403,7 @@
                 }
               }
             },
-            "description": "Datos inválidos (`Validation.Invalid`)."
+            "description": "La consigna no es `brief` o el borrador no es `draft`."
           }
         },
         "security": [

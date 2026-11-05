@@ -1,24 +1,12 @@
 """M3 · Material: contract with the front."""
 
 from datetime import datetime
-from enum import StrEnum
 from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
-class MaterialKind(StrEnum):
-    GUIDE = "guide"
-    BRIEF = "brief"
-    DRAFT = "draft"
-    CLASS_CONTENT = "class_content"
-
-
-class MaterialSource(StrEnum):
-    SAMPLE = "sample"
-    UPLOAD = "upload"
-    PASTE = "paste"
+from frobi.modules.materials.domain import Material, MaterialKind, MaterialSource, Work
 
 
 class MaterialSummaryOut(BaseModel):
@@ -27,6 +15,16 @@ class MaterialSummaryOut(BaseModel):
     kind: MaterialKind
     source: MaterialSource
     preview: str = Field(description="Primeras líneas del texto.")
+
+    @classmethod
+    def from_domain(cls, material: Material) -> "MaterialSummaryOut":
+        return cls(
+            id=material.id,
+            title=material.title,
+            kind=material.kind,
+            source=material.source,
+            preview=material.preview(),
+        )
 
 
 class MaterialOut(BaseModel):
@@ -37,6 +35,18 @@ class MaterialOut(BaseModel):
     class_id: UUID | None
     extracted_text: str
     created_at: datetime
+
+    @classmethod
+    def from_domain(cls, material: Material) -> "MaterialOut":
+        return cls(
+            id=material.id,
+            title=material.title,
+            kind=material.kind,
+            source=material.source,
+            class_id=material.class_id,
+            extracted_text=material.text,
+            created_at=material.created_at,
+        )
 
 
 class CreateMaterialRequest(BaseModel):
@@ -61,3 +71,16 @@ class WorkOut(BaseModel):
     brief_material_id: UUID
     draft_material_id: UUID
     organized: OrganizedWork
+
+    @classmethod
+    def from_domain(cls, work: Work) -> "WorkOut":
+        return cls(
+            id=work.id,
+            brief_material_id=work.brief_material_id,
+            draft_material_id=work.draft_material_id,
+            organized=OrganizedWork(
+                requirements=list(work.organized.requirements),
+                topics=list(work.organized.topics),
+                missing=list(work.organized.missing),
+            ),
+        )
