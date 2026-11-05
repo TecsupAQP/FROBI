@@ -10,6 +10,7 @@ from .manage_class import (
     GetClassHandler,
     InviteStudentsHandler,
     ListMembersHandler,
+    ListMyClassesHandler,
     MembersView,
 )
 from .membership import (
@@ -33,6 +34,7 @@ __all__ = [
     "LeaveClassHandler",
     "ListClassContentHandler",
     "ListMembersHandler",
+    "ListMyClassesHandler",
     "MembersView",
     "Panel",
     "StudentDetail",

@@ -19,3 +19,17 @@ class InvalidClassCode(DomainError):
     code = "Classrooms.InvalidCode"
     kind = ErrorKind.VALIDATION
     default_message = "Ese código de clase no existe. Puedes entrar sin clase y unirte después."
+
+
+class DemoUnavailable(DomainError):
+    """The demo sign-in only exists with FROBI_ENVIRONMENT=local or demo."""
+
+    code = "Resource.NotFound"
+    kind = ErrorKind.NOT_FOUND
+    default_message = "El acceso demo no está disponible aquí."
+
+
+class DemoNotSeeded(DomainError):
+    code = "Identity.DemoNotSeeded"
+    kind = ErrorKind.CONFLICT
+    default_message = "Faltan los datos de demo. Córrelos con: uv run python -m frobi.demo"

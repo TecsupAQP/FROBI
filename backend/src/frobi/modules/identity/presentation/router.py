@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from frobi.modules.identity.application import (
+    DemoSessionHandler,
     EndSessionHandler,
     GetMeHandler,
     StartSessionCommand,
@@ -12,8 +13,8 @@ from frobi.modules.identity.application import (
 )
 from frobi.shared.presentation import AUTH_RESPONSES, CurrentPersonId, SessionToken, problem
 
-from .dependencies import get_end_session, get_get_me, get_start_session
-from .schemas import CreateSessionRequest, MeOut, SessionOut
+from .dependencies import get_demo_session, get_end_session, get_get_me, get_start_session
+from .schemas import CreateSessionRequest, DemoSessionRequest, MeOut, SessionOut
 
 router = APIRouter(tags=["M1 · Cuenta y acceso"])
 
@@ -34,6 +35,27 @@ async def create_session(
         )
     )
     return SessionOut.from_result(result)
+
+
+@router.post(
+    "/sessions/demo",
+    summary="Entrar como persona de la demo (solo entorno local o demo)",
+    description=(
+        "Para presentar FROBI: entra como el docente demo de la clase SENSOR1 o como Ana o "
+        "Luis, sus estudiantes demo. Solo existe con `FROBI_ENVIRONMENT=local` o `demo`; en "
+        "cualquier otro entorno responde 404. Los estudiantes existen después de correr "
+        "`uv run python -m frobi.demo`."
+    ),
+    responses={
+        404: problem("El acceso demo no está habilitado en este entorno."),
+        409: problem("Faltan los datos de demo (`Identity.DemoNotSeeded`)."),
+    },
+)
+async def create_demo_session(
+    body: DemoSessionRequest,
+    handler: Annotated[DemoSessionHandler, Depends(get_demo_session)],
+) -> SessionOut:
+    return SessionOut.from_result(await handler.handle(body.who))
 
 
 @router.delete(

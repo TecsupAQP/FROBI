@@ -33,3 +33,11 @@ class ClassroomsMembershipAdapter:
         if active is None:
             return None
         return ActiveMembership(class_id=active.class_id, class_name=active.class_name)
+
+
+class ClassroomsDemoDirectory:
+    def __init__(self, session: AsyncSession) -> None:
+        self._demo = classrooms.demo_people_handler(session)
+
+    async def person_for(self, who: str) -> UUID | None:
+        return await self._demo.person_for(who)

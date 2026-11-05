@@ -1,4 +1,5 @@
 from .configure_person import ConfigurePersonHandler
+from .demo_session import DemoSessionHandler
 from .end_session import EndSessionHandler
 from .get_me import GetMeHandler, MeView
 from .read_person import ReadPersonHandler
@@ -7,6 +8,7 @@ from .start_session import StartSessionCommand, StartSessionHandler, StartSessio
 
 __all__ = [
     "ConfigurePersonHandler",
+    "DemoSessionHandler",
     "EndSessionHandler",
     "GetMeHandler",
     "MeView",

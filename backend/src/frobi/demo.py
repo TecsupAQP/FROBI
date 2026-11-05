@@ -21,7 +21,7 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 
 from frobi.main import create_app
-from frobi.modules.classrooms.domain import DEMO_CLASS_ID, DEMO_TEACHER_ID
+from frobi.modules.classrooms.domain import DEMO_CLASS_ID, DEMO_STUDENTS, DEMO_TEACHER_ID
 from frobi.modules.identity.infrastructure import RedisSessionStore
 from frobi.shared.infrastructure import get_settings
 
@@ -131,7 +131,7 @@ async def _seed(client: AsyncClient, teacher_token: str) -> list[DemoPerson]:
     )
     upload.raise_for_status()
 
-    _, ana = await _enter(client, "Ana (demo)")
+    _, ana = await _enter(client, DEMO_STUDENTS["ana"])
     await _prompt(client, ana, "Explícame los sensores")
     await _study(client, ana, "easy_read", right=True, hints=1)
     await _study(client, ana, "easy_read", right=True, hints=0)
@@ -144,11 +144,11 @@ async def _seed(client: AsyncClient, teacher_token: str) -> list[DemoPerson]:
         "de la planta y una tabla corta.",
     )
 
-    _, luis = await _enter(client, "Luis (demo)")
+    _, luis = await _enter(client, DEMO_STUDENTS["luis"])
     for _ in range(3):
         await _study(client, luis, "visual_map", right=False, hints=1)
     await _prompt(client, luis, "Hazme la tarea de sensores")
-    return [DemoPerson("Ana (demo)", ana), DemoPerson("Luis (demo)", luis)]
+    return [DemoPerson(DEMO_STUDENTS["ana"], ana), DemoPerson(DEMO_STUDENTS["luis"], luis)]
 
 
 async def main(reset: bool) -> None:
@@ -198,6 +198,10 @@ async def main(reset: bool) -> None:
     print(f"  Docente demo  {teacher_token}")
     for student in students:
         print(f"  {student.alias:<13} {student.token}")
+    print(
+        f"\nDesde el front (sin copiar tokens): POST {API}/sessions/demo con "
+        '{"who": "teacher"}, "ana" o "luis".'
+    )
 
 
 if __name__ == "__main__":

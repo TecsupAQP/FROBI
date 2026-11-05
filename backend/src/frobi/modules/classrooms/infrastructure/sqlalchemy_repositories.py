@@ -54,6 +54,14 @@ class SqlAlchemyClassRepository:
         row = await self._session.get(ClassModel, class_id)
         return None if row is None else _classroom(row)
 
+    async def list_for_teacher(self, teacher_id: UUID) -> list[Classroom]:
+        query = (
+            select(ClassModel)
+            .where(ClassModel.teacher_id == teacher_id)
+            .order_by(ClassModel.created_at.desc())
+        )
+        return [_classroom(row) for row in (await self._session.scalars(query)).all()]
+
     async def get_by_code(self, code: str) -> Classroom | None:
         row = await self._session.scalar(select(ClassModel).where(ClassModel.invite_code == code))
         return None if row is None else _classroom(row)

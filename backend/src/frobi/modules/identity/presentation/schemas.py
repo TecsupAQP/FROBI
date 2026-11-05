@@ -17,6 +17,12 @@ class IntroStatus(StrEnum):
     PENDING = "pending"
 
 
+class DemoSessionRequest(BaseModel):
+    who: Literal["teacher", "ana", "luis"] = Field(
+        description="`teacher`: docente demo de SENSOR1. `ana` y `luis`: sus estudiantes demo."
+    )
+
+
 class CreateSessionRequest(BaseModel):
     alias: str = Field(min_length=1, max_length=40, examples=["Ana"])
     career: str = Field(min_length=1, max_length=80, examples=["Mecatrónica"])

@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from frobi.shared.infrastructure import SqlAlchemyUnitOfWork, SystemClock
 
 from .application import ActiveClass, ActiveClassHandler, JoinClassHandler, LeaveClassHandler
+from .application.demo import DEMO_PEOPLE, DemoPeopleHandler
 from .domain import Classroom
 
 
@@ -28,6 +29,13 @@ def active_class_handler(session: AsyncSession) -> ActiveClassHandler:
     )
 
 
+def demo_people_handler(session: AsyncSession) -> DemoPeopleHandler:
+    """``person_for("teacher" | "ana" | "luis")`` in the seeded demo class (identity)."""
+    from .infrastructure import SqlAlchemyMembershipRepository
+
+    return DemoPeopleHandler(SqlAlchemyMembershipRepository(session))
+
+
 def leave_class_handler(session: AsyncSession) -> LeaveClassHandler:
     from .infrastructure import SqlAlchemyMembershipRepository
 
@@ -37,12 +45,15 @@ def leave_class_handler(session: AsyncSession) -> LeaveClassHandler:
 
 
 __all__ = [
+    "DEMO_PEOPLE",
     "ActiveClass",
     "ActiveClassHandler",
     "Classroom",
+    "DemoPeopleHandler",
     "JoinClassHandler",
     "LeaveClassHandler",
     "active_class_handler",
+    "demo_people_handler",
     "join_class_handler",
     "leave_class_handler",
 ]

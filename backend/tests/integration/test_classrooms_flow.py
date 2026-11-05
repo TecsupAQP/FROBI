@@ -233,3 +233,51 @@ async def test_only_the_teacher_uploads_and_needs_text_or_a_pdf(client: AsyncCli
     assert empty.json()["code"] == "Classrooms.MissingContent"
     assert broken.json()["code"] == "Materials.PdfUnreadable"
     assert (await client.get(url, headers=teacher)).json() == []
+
+
+async def test_a_teacher_finds_their_classes_without_remembering_ids(client: AsyncClient) -> None:
+    teacher = await _enter(client, "Profe Nora", role="teacher")
+    first = await client.post(
+        "/api/v1/classes", headers=teacher, json={"name": "Uno", "subject": "A", "tasks": []}
+    )
+    second = await client.post(
+        "/api/v1/classes", headers=teacher, json={"name": "Dos", "subject": "B", "tasks": []}
+    )
+    student = await _enter(client, "Ana")
+
+    mine = await client.get("/api/v1/classes", headers=teacher)
+
+    assert [c["id"] for c in mine.json()] == [second.json()["id"], first.json()["id"]]
+    assert (await client.get("/api/v1/classes", headers=student)).status_code == 403
+
+
+async def test_the_demo_teacher_can_enter_and_open_the_demo_class(client: AsyncClient) -> None:
+    entered = await client.post("/api/v1/sessions/demo", json={"who": "teacher"})
+    assert entered.status_code == 200, entered.text
+    auth = {"Authorization": f"Bearer {entered.json()['token']}"}
+
+    mine = await client.get("/api/v1/classes", headers=auth)
+    panel = await client.get(f"/api/v1/classes/{DEMO_CLASS}/dashboard", headers=auth)
+
+    assert entered.json()["person"]["role"] == "teacher"
+    assert DEMO_CLASS in [c["id"] for c in mine.json()]
+    assert panel.json()["sample_data"] is True
+
+
+async def test_demo_students_need_the_seed_first(client: AsyncClient) -> None:
+    response = await client.post("/api/v1/sessions/demo", json={"who": "luis"})
+
+    assert response.status_code == 409
+    assert response.json()["code"] == "Identity.DemoNotSeeded"
+
+
+async def test_the_demo_sign_in_does_not_exist_in_production(
+    test_settings: Settings, migrated_database: str, redis: "Redis"
+) -> None:
+    app = create_app(test_settings.model_copy(update={"environment": "production"}))
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post("/api/v1/sessions/demo", json={"who": "teacher"})
+    await app.state.redis.aclose()
+    await app.state.engine.dispose()
+
+    assert response.status_code == 404

@@ -16,6 +16,10 @@ class ClassRepository(Protocol):
 
     async def get_by_code(self, code: str) -> Classroom | None: ...
 
+    async def list_for_teacher(self, teacher_id: UUID) -> list[Classroom]:
+        """Most recent first."""
+        ...
+
     async def code_taken(self, code: str) -> bool: ...
 
 

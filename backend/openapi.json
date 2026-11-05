@@ -888,6 +888,25 @@
         "title": "DashboardOut",
         "type": "object"
       },
+      "DemoSessionRequest": {
+        "properties": {
+          "who": {
+            "description": "`teacher`: docente demo de SENSOR1. `ana` y `luis`: sus estudiantes demo.",
+            "enum": [
+              "teacher",
+              "ana",
+              "luis"
+            ],
+            "title": "Who",
+            "type": "string"
+          }
+        },
+        "required": [
+          "who"
+        ],
+        "title": "DemoSessionRequest",
+        "type": "object"
+      },
       "EvaluatePromptRequest": {
         "properties": {
           "claim_id": {
@@ -3100,6 +3119,65 @@
       }
     },
     "/api/v1/classes": {
+      "get": {
+        "description": "Las clases que enseña la persona actual, la más reciente primero.",
+        "operationId": "list_my_classes_api_v1_classes_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ClassOut"
+                  },
+                  "title": "Response List My Classes Api V1 Classes Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Sin sesión (`Identity.Unauthenticated`)."
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Solo para docentes (`Identity.Forbidden`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mis clases (docente)",
+        "tags": [
+          "M12 · Clase del docente"
+        ]
+      },
       "post": {
         "operationId": "create_class_api_v1_classes_post",
         "requestBody": {
@@ -5356,6 +5434,68 @@
           }
         ],
         "summary": "Cerrar la sesión",
+        "tags": [
+          "M1 · Cuenta y acceso"
+        ]
+      }
+    },
+    "/api/v1/sessions/demo": {
+      "post": {
+        "description": "Para presentar FROBI: entra como el docente demo de la clase SENSOR1 o como Ana o Luis, sus estudiantes demo. Solo existe con `FROBI_ENVIRONMENT=local` o `demo`; en cualquier otro entorno responde 404. Los estudiantes existen después de correr `uv run python -m frobi.demo`.",
+        "operationId": "create_demo_session_api_v1_sessions_demo_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemoSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "El acceso demo no está habilitado en este entorno."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Faltan los datos de demo (`Identity.DemoNotSeeded`)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Datos inválidos (`Validation.Invalid`)."
+          }
+        },
+        "summary": "Entrar como persona de la demo (solo entorno local o demo)",
         "tags": [
           "M1 · Cuenta y acceso"
         ]

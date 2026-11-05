@@ -1,6 +1,6 @@
 """M12 · Clase del docente.
 
-Real: create a class, join with a code, see the class, invite by alias, list members.
+Real: create a class, list my classes, join with a code, see the class, invite, list members.
 Real: the teacher panel and the student detail, both only with activity of this class.
 Real: class content uploaded by the teacher, read by the teacher and joined students.
 """
@@ -19,6 +19,7 @@ from frobi.modules.classrooms.application import (
     JoinWithCodeHandler,
     ListClassContentHandler,
     ListMembersHandler,
+    ListMyClassesHandler,
     StudentDetailHandler,
     UploadClassContentCommand,
     UploadClassContentHandler,
@@ -39,6 +40,7 @@ from .dependencies import (
     get_join_class,
     get_list_class_content,
     get_list_members,
+    get_list_my_classes,
     get_student_detail,
     get_upload_class_content,
 )
@@ -109,6 +111,19 @@ async def create_class(
         )
     )
     return _class_out(classroom)
+
+
+@router.get(
+    "",
+    summary="Mis clases (docente)",
+    description="Las clases que enseña la persona actual, la más reciente primero.",
+    responses=TEACHER_RESPONSES,
+)
+async def list_my_classes(
+    person_id: CurrentPersonId,
+    handler: Annotated[ListMyClassesHandler, Depends(get_list_my_classes)],
+) -> list[ClassOut]:
+    return [_class_out(c) for c in await handler.handle(person_id)]
 
 
 @router.post(

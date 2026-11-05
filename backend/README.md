@@ -132,6 +132,11 @@ its class content and two students, «Ana (demo)» and «Luis (demo)», whose ac
 the real API. It prints a session token for the demo teacher and for each student (use it in
 **Authorize** in `/docs`). The panel of the demo class is always `sample_data: true`.
 
+The front does not need those tokens: `POST /sessions/demo` with `{"who": "teacher"}`, `"ana"` or
+`"luis"` enters as that person. It only exists with `FROBI_ENVIRONMENT=local` or `demo` (404
+anywhere else); the students exist once the script has run. A teacher's classes are listed by
+`GET /classes`, so the front never has to remember a class id.
+
 ## Docs
 
 - [`PLAN_BACKEND.md`](./PLAN_BACKEND.md): functional plan, data model and endpoints.

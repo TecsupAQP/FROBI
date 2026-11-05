@@ -14,6 +14,7 @@ from frobi.modules.classrooms.application import (
     JoinWithCodeHandler,
     ListClassContentHandler,
     ListMembersHandler,
+    ListMyClassesHandler,
     StudentDetailHandler,
     UploadClassContentHandler,
 )
@@ -94,3 +95,7 @@ def get_upload_class_content(db: DbSession) -> UploadClassContentHandler:
 
 def get_list_class_content(db: DbSession) -> ListClassContentHandler:
     return ListClassContentHandler(get_get_class(db), ClassMaterialsAdapter(db))
+
+
+def get_list_my_classes(db: DbSession) -> ListMyClassesHandler:
+    return ListMyClassesHandler(SqlAlchemyClassRepository(db), PersonDirectoryAdapter(db))

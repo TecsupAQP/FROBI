@@ -76,6 +76,19 @@ async def own_class(classes: ClassRepository, teacher_id: UUID, class_id: UUID) 
     return classroom
 
 
+class ListMyClassesHandler:
+    """The classes a teacher teaches, so the front never has to remember them (RF44)."""
+
+    def __init__(self, classes: ClassRepository, people: PersonDirectory) -> None:
+        self._classes = classes
+        self._people = people
+
+    async def handle(self, teacher_id: UUID) -> list[Classroom]:
+        if not await self._people.is_teacher(teacher_id):
+            raise TeachersOnly()
+        return await self._classes.list_for_teacher(teacher_id)
+
+
 class GetClassHandler:
     """The teacher of the class and its joined members can see it."""
 

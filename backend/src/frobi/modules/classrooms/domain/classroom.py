@@ -16,6 +16,8 @@ MAX_TASKS = 20
 # Seeded by migration 0010 («Sensores 2026-II», code SENSOR1). Its panel is always demo data.
 DEMO_CLASS_ID = UUID("00000000-0000-4000-8000-0000000000c1")
 DEMO_TEACHER_ID = UUID("00000000-0000-4000-8000-00000000d0c0")
+# Students that the demo seed (``python -m frobi.demo``) adds to the demo class.
+DEMO_STUDENTS = {"ana": "Ana (demo)", "luis": "Luis (demo)"}
 
 
 def new_invite_code() -> str:

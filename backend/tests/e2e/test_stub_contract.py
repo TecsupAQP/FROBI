@@ -11,7 +11,11 @@ from frobi.main import create_app
 from frobi.shared.infrastructure import Settings
 from frobi.shared.presentation import PROBLEM_JSON
 
-PUBLIC = {("POST", "/api/v1/sessions"), ("GET", "/api/v1/health")}
+PUBLIC = {
+    ("POST", "/api/v1/sessions"),
+    ("POST", "/api/v1/sessions/demo"),
+    ("GET", "/api/v1/health"),
+}
 AUTH = {"Authorization": "Bearer example-token"}
 
 

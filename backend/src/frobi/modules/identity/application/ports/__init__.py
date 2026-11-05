@@ -59,10 +59,17 @@ class OnboardingStatusReader(Protocol):
     async def for_person(self, person_id: UUID) -> OnboardingStatus: ...
 
 
+class DemoDirectory(Protocol):
+    """Over the public API of classrooms: the person behind a demo name, or None."""
+
+    async def person_for(self, who: str) -> UUID | None: ...
+
+
 __all__ = [
     "ActiveMembership",
     "ClassMembership",
     "ClassRef",
+    "DemoDirectory",
     "OnboardingStatus",
     "OnboardingStatusReader",
     "PersonRepository",

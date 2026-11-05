@@ -14,13 +14,17 @@ from frobi.modules.classrooms.application import (
     LeaveClassHandler,
     ListClassContentHandler,
     ListMembersHandler,
+    ListMyClassesHandler,
     UploadClassContentCommand,
     UploadClassContentHandler,
 )
+from frobi.modules.classrooms.application.demo import DemoPeopleHandler
 from frobi.modules.classrooms.application.ports import ClassMaterial
 from frobi.modules.classrooms.domain import (
     CODE_ALPHABET,
     CODE_LENGTH,
+    DEMO_CLASS_ID,
+    DEMO_TEACHER_ID,
     ClassNotFound,
     Classroom,
     InvalidClassCode,
@@ -51,6 +55,10 @@ class Classes:
 
     async def code_taken(self, code: str) -> bool:
         return await self.get_by_code(code) is not None
+
+    async def list_for_teacher(self, teacher_id: UUID) -> list[Classroom]:
+        mine = [c for c in self.items.values() if c.teacher_id == teacher_id]
+        return sorted(mine, key=lambda c: c.created_at, reverse=True)
 
 
 class Memberships:
@@ -320,3 +328,40 @@ async def test_class_content_is_for_the_teacher_and_joined_students_only(
     assert [m.title for m in await listing.handle(ANA, classroom.id)] == ["Guía"]
     with pytest.raises(ClassNotFound):
         await listing.handle(LUIS, classroom.id)
+
+
+async def test_a_teacher_lists_their_own_classes_only(classes: Classes) -> None:
+    mine = await _create(classes, "Sensores", "ABC234")
+    other = Classroom.create(
+        teacher_id=uuid4(),
+        name="Otra",
+        subject="Redes",
+        tasks=[],
+        invite_code="XYZ789",
+        now=datetime(2026, 11, 6, tzinfo=UTC),
+    )
+    await classes.add(other)
+
+    assert await ListMyClassesHandler(classes, People()).handle(TEACHER) == [mine]
+    with pytest.raises(TeachersOnly):
+        await ListMyClassesHandler(classes, People()).handle(ANA)
+
+
+async def test_demo_people_are_the_demo_teacher_and_the_seeded_students(
+    memberships: Memberships,
+) -> None:
+    ana = uuid4()
+    await memberships.add(
+        Membership.join_new(
+            class_id=DEMO_CLASS_ID,
+            person_id=ana,
+            alias="Ana (demo)",
+            now=datetime(2026, 11, 6, tzinfo=UTC),
+        )
+    )
+    demo = DemoPeopleHandler(memberships)
+
+    assert await demo.person_for("teacher") == DEMO_TEACHER_ID
+    assert await demo.person_for("ana") == ana
+    assert await demo.person_for("luis") is None
+    assert await demo.person_for("someone") is None
