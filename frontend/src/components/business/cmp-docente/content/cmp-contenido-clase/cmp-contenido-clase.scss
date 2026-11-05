@@ -1,0 +1,95 @@
+$prefix: cmp-contenido-clase;
+
+.#{$prefix} {
+  display: flex;
+  flex-direction: column;
+  gap: $esp-16;
+  padding: $esp-20;
+  border: $linea-1 solid $borde-suave;
+  border-radius: $radio-20;
+  background-color: $fondo-superficie;
+
+  @include tablet {
+    padding: $esp-24 $esp-28;
+  }
+
+  &__cabecera {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-12;
+
+    @include tablet {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  }
+
+  &__titulo {
+    @include texto-subtitulo;
+    color: $texto-principal;
+  }
+
+  &__secundario,
+  &__vacio,
+  &__fecha {
+    color: $texto-secundario;
+  }
+
+  &__error {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-8;
+    color: $estado-error;
+  }
+
+  &__lista {
+    display: grid;
+    gap: $esp-12;
+
+    @include escritorio {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__material {
+    display: flex;
+    align-items: flex-start;
+    gap: $esp-12;
+    padding: $esp-14 $esp-16;
+    border: $linea-1 solid $borde-suave;
+    border-radius: $radio-16;
+  }
+
+  &__icono {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: $radio-12;
+    background-color: $marca-azul-claro;
+    color: $marca-azul;
+  }
+
+  &__textos {
+    display: flex;
+    flex-direction: column;
+    gap: $esp-2;
+    min-width: 0;
+  }
+
+  &__nombre {
+    @include texto-etiqueta;
+    color: $texto-principal;
+    overflow-wrap: anywhere;
+  }
+
+  &__vista {
+    overflow: hidden;
+    color: $texto-cuerpo;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -20,18 +20,33 @@
         :descripcion="`${panel.grupo.nombre} · ${panel.grupo.estudiantes} estudiantes (solo alias, sin datos personales)`"
       >
         <template #acciones>
-          <v-select
-            id="docente-grupo"
-            :class="`${PREFIX}__grupo`"
-            :model-value="grupoId"
-            etiqueta="Grupo"
-            :opciones="panel.grupos"
-            @update:model-value="cambiarGrupo"
-          />
+          <div :class="`${PREFIX}__clases`">
+            <v-select
+              id="docente-grupo"
+              data-recorrido="selector-clase"
+              :class="`${PREFIX}__grupo`"
+              :model-value="grupoId"
+              etiqueta="Clase"
+              :opciones="panel.grupos"
+              @update:model-value="cambiarGrupo"
+            />
+            <v-button variante="texto" icono="pencil" :destino="{ name: RutaEnum.CLASE_NUEVA }">
+              Crear otra clase
+            </v-button>
+          </div>
         </template>
       </cmp-encabezado-pagina>
 
       <cmp-mi-clase v-if="clase" data-recorrido="mi-clase" :clase="clase" />
+
+      <cmp-contenido-clase
+        v-if="clase"
+        data-recorrido="contenido-clase"
+        :materiales="contenido"
+        :subiendo="subiendo"
+        :error="errorContenido"
+        @subir="subirContenido"
+      />
 
       <v-aviso v-if="panel.esEjemplo" :class="`${PREFIX}__ejemplo`" tipo="aviso" icono="info">
         Datos de ejemplo mientras tu clase no tenga actividad. Visible solo para el rol Docente.

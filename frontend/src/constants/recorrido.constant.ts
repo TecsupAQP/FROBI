@@ -26,6 +26,14 @@ export const RECORRIDO_ESTUDIANTE: PasoRecorrido[] = [
     objetivo: "guia-actual",
   },
   {
+    titulo: "El material de tu clase",
+    texto: "Si te uniste a una clase, aquí aparece lo que sube tu docente. Elige uno para estudiarlo.",
+    destino: { name: RutaEnum.INICIO },
+    ruta: RutaEnum.INICIO,
+    objetivo: "material-clase",
+    siFalta: "Si te unes a una clase con su código, aquí verás el material que sube tu docente.",
+  },
+  {
     titulo: "Tu PDF, tal como lo subiste",
     texto: "Si tu guía es un PDF, aquí lo ves completo para revisarlo mientras estudias.",
     destino: { name: RutaEnum.GUIA },
@@ -106,6 +114,23 @@ export const RECORRIDO_DOCENTE: PasoRecorrido[] = [
     ruta: RutaEnum.CLASE_INVITAR,
     objetivo: "codigo",
     siFalta: "Cuando crees tu clase, aquí verás su código.",
+  },
+  {
+    titulo: "Comparte material con tu clase",
+    texto:
+      "Sube PDF cuando quieras. Tus alumnos los ven en su Inicio y los estudian en el formato que les sirva.",
+    destino: { name: RutaEnum.DOCENTE },
+    ruta: RutaEnum.DOCENTE,
+    objetivo: "contenido-clase",
+    siFalta: "Cuando tengas una clase, aquí subirás su material.",
+  },
+  {
+    titulo: "Tus clases",
+    texto: "Si enseñas en varias clases, elige aquí cuál ver. Cada una tiene su código, alumnos y material.",
+    destino: { name: RutaEnum.DOCENTE },
+    ruta: RutaEnum.DOCENTE,
+    objetivo: "selector-clase",
+    siFalta: "Cuando crees tu clase, aquí podrás cambiar entre tus clases.",
   },
   {
     titulo: "Sigue a cada alumno",

@@ -33,6 +33,21 @@ export interface Clase {
   esEjemplo: boolean;
 }
 
+// Una clase en la lista "Mis clases" del docente.
+export interface ClaseResumen {
+  id: string;
+  nombre: string;
+  codigo: string;
+}
+
+// Material que el docente sube a la clase: lo ven sus alumnos unidos.
+export interface MaterialClase {
+  id: string;
+  titulo: string;
+  vistaPrevia: string;
+  fecha: string;
+}
+
 export interface NuevaClase {
   nombre: string;
   carrera: string;

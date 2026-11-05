@@ -1,8 +1,8 @@
 <template>
-  <section :class="PREFIX" :aria-labelledby="`${PREFIX}-titulo`">
+  <section :class="PREFIX" :aria-labelledby="`${prefijoId}-titulo`">
     <div :class="`${PREFIX}__encabezado`">
-      <h2 :id="`${PREFIX}-titulo`" :class="`${PREFIX}__titulo`">Mis guías</h2>
-      <p :class="`${PREFIX}__secundario`">Todas las que subiste quedan guardadas. Elige con cuál estudiar.</p>
+      <h2 :id="`${prefijoId}-titulo`" :class="`${PREFIX}__titulo`">{{ titulo }}</h2>
+      <p :class="`${PREFIX}__secundario`">{{ descripcion }}</p>
     </div>
     <ul :class="`${PREFIX}__lista`">
       <li

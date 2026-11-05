@@ -112,4 +112,16 @@ $prefix: cmp-docente;
   &__paso {
     align-self: flex-start;
   }
+
+  // Selector de clase y acceso a crear otra.
+  &__clases {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: $esp-4;
+
+    @include tablet {
+      align-items: flex-end;
+    }
+  }
 }
