@@ -3,7 +3,9 @@
     <h2 id="mi-clase-titulo" :class="`${PREFIX}__titulo`">Mi clase · {{ clase.nombre }}</h2>
     <div :class="`${PREFIX}__chips`">
       <v-chip icono="info">Código {{ clase.codigo }}</v-chip>
-      <v-chip tono="exito" icono="check">{{ clase.alumnos.length }} {{ clase.alumnos.length === 1 ? "alumno" : "alumnos" }}</v-chip>
+      <v-chip tono="exito" icono="check"
+        >{{ clase.alumnos.length }} {{ clase.alumnos.length === 1 ? "alumno" : "alumnos" }}</v-chip
+      >
     </div>
     <ul :class="`${PREFIX}__alumnos`">
       <li v-for="alumno in clase.alumnos" :key="alumno.alias" :class="`${PREFIX}__alumno`">
