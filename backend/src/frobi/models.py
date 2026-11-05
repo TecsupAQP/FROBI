@@ -4,6 +4,7 @@ Add a module's ``infrastructure.models`` here when it gets its first table.
 """
 
 from frobi.modules.adaptations.infrastructure import models as adaptations_models
+from frobi.modules.claim_review.infrastructure import models as claim_review_models
 from frobi.modules.comprehension.infrastructure import models as comprehension_models
 from frobi.modules.identity.infrastructure import models as identity_models
 from frobi.modules.materials.infrastructure import models as materials_models
@@ -16,6 +17,7 @@ metadata = Base.metadata
 
 __all__ = [
     "adaptations_models",
+    "claim_review_models",
     "comprehension_models",
     "identity_models",
     "materials_models",

@@ -31,6 +31,9 @@ class InMemoryMaterials:
     async def get(self, material_id: UUID) -> Material | None:
         return self.items.get(material_id)
 
+    async def list_for_owner(self, owner_id: UUID, kind: MaterialKind) -> list[Material]:
+        return [m for m in self.items.values() if m.owner_id == owner_id and m.kind is kind]
+
 
 class StaticSamples:
     def list(self) -> list[Material]:
@@ -46,6 +49,9 @@ class InMemoryWorks:
 
     async def add(self, work: Work) -> None:
         self.items.append(work)
+
+    async def get(self, work_id: UUID) -> Work | None:
+        return next((w for w in self.items if w.id == work_id), None)
 
 
 class FakeExtractor:
