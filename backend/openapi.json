@@ -2733,7 +2733,7 @@
             "type": "string"
           },
           "need": {
-            "description": "Necesidad que cubre, para filtrar con `?need=`.",
+            "description": "Necesidad que cubre, para filtrar con `?need=`: verify_source, study_material, calculate, write o visualize.",
             "title": "Need",
             "type": "string"
           },
@@ -5291,7 +5291,7 @@
                 }
               }
             },
-            "description": "Datos inválidos (`Validation.Invalid`)."
+            "description": "La necesidad no existe (`Tools.UnknownNeed`)."
           }
         },
         "security": [
@@ -5339,6 +5339,16 @@
             },
             "description": "Sin sesión (`Identity.Unauthenticated`)."
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "No existe (`Resource.NotFound`)."
+          },
           "422": {
             "content": {
               "application/json": {
@@ -5347,7 +5357,7 @@
                 }
               }
             },
-            "description": "Datos inválidos (`Validation.Invalid`)."
+            "description": "Falta `need` o `claim_id` (`Tools.NeedRequired`) o la necesidad no existe (`Tools.UnknownNeed`)."
           }
         },
         "security": [
@@ -5355,7 +5365,7 @@
             "HTTPBearer": []
           }
         ],
-        "summary": "Recomendar una herramienta para una necesidad",
+        "summary": "Recomendar una herramienta para una necesidad o una afirmación",
         "tags": [
           "M10 · Herramientas"
         ]
