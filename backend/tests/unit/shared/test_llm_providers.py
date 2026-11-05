@@ -66,6 +66,8 @@ async def test_openai_compatible_uses_its_base_url_and_json_mode() -> None:
         (200, {"content": "not a list"}),
         (200, {"content": [{"type": "text", "text": "Sin JSON"}]}),
         (200, {"content": [{"type": "text", "text": "[1, 2]"}]}),
+        # Cut at the token limit: even if it happened to parse, the content is incomplete.
+        (200, {"stop_reason": "max_tokens", "content": [{"type": "text", "text": '{"a": 1}'}]}),
     ],
 )
 async def test_any_provider_problem_is_llm_unavailable(status: int, body: object) -> None:

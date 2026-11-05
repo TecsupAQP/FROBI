@@ -17,7 +17,9 @@ from .fallback_text_generator import FallbackTextGenerator
 MAX_MATERIAL_CHARS = 20_000
 OUTPUT_SHAPE = (
     'Responde con este JSON: {"title": str, "sections": '
-    '[{"heading": str, "body": str, "items": [str]}]}. Entre 3 y 8 secciones.'
+    '[{"heading": str, "body": str, "items": [str]}]}. Entre 3 y 5 secciones; cada "body" de '
+    "1 a 3 frases cortas y como máximo 3 items breves por sección. "
+    "Sé breve: no más de 250 palabras en total."
 )
 
 

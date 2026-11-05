@@ -19,7 +19,9 @@ ANTHROPIC_URL = "https://api.anthropic.com"
 ANTHROPIC_VERSION = "2023-06-01"
 DEFAULT_ANTHROPIC_MODEL = "claude-haiku-5-5"
 OPENAI_URL = "https://api.openai.com/v1"
-MAX_OUTPUT_TOKENS = 2048
+# Room for the longest answer (an adaptation) with margin; prompts also ask to be brief so the
+# reply fits in the 15 s cap.
+MAX_OUTPUT_TOKENS = 4096
 
 
 def parse_json_object(text: str) -> dict[str, Any]:
@@ -92,6 +94,8 @@ class AnthropicLlmClient(_HttpLlmClient):
             )
         except (KeyError, TypeError, AttributeError) as error:
             raise LlmUnavailable("Unexpected Anthropic reply") from error
+        if reply.get("stop_reason") == "max_tokens":
+            raise LlmUnavailable("The reply was cut at the output token limit")
         return parse_json_object(text)
 
 
